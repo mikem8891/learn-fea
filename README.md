@@ -24,7 +24,7 @@ u_x \\\\ u_y
 
 Let L be a differential operator for converting u to \epsilon.
 \\[
-mathbf{L(u)}=
+\mathbf{L(u)}=
 \begin{pmatrix}
 \frac{\partial}{\partial x}
 \\\\ \frac{\partial}{\partial y} 
@@ -40,7 +40,7 @@ u_x \\\\ u_y
 \\\\ \frac{\partial u_y}{\partial y} 
 \\\\ \frac{\partial u_x}{\partial y} +
 \frac{\partial u_y}{\partial x}
-\end{pmatrix}=
+\end{pmatrix}
 \\]
 
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
