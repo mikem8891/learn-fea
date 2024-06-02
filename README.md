@@ -51,12 +51,17 @@ u_x \\\\ u_y
 
 Let \\(\mathbf{E}\\) be a elasticity matrix to convert strain to stress, where E is Young's modulus, G is the modulus of rigidity, and \\(\nu\\) is Poisson's ratio.
 
-\\[\mathbf{E} =
+\\[
+\mathbf{\sigma} =
+\mathbf{E\epsilon} =
 \begin{bmatrix}
 \frac{E}{1-\nu^2} & \frac{E\nu}{1-\nu^2} & 0
 \\\\ \frac{E\nu}{1-\nu^2} & \frac{E}{1-\nu^2} & 0 
 \\\\ 0 & 0 & G
-\end{bmatrix}
+\end{bmatrix} =
+\begin{pmatrix}
+\epsilon_x \\\\ \epsilon_y \\\\ \gamma_{xy}
+\end{pmatrix}
 \\]
 
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
