@@ -12,8 +12,8 @@ Staring with a 2D solid material. Let \\(\textbf{u}\\) be the displacement field
   \epsilon_x \\
   \epsilon_y \\
   \gamma
-end{pmatrix}
- \\]
+\end{pmatrix}
+\\]
 
 
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
