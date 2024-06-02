@@ -51,12 +51,11 @@ u_x \\\\ u_y
 
 Let \\(\mathbf{E}\\) be a elasticity matrix to convert strain to stress, where E is Young's modulus, G is the modulus of rigidity, and \\(\nu\\) is Poisson's ratio.
 
-\\[\mathbf{E}=
+\\[\mathbf{E} =
 \begin{bmatrix}
-\frac{\partial}{\partial x} & 0
-\\\\ 0 & \frac{\partial}{\partial y} 
-\\\\ \frac{\partial}{\partial y} &
-\frac{\partial}{\partial x}
+E & E\nu & 0
+\\\\ E\nu & E & 0 
+\\\\ 0 & 0 & G
 \end{bmatrix}
 \\]
 
