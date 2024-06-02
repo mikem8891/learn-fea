@@ -22,6 +22,27 @@ u_x \\\\ u_y
 \end{pmatrix}
 \\]
 
+Let L be a differential operator for converting u to \epsilon.
+\\[
+mathbf{L(u)}=
+\begin{pmatrix}
+\frac{\partial}{\partial x}
+\\\\ \frac{\partial}{\partial y} 
+\\\\ \frac{\partial}{\partial y} +
+\frac{\partial}{\partial x}
+\end{pmatrix}
+\begin{pmatrix}
+u_x \\\\ u_y
+\end{pmatrix}
+=
+\begin{pmatrix}
+\frac{\partial u_x}{\partial x}
+\\\\ \frac{\partial u_y}{\partial y} 
+\\\\ \frac{\partial u_x}{\partial y} +
+\frac{\partial u_y}{\partial x}
+\end{pmatrix}=
+\\]
+
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
 
