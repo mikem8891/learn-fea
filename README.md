@@ -22,7 +22,7 @@ u_x \\\\ u_y
 \end{pmatrix}
 \\]
 
-Let L be a differential operator for converting u to \epsilon.
+Let \\(\mathbf{L}\\) be a differential operator for converting \\(\mathbf{u}\\) to \\(\mathbf{\epsilon}\\).
 \\[
 \mathbf{L(u)}=
 \begin{pmatrix}
