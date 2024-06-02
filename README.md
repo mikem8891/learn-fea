@@ -32,7 +32,7 @@ u_x \\\\ u_y
 \\]
 
 Let \\(\mathbf{L}\\) be a differential operator for converting \\(\mathbf{u}\\)
-to \\(\mathbf{\epsilon}\\). This operator
+to \\(\mathbf{\epsilon}\\).
 
 \\[
 \mathbf{L(u)}=
@@ -49,6 +49,17 @@ u_x \\\\ u_y
 \mathbf{\epsilon}
 \\]
 
+Let \\(\mathbf{E}\\) be a elasticity matrix to convert strain to stress, where E is Young's modulus, G is the modulus of rigidity, and \\(\nu\\) is Poisson's ratio.
+
+ \\[\mathbf{E}=
+ \begin{bmatrix}
+\frac{\partial}{\partial x}
+\\\\ \frac{\partial}{\partial y} 
+\\\\ \frac{\partial}{\partial y} +
+\frac{\partial}{\partial x}
+\end{bmatrix}
+\begin{pmatrix}
+ \\]
+
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-
