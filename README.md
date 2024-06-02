@@ -36,12 +36,12 @@ to \\(\mathbf{\epsilon}\\).
 
 \\[
 \mathbf{L(u)}=
-\begin{pmatrix}
+\begin{bmatrix}
+\frac{\partial}{\partial x} & 0
+\\\\ 0 & \frac{\partial}{\partial y} 
+\\\\ \frac{\partial}{\partial y} &
 \frac{\partial}{\partial x}
-\\\\ \frac{\partial}{\partial y} 
-\\\\ \frac{\partial}{\partial y} +
-\frac{\partial}{\partial x}
-\end{pmatrix}
+\end{bmatrix}
 \begin{pmatrix}
 u_x \\\\ u_y
 \end{pmatrix}
@@ -53,9 +53,9 @@ Let \\(\mathbf{E}\\) be a elasticity matrix to convert strain to stress, where E
 
 \\[\mathbf{E}=
 \begin{bmatrix}
-\frac{\partial}{\partial x}
-\\\\ \frac{\partial}{\partial y} 
-\\\\ \frac{\partial}{\partial y} +
+\frac{\partial}{\partial x} & 0
+\\\\ 0 & \frac{\partial}{\partial y} 
+\\\\ \frac{\partial}{\partial y} &
 \frac{\partial}{\partial x}
 \end{bmatrix}
 \\]
