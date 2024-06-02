@@ -53,8 +53,8 @@ Let \\(\mathbf{E}\\) be a elasticity matrix to convert strain to stress, where E
 
 \\[\mathbf{E} =
 \begin{bmatrix}
-frac{E}{1-\nu^2} & frac{E\nu}{1-\nu^2} & 0
-\\\\ frac{E\nu}{1-\nu^2} & frac{E}{1-\nu^2} & 0 
+\frac{E}{1-\nu^2} & \frac{E\nu}{1-\nu^2} & 0
+\\\\ \frac{E\nu}{1-\nu^2} & \frac{E}{1-\nu^2} & 0 
 \\\\ 0 & 0 & G
 \end{bmatrix}
 \\]
