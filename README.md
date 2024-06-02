@@ -4,7 +4,10 @@ Learning finite element analysis
 Lower-case bold variables are vectors.
 Upper-case bold variables are matrices.
 
-Staring with a 2D solid material. Let \\(\mathbf{u}\\) be the displacement field.  Let \\(\mathbf{\epsilon}\\) be the strains in the xy-plane.
+Staring with a 2D solid material. Let \\(\mathbf{u}\\) be the displacement
+field.  Let \\(\mathbf{\epsilon}\\) be the normal \\(\epsilon\\) and shear
+\\(\gamma\\) strains.  Let \\(\mathbf{\sigma}\\) be the normal \\(\sigma\\) and
+shear \\(\tau\\) stresses.
 
 \\[\mathbf{u} = \begin{pmatrix}
 u_x \\\\ u_y
@@ -22,7 +25,15 @@ u_x \\\\ u_y
 \end{pmatrix}
 \\]
 
-Let \\(\mathbf{L}\\) be a differential operator for converting \\(\mathbf{u}\\) to \\(\mathbf{\epsilon}\\).
+\\[\mathbf{\sigma} =
+\begin{pmatrix}
+\sigma_x \\\\ \sigma_y \\\\ \tau_{xy}
+\end{pmatrix}
+\\]
+
+Let \\(\mathbf{L}\\) be a differential operator for converting \\(\mathbf{u}\\)
+to \\(\mathbf{\epsilon}\\). This operator
+
 \\[
 \mathbf{L(u)}=
 \begin{pmatrix}
