@@ -8,12 +8,16 @@ Staring with a 2D solid material. Let \\(\textbf{u}\\) be the displacement field
 
 \\[u = (u_x u_y) \\]
 
-\\[\epsilon = \begin{pmatrix}
-  \epsilon_x \\\
-  \epsilon_y \\\\
+
+<span>
+\[\epsilon = 
+\begin{pmatrix}
+  \epsilon_x \\
+  \epsilon_y \\
   \gamma
 \end{pmatrix}
-\\]
+\]
+</span>
 
 
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
