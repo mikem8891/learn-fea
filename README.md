@@ -10,7 +10,7 @@ Staring with a 2D solid material. Let \\(\textbf{u}\\) be the displacement field
 
 \\[\epsilon =
 \begin{pmatrix}
-\epsilon_x \\ \epsilon_y \\ \gamma
+\epsilon_x \\\\ \epsilon_y \\\\ \gamma
 \end{pmatrix}
 \\]
 
