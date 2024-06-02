@@ -6,14 +6,17 @@ Upper-case bold variables are matrices.
 
 Staring with a 2D solid material. Let \\(\mathbf{u}\\) be the displacement field.  Let \\(\mathbf{\epsilon}\\) be the strains in the xy-plane.
 
-\\[u = \begin{pmatrix}
+\\[\mathbf{u} = \begin{pmatrix}
 u_x \\\\ u_y
 \end{pmatrix} \\]
 
-\\[\epsilon =
+\\[\mathbf{\epsilon} =
 \begin{pmatrix}
-\epsilon_x \\\\ \epsilon_y \\\\ \gamma
-\end{pmatrix}
+\epsilon_x \\\\ \epsilon_y \\\\ \gamma_xy
+\end{pmatrix} =
+\begin{pmatrix}
+\frac{\partial u_x}{\partial x} \\\\ \epsilon_y \\\\ \gamma_xy
+\end{pmatrix} = 
 \\]
 
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
