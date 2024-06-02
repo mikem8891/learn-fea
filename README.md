@@ -35,12 +35,7 @@ Let L be a differential operator for converting u to \epsilon.
 u_x \\\\ u_y
 \end{pmatrix}
 =
-\begin{pmatrix}
-\frac{\partial u_x}{\partial x}
-\\\\ \frac{\partial u_y}{\partial y} 
-\\\\ \frac{\partial u_x}{\partial y} +
-\frac{\partial u_y}{\partial x}
-\end{pmatrix}
+\mathbf{\epsilon}
 \\]
 
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
