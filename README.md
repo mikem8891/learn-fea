@@ -4,9 +4,11 @@ Learning finite element analysis
 Lower-case bold variables are vectors.
 Upper-case bold variables are matrices.
 
-Staring with a 2D solid material. Let \\(\textbf{u}\\) be the displacement field.  Let \\(\textbf{ \epsilon }\\) be the strains in the xy-plane.
+Staring with a 2D solid material. Let \\(\mathbf{u}\\) be the displacement field.  Let \\(\mathbf{\epsilon}\\) be the strains in the xy-plane.
 
-\\[u = (u_x u_y) \\]
+\\[u = \begin{pmatrix}
+u_x \\\\ u_y
+\end{pmatrix} \\]
 
 \\[\epsilon =
 \begin{pmatrix}
