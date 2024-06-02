@@ -58,7 +58,7 @@ Let \\(\mathbf{E}\\) be a elasticity matrix to convert strain to stress, where E
 \frac{E}{1-\nu^2} & \frac{E\nu}{1-\nu^2} & 0
 \\\\ \frac{E\nu}{1-\nu^2} & \frac{E}{1-\nu^2} & 0 
 \\\\ 0 & 0 & G
-\end{bmatrix} =
+\end{bmatrix}
 \begin{pmatrix}
 \epsilon_x \\\\ \epsilon_y \\\\ \gamma_{xy}
 \end{pmatrix}
