@@ -15,9 +15,9 @@ u_x \\\\ u_y
 \epsilon_x \\\\ \epsilon_y \\\\ \gamma_{xy}
 \end{pmatrix} =
 \begin{pmatrix}
-\frac{\partial u_x}{\partial x} \\\\
-\frac{\partial u_y}{\partial y} \\\\
-\frac{\partial u_x}{\partial y} +
+\frac{\partial u_x}{\partial x}
+\\\\ \frac{\partial u_y}{\partial y} 
+\\\\ \frac{\partial u_x}{\partial y} +
 \frac{\partial u_y}{\partial x}
 \end{pmatrix}
 \\]
