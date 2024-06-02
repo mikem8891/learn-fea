@@ -9,8 +9,8 @@ Staring with a 2D solid material. Let \\(\textbf{u}\\) be the displacement field
 \\[u = (u_x u_y) \\]
 
 \\[\epsilon = \begin{pmatrix}
-  \epsilon_x \\
-  \epsilon_y \\
+  \epsilon_x \\\
+  \epsilon_y \\\\
   \gamma
 \end{pmatrix}
 \\]
