@@ -12,11 +12,14 @@ u_x \\\\ u_y
 
 \\[\mathbf{\epsilon} =
 \begin{pmatrix}
-\epsilon_x \\\\ \epsilon_y \\\\ \gamma_xy
+\epsilon_x \\\\ \epsilon_y \\\\ \gamma_{xy}
 \end{pmatrix} =
 \begin{pmatrix}
-\frac{\partial u_x}{\partial x} \\\\ \epsilon_y \\\\ \gamma_xy
-\end{pmatrix} = 
+\frac{\partial u_x}{\partial x} \\\\
+\frac{\partial u_y}{\partial y} \\\\
+\frac{\partial u_x}{\partial y} +
+\frac{\partial u_y}{\partial x}
+\end{pmatrix}
 \\]
 
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
