@@ -10,7 +10,7 @@
     <script src="https://fred-wang.github.io/TeXZilla/examples/customElement.js"></script>
   </head>
   <body>
-    <div class="container-lg px-3 my-5 markdown-body">
+    <div>
       <h1 id="learn-fea">learn-fea</h1>
 <p>Learning finite element analysis</p>
 
@@ -22,52 +22,56 @@ field.  Let \(\mathbf{\epsilon}\) be the normal \(\epsilon\) and shear
 \(\gamma\) strains.  Let \(\mathbf{\sigma}\) be the normal \(\sigma\) and
 shear \(\tau\) stresses.</p>
 
-<p>\[\mathbf{u} = \begin{pmatrix}
-u_x \\ u_y
-\end{pmatrix} \]</p>
-
-<p>\[\mathbf{\epsilon} =
+<la-tex display="block">
+\mathbf{u} = 
 \begin{pmatrix}
-\epsilon_x \\ \epsilon_y \\ \gamma_{xy}
+  u_x \\ u_y
+\end{pmatrix}
+</la-tex>
+
+<la-tex display="block">
+\mathbf{\epsilon} =
+\begin{pmatrix}
+  \epsilon_x \\ \epsilon_y \\ \gamma_{xy}
 \end{pmatrix} =
 \begin{pmatrix}
-\frac{\partial u_x}{\partial x}
-\\ \frac{\partial u_y}{\partial y} 
-\\ \frac{\partial u_x}{\partial y} +
-\frac{\partial u_y}{\partial x}
+  \frac{\partial u_x}{\partial x} \\
+  \frac{\partial u_y}{\partial y} \\
+  \frac{\partial u_x}{\partial y} +
+  \frac{\partial u_y}{\partial x}
 \end{pmatrix}
-\]</p>
+</la-tex>
 
-<p>\[\mathbf{\sigma} =
-\begin{pmatrix}
-\sigma_x \\ \sigma_y \\ \tau_{xy}
-\end{pmatrix}
-\]</p>
+<la-tex display="block">
+  \mathbf{\sigma} =
+  \begin{pmatrix}
+    \sigma_x \\ \sigma_y \\ \tau_{xy}
+  \end{pmatrix}
+</la-tex>
 
 <p>Let \(\mathbf{L}\) be a differential operator for converting \(\mathbf{u}\)
 to \(\mathbf{\epsilon}\).</p>
 
-<p>\[
+<la-tex display="block">
 \mathbf{L(u)}=
 \begin{bmatrix}
-\frac{\partial}{\partial x} &amp; 0
-\\ 0 &amp; \frac{\partial}{\partial y} 
-\\ \frac{\partial}{\partial y} &amp;
-\frac{\partial}{\partial x}
+  \frac{\partial}{\partial x} & 0 \\
+  0 & \frac{\partial}{\partial y} \\
+  \frac{\partial}{\partial y} &
+  \frac{\partial}{\partial x}
 \end{bmatrix}
 \begin{pmatrix}
-u_x \\ u_y
+  u_x \\ u_y
 \end{pmatrix}
-=
-\mathbf{\epsilon}
-\]</p>
+= \mathbf{\epsilon}
+</la-tex>
 
 <p>Let \(\mathbf{E}\) be an elasticity matrix to convert strain to stress, 
 where \(E\) is Young’s modulus, \(G\) is the modulus of rigidity, and
 \(\nu\) is Poisson’s ratio.  The matrix shown is for the plane stress
 condition; that is \(\sigma_z = 0\).</p>
 
-<la-tex>
+<la-tex display="block">
 \mathbf{\sigma} =
 \mathbf{E\epsilon} =
 \begin{bmatrix}
@@ -82,11 +86,12 @@ condition; that is \(\sigma_z = 0\).</p>
 
 <p>Newton’s second law on any point in the material may be written as follows:</p>
 
-<la-tex>
+<la-tex display="block">
   \mathbf{f} = \rho
   \frac{\partial^2 \mathbf{u}}{\partial t^2}
 </la-tex>
-      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+<br>
+      <div>
         This site is open source. <a href="https://github.com/mikem8891/learn-fea/edit/main/README.md">Improve this page</a>.
       </div>
     </div>
