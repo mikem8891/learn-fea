@@ -49,7 +49,10 @@ u_x \\\\ u_y
 \mathbf{\epsilon}
 \\]
 
-Let \\(\mathbf{E}\\) be a elasticity matrix to convert strain to stress, where E is Young's modulus, G is the modulus of rigidity, and \\(\nu\\) is Poisson's ratio.
+Let \\(\mathbf{E}\\) be an elasticity matrix to convert strain to stress, 
+where \\(E\\) is Young's modulus, \\(G\\) is the modulus of rigidity, and
+\\(\nu\\) is Poisson's ratio.  The matrix shown is for the plane stress
+condition; that is \\(\sigma_z = 0\\).
 
 \\[
 \mathbf{\sigma} =
