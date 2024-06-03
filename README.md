@@ -70,7 +70,7 @@ condition; that is \\(\sigma_z = 0\\).
 Newton's second law on any point in the material may be written as follows:
 
 \\[\mathbf{f} = \rho
-\frac{\partial\mathbf{u}}{\partial t}\\]
+\frac{\partial^2 \mathbf{u}}{\partial t^2}\\]
 
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
