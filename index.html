@@ -4,18 +4,24 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>learn-fea | Learning finite element analysis.</title>
+    <style>
+      body{
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    </style>
     <script src="https://fred-wang.github.io/TeXZilla/TeXZilla-min.js"></script>
     <script src="https://fred-wang.github.io/TeXZilla/examples/customElement.js"></script>
   </head>
   <body>
     <div>
-      <h1 id="learn-fea">learn-fea</h1>
+      <h1>learn-fea</h1>
 <p>Learning finite element analysis</p>
 
 <p>Lower-case bold variables are vectors.
 Upper-case bold variables are matrices.</p>
+
+<h2>Mechanics of Materials</h2>
 
 <p>Staring with a 2D solid material. Let <la-tex>\mathbf{u}</la-tex> be the
 displacement field.  Let <la-tex>\mathbf{\epsilon}</la-tex> be the normal 
@@ -93,6 +99,36 @@ shown is for the plane stress condition; that is <la-tex>\sigma_z = 0</la-tex>.
   \mathbf{f} = \rho
   \frac{\partial^2 \mathbf{u}}{\partial t^2}
 </la-tex>
+
+<p>Where <la-tex>\mathbf{f}</la-tex> is the sum of forces per unit volume and 
+<la-tex>\rho</la-tex> is the density.  The forces can include body forces like 
+gravity and magnetism, reference-frame forces like centifugal force and 
+coriolis force, and stress in the material.  For FEA we are concerned with the
+stress, but other forces can be added, as needed.  Let 
+<la-tex>\mathbf{f}_s</la-tex> be the force due to stress.</p>
+
+<la-tex display="block">
+  \mathbf{f}_s=
+  \mathbf{L}^T(\mathbf{\sigma}) =
+  \begin{bmatrix}
+    \frac{\partial}{\partial x} & 0 & \frac{\partial}{\partial y} \\
+    0 & \frac{\partial}{\partial y} & \frac{\partial}{\partial x}
+  \end{bmatrix}
+  \begin{pmatrix}
+    \sigma_x \\
+    \sigma_y \\
+    \tau_{xy}
+  \end{pmatrix}
+</la-tex>
+
+<p>Let <la-tex>\mathbf{f}_b</la-tex> be the sum of other forces, such as the ones mentioned
+above.</p>
+
+<la-tex display="block">
+  \mathbf{f}_b + \mathbf{L}^T(\mathbf{\sigma}) =
+  \rho \frac{\partial^2 \mathbf{u}}{\partial t^2}
+</la-tex>
+
 <br>
       <div>
         This site is open source. <a href="https://github.com/mikem8891/learn-fea/edit/main/README.md">Improve this page</a>.
