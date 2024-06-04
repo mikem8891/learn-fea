@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>learn-fea | Learning finite element analysis.</title>
+    <link
+      rel="stylesheet"
+      href="https://fred-wang.github.io/MathFonts/LatinModern/mathfonts.css" />
     <style>
       body{
         font-family: Arial, Helvetica, sans-serif;
@@ -12,6 +15,15 @@
     </style>
     <script src="https://fred-wang.github.io/TeXZilla/TeXZilla-min.js"></script>
     <script src="https://fred-wang.github.io/TeXZilla/examples/customElement.js"></script>
+    <script>
+      window.onload = function() {
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync("math{font-family: Latin Modern Math;}");
+        for(const elem of document.getElementsByTagName("la-tex")){
+          elem.shadowRoot.adoptedStyleSheets = [sheet];
+        }
+      }
+    </script>
   </head>
   <body>
     <div>
