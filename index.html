@@ -27,16 +27,12 @@
   </head>
   <body>
     <div>
-      <h1>learn-fea</h1>
-<p>Learning finite element analysis</p>
+<h1>Learn FEA</h1>
 
-<p>Lower-case bold variables are vectors.
-Upper-case bold variables are matrices.</p>
-
-<h2>Mechanics of Materials</h2>
+<h2>Intro to Mechanics of Materials</h2>
 
 <p>Staring with a 2D solid material. Let <la-tex>\mathbf{u}</la-tex> be the
-displacement field.  Let <la-tex>\mathbf{\epsilon}</la-tex> be the normal 
+displacement field of the material.  Let <la-tex>\mathbf{\epsilon}</la-tex> be the normal 
 <la-tex>(\epsilon)</la-tex> and shear <la-tex>(\gamma)</la-tex> strains.  Let 
 <la-tex>\mathbf{\sigma}</la-tex> be the normal <la-tex>(\sigma)</la-tex> and
 shear <la-tex>(\tau)</la-tex> stresses.</p>
@@ -47,7 +43,7 @@ shear <la-tex>(\tau)</la-tex> stresses.</p>
   u_x \\ u_y
 \end{pmatrix}
 </la-tex>
-
+<br>
 <la-tex display="block">
 \mathbf{\epsilon} =
 \begin{pmatrix}
@@ -60,7 +56,7 @@ shear <la-tex>(\tau)</la-tex> stresses.</p>
   \frac{\partial u_y}{\partial x}
 \end{pmatrix}
 </la-tex>
-
+<br>
 <la-tex display="block">
   \mathbf{\sigma} =
   \begin{pmatrix}
@@ -86,7 +82,7 @@ to <la-tex>\mathbf{\epsilon}</la-tex>.</p>
 = \mathbf{\epsilon}
 </la-tex>
 
-<p>Let <la-tex>\mathbf{E}</la-tex> be an elasticity matrix to convert strain to
+<p>Let <la-tex>\mathbf{E}</la-tex> be an elasticity matrix to convert strain into
 stress, where <la-tex>E</la-tex> is Young’s modulus, <la-tex>G</la-tex> is the
 modulus of rigidity, and <la-tex>\nu</la-tex> is Poisson’s ratio.  The matrix
 shown is for the plane stress condition; that is <la-tex>\sigma_z = 0</la-tex>.
@@ -105,7 +101,7 @@ shown is for the plane stress condition; that is <la-tex>\sigma_z = 0</la-tex>.
 \end{pmatrix}
 </la-tex>
 
-<p>Newton’s second law on any point in the material may be written as follows:</p>
+<p>Newton’s second law at any point in the material may be written as follows:</p>
 
 <la-tex display="block">
   \mathbf{f} = \rho
@@ -113,10 +109,8 @@ shown is for the plane stress condition; that is <la-tex>\sigma_z = 0</la-tex>.
 </la-tex>
 
 <p>Where <la-tex>\mathbf{f}</la-tex> is the sum of forces per unit volume and 
-<la-tex>\rho</la-tex> is the density.  The forces can include body forces like 
-gravity and magnetism, reference-frame forces like centifugal force and 
-coriolis force, and stress in the material.  For FEA we are concerned with the
-stress, but other forces can be added, as needed.  Let 
+<la-tex>\rho</la-tex> is the density.  We are concerned with the
+stress in the material, but other forces can be added, as needed.  Let 
 <la-tex>\mathbf{f}_s</la-tex> be the force due to stress.</p>
 
 <la-tex display="block">
@@ -133,18 +127,27 @@ stress, but other forces can be added, as needed.  Let
   \end{pmatrix}
 </la-tex>
 
-<p>Let <la-tex>\mathbf{f}_b</la-tex> be the sum of other forces, such as the ones mentioned
-above.</p>
+<p>Let <la-tex>\mathbf{f}_b</la-tex> be the sum of other forces, such as body
+forces like  gravity and magnetism, reference-frame forces like centifugal force
+and coriolis force.</p>
 
 <la-tex display="block">
   \mathbf{f}_b + \mathbf{L}^T(\mathbf{\sigma}) =
   \rho \frac{\partial^2 \mathbf{u}}{\partial t^2}
 </la-tex>
 
-<br>
-      <div>
-        This site is open source. <a href="https://github.com/mikem8891/learn-fea/edit/main/README.md">Improve this page</a>.
-      </div>
+<h2>Basics of Finite Element Method</h2>
+
+<p>Finite element method is used to solve partial differential equations on domains
+with complex geometry.  This is in contrast to finite difference method which usually 
+requires a domain to be easily divided into equal sized tiles or blocks.  Finite
+element method uses elements made up of nodes.  Adjecent elements share the nodes
+at their common boundary.  The solution within an element is calculated as a sum.</p>
+
+<la-tex display="block">
+  \mathbf{u}(\mathbf{x},t)=\sum_i{N_i(\mathbf{x}) u_i(t)}
+</la-tex>
+
     </div>
   </body>
 </html>
