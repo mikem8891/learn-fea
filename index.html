@@ -65,8 +65,7 @@ shear <la-tex>(\tau)</la-tex> stresses.</p>
 </la-tex>
 
 <p>Let <la-tex>\mathbf{L}</la-tex> be a differential operator for converting 
-<la-tex>\mathbf{u}</la-tex>
-to <la-tex>\mathbf{\epsilon}</la-tex>.</p>
+<la-tex>\mathbf{u}</la-tex> to <la-tex>\mathbf{\epsilon}</la-tex>.</p>
 
 <la-tex display="block">
 \mathbf{L(u)}=
@@ -142,11 +141,20 @@ and coriolis force.</p>
 with complex geometry.  This is in contrast to finite difference method which usually 
 requires a domain to be easily divided into equal sized tiles or blocks.  Finite
 element method uses elements made up of nodes.  Adjecent elements share the nodes
-at their common boundary.  The solution within an element is calculated as a sum.</p>
+at their common boundary.  The solution is approximated as the sum below.</p>
 
 <la-tex display="block">
-  \mathbf{u}(\mathbf{x},t)=\sum_i{N_i(\mathbf{x}) u_i(t)}
+  \mathbf{u}(\mathbf{x},t)\approx\sum_i{N_i(\mathbf{x}) u_i(t)}
 </la-tex>
+
+<p>Where <la-tex>N_i</la-tex> are trail functions and <la-tex>\mathbf{u_i}</la-tex>
+are the values of the solution at each node.  The trail functions are determined
+by the domain and the type of elements used.  A trial function for node i will have
+a value of 1 at node i and 0 at all other nodes.  In addition, the trail function
+will be 0 outside of any elements it is a part of.  Depending on the type of
+element, the trail function may be linear, quadratic, or some other distrbution.
+When all the trail functions in an element are sumed, the value across the entire 
+element is 1.</p>
 
     </div>
   </body>
