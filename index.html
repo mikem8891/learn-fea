@@ -144,7 +144,7 @@ element method uses elements made up of nodes.  Adjecent elements share the node
 at their common boundary.  The solution is approximated as the sum below.</p>
 
 <la-tex display="block">
-  \mathbf{u}(\mathbf{x},t)\approx\sum_i{N_i(\mathbf{x}) u_i(t)}
+  \mathbf{u}(\mathbf{x},t)\approx\sum_i{N_i(\mathbf{x}) \mathbf{u}_i(t)}
 </la-tex>
 
 <p>Where <la-tex>N_i</la-tex> are trail functions and <la-tex>\mathbf{u_i}</la-tex>
@@ -155,6 +155,19 @@ will be 0 outside of any elements it is a part of.  Depending on the type of
 element, the trail function may be linear, quadratic, or some other distrbution.
 When all the trail functions in an element are sumed, the value across the entire 
 element is 1.</p>
+
+<p>Before solving for <la-tex>\mathbf{u}_i</la-tex> lets look at an example of a
+trail function.  The simpliest 2D element is a linear triangular element. This
+element is not accurate for structural finite element, so we will look at better
+elements later.  Let <la-tex>D</la-tex> be the triangular domain of an element
+between nodes at (0, 0), (1, 0), and (0, 1).
+</p>
+
+<la-tex display="block">
+  D = \{ (x, y) : 0\le x, 0\le y, x+y\le 1\}
+</la-tex>
+
+<p></p>
 
     </div>
   </body>
