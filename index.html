@@ -222,10 +222,9 @@ can solve.</p>
   \sum_i{\rho N_i N_j \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}}
 </la-tex>
 
-<p>We apply the product rule to the stress term and integrate.  This is 
-essentially integrating by parts.  It will allow us to break up the term into
-an internal stress force and an external stress force applied to the boundary.
-</p>
+<p>We apply the product rule to the stress term.  This will allow us to break up
+the term into an internal stress force and an external stress force applied at
+the boundary.  </p>
 
 <la-tex display="block">
   N_j \mathbf{f}_b + 
@@ -233,16 +232,59 @@ an internal stress force and an external stress force applied to the boundary.
     \mathbf{L}^T(N_j) \mathbf{\sigma}  =
   \sum_i{\rho N_i N_j \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}}
 </la-tex>
+
+<p>We will give each term its own variable and intregrate over the domain of
+the element.</p>
+
+<la-tex display="block">
+  \mathbf{f}_{bj} + \mathbf{f}_{sj} - \sum_i \mathbf{K}_j\mathbf{u}_i = 
+  \sum_i M_j \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}
+</la-tex>
 <br>
 <la-tex display="block">
-  \iint_D N_j \mathbf{f}_b \, \mathrm{dA} + 
-    \iint_D \mathbf{L}^T(N_j \mathbf{\sigma}) \, \mathrm{dA} - 
-    \iint_D \mathbf{B}_j^T \mathbf{\sigma} \, \mathrm{dA}  =
-    \iint_D 
-      \sum_i \rho N_i N_j \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2} \, \mathrm{dA}
+  \mathbf{f}_{bj} = \iint_D N_j \mathbf{f}_b \, \mathrm{dA}
 </la-tex>
-
-
+<br>
+<la-tex display="block">
+  \mathbf{f}_{sj} = \iint_D \mathbf{L}^T(N_j \mathbf{\sigma}) \, \mathrm{dA}
+</la-tex>
+<br>
+<la-tex display="block">
+  \mathbf{K}_j\mathbf{u}_i = 
+    \iint_D \mathbf{L}^T(N_j) \mathbf{\sigma} \, \mathrm{dA} =
+    \left( \iint_D \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i \mathrm{dA} \right) \mathbf{u}_i
+</la-tex>
+<br>
+<la-tex display="block">
+  M_j = \iint_D \rho N_i N_j \mathrm{dA}
+</la-tex>
+<p>It is relatively straight forward to calculate these values, except 
+<la-tex>\mathbf{f}_{sj}</la-tex>.  We need to use Green's theorum.</p>
+<la-tex display="block">
+  \mathbf{f}_{sj} = \iint_D \mathbf{L}^T(N_j \mathbf{\sigma}) \, \mathrm{dA}
+</la-tex>
+<br>
+<la-tex display="block">
+  =\iint_D 
+    \begin{pmatrix}
+      \frac{\partial}{\partial x}(N_j\sigma_x) +
+      \frac{\partial}{\partial y}(N_j\tau_{xy})\\
+      \frac{\partial}{\partial x}(N_j\tau_{xy}) +
+      \frac{\partial}{\partial y}(N_j\sigma_y)
+    \end{pmatrix}
+    \mathrm{dA}
+</la-tex>
+<br>
+<la-tex display="block">
+  =\oint_{\partial D}
+    N_j
+    \begin{pmatrix}
+      \sigma_x dy -
+      \tau_{xy} dx \\
+      \tau_{xy} dy -
+      \sigma_y dx
+    \end{pmatrix}
+</la-tex>
     </div>
   </body>
 </html>
