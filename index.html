@@ -251,7 +251,7 @@ the element.</p>
 <br>
 <la-tex display="block">
   \mathbf{K}_j\mathbf{u}_i = 
-    \iint_D \mathbf{L}^T(N_j) \mathbf{\sigma} \, \mathrm{dA} =
+    \iint_D \mathbf{B}^T_j \mathbf{\sigma} \, \mathrm{dA} =
     \left( \iint_D \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i \mathrm{dA} \right) \mathbf{u}_i
 </la-tex>
 <br>
@@ -259,7 +259,9 @@ the element.</p>
   M_j = \iint_D \rho N_i N_j \mathrm{dA}
 </la-tex>
 <p>It is relatively straight forward to calculate these values, except 
-<la-tex>\mathbf{f}_{sj}</la-tex>.  We need to use Green's theorum.</p>
+<la-tex>\mathbf{f}_{sj}</la-tex>.  Here we need to use Green's theorem.  This shows
+us that <la-tex>\mathbf{f}_{sj}</la-tex> is only a result of the stress at the 
+boundary.  <la-tex>\partial D</la-tex> is the boundary of domain <la-tex>D</la-tex>.</p>
 <la-tex display="block">
   \mathbf{f}_{sj} = \iint_D \mathbf{L}^T(N_j \mathbf{\sigma}) \, \mathrm{dA}
 </la-tex>
@@ -284,6 +286,16 @@ the element.</p>
       \tau_{xy} dy -
       \sigma_y dx
     \end{pmatrix}
+</la-tex>
+<p>It is probably more useful to apply boundary conditions in terms of 
+the normal bearing stress <la-tex>\sigma_b</la-tex> and the frictional shear
+stress <la-tex>\tau_f</la-tex>.</p>
+<la-tex display="block">
+  \sigma_b \, \mathrm{d}\mathbf{n} = 
+  \begin{pmatrix}
+    dy \\
+    -dx
+  \end{pmatrix}
 </la-tex>
     </div>
   </body>
