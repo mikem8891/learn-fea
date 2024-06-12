@@ -291,12 +291,39 @@ boundary.  <la-tex>\partial D</la-tex> is the boundary of domain <la-tex>D</la-t
 the normal bearing stress <la-tex>\sigma_b</la-tex> and the frictional shear
 stress <la-tex>\tau_f</la-tex>.</p>
 <la-tex display="block">
-  \sigma_b \, \mathrm{d}\mathbf{n} = 
+  \mathbf{f}_{sj} =
+  \oint_{\partial D}
+    N_j
+    \left(
+      \sigma_b \, \hat{\mathbf{N}} +
+      \tau_f   \, \hat{\mathbf{T}}
+    \right)
+    ds
+</la-tex>
+<p>Where <la-tex>\hat{\mathbf{N}}</la-tex> is the normal unit vector,
+<la-tex>\hat{\mathbf{T}}</la-tex> is the tangent unit vector, and
+<la-tex>ds</la-tex> is the differential length.</p>
+
+<la-tex display="block">
+  \hat{\mathbf{N}} = 
   \begin{pmatrix}
-    dy \\
-    -dx
+    \frac{dy}{ds} \\
+    -\frac{dx}{ds}
   \end{pmatrix}
 </la-tex>
+<br>
+<la-tex display="block">
+  \hat{\mathbf{T}} = 
+  \begin{pmatrix}
+    \frac{dx}{ds} \\
+    \frac{dy}{ds}
+  \end{pmatrix}
+</la-tex>
+<br>
+<la-tex display="block">
+  ds = \sqrt{dx^2 + dy^2}
+</la-tex>
+
     </div>
   </body>
 </html>
