@@ -153,6 +153,8 @@ element, the trail function may be linear, quadratic, or some other distrbution.
 When all the trail functions in an element are sumed, the value across the entire 
 element is 1.</p>
 
+<div class="example">
+<h3>Example</h3>
 <p>Before solving for <la-tex>\mathbf{u}_i</la-tex> lets look at an example of a
 trail functions.  The simpliest 2D element is a linear triangular element. This
 element is not accurate for structural finite element, so we will look at better
@@ -171,6 +173,8 @@ and zero at the other nodes.</p>
   <la-tex>N_1 = 1-x-y</la-tex><br>
   <la-tex>N_2 = x</la-tex><br>
   <la-tex>N_3 = y</la-tex>
+</div>
+<p></p>
 </div>
 
 <p>Since the approximate solution is a production of a space-only dependent
@@ -324,7 +328,18 @@ stress <la-tex>\tau_f</la-tex>.</p>
   ds = \sqrt{dx^2 + dy^2}
 </la-tex>
 
-<p></p>
+<div class="example">
+  <h3>Example</h3>
+  <p>Now lets calculate mass values and stiffness matrices.  We will start with
+  <la-tex>i=1</la-tex> and <la-tex>j=1</la-tex>.</p>
+  <la-tex display="block">
+    M_{11} = \iint_D \rho N_i N_j \mathrm{dA}
+  </la-tex>
+  <la-tex display="block">
+    \mathbf{K}_{11} = 
+  </la-tex>
+  <p></p>
+</div>
 
     </div>
   </body>
