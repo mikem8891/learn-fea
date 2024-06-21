@@ -7,14 +7,9 @@
     <link
       rel="stylesheet"
       href="https://fred-wang.github.io/MathFonts/LatinModern/mathfonts.css" />
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-      body{
-        font-family: Arial, Helvetica, sans-serif;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="style.css" />
     <script src="https://fred-wang.github.io/TeXZilla/TeXZilla-min.js"></script>
     <script src="https://fred-wang.github.io/TeXZilla/examples/customElement.js"></script>
     <script>
@@ -250,14 +245,19 @@ the element.</p>
 </la-tex>
 <br>
 <la-tex display="block">
-  \mathbf{K}_j\mathbf{u}_i = 
+  \mathbf{K}_{ij}\mathbf{u}_i = 
     \iint_D \mathbf{B}^T_j \mathbf{\sigma} \, \mathrm{dA} =
     \left( \iint_D \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i \mathrm{dA} \right) \mathbf{u}_i
 </la-tex>
 <br>
 <la-tex display="block">
-  M_j = \iint_D \rho N_i N_j \mathrm{dA}
+  M_{ij} = \iint_D \rho N_i N_j \mathrm{dA}
 </la-tex>
+
+<p>Where <la-tex>\mathbf{f}_{s}</la-tex> is the force due to the stress,
+<la-tex>\mathbf{K}</la-tex> is the stiffness, and 
+<la-tex>M</la-tex> is the mass.</p>
+
 <p>It is relatively straight forward to calculate these values, except 
 <la-tex>\mathbf{f}_{sj}</la-tex>.  Here we need to use Green's theorem.  This shows
 us that <la-tex>\mathbf{f}_{sj}</la-tex> is only a result of the stress at the 
@@ -323,6 +323,8 @@ stress <la-tex>\tau_f</la-tex>.</p>
 <la-tex display="block">
   ds = \sqrt{dx^2 + dy^2}
 </la-tex>
+
+<p></p>
 
     </div>
   </body>
