@@ -330,14 +330,26 @@ stress <la-tex>\tau_f</la-tex>.</p>
 
 <div class="example">
   <h3>Example</h3>
-  <p>Now lets calculate mass values and stiffness matrices.  We will start with
-  <la-tex>i=1</la-tex> and <la-tex>j=1</la-tex>.</p>
+  <p>Now lets calculate mass values and stiffness matrices using the trails 
+  functions from above.  We will start with the mass value for <la-tex>i=1</la-tex> and 
+  <la-tex>j=1</la-tex>.  For covenience, we will apply
+  the substitution <la-tex>v = 1-x</la-tex>.</p>
   <la-tex display="block">
-    M_{11} = \iint_D \rho N_i N_j \mathrm{dA}
-  </la-tex>
+    M_{11} = \rho \iint_D {N_1}^2 \mathrm{dA}
+  </la-tex><br>
   <la-tex display="block">
-    \mathbf{K}_{11} = 
-  </la-tex>
+    = \rho \int_0^1 \int_0^{1-x} (1-x-y)^2 \mathrm{dy dx}
+  </la-tex><br>
+  <la-tex display="block">
+    = \rho \int_0^1 \int_0^{v} (v-y)^2 \mathrm{dy dv}
+  </la-tex><br>
+  <la-tex display="block">
+    = \rho \int_0^1 \int_0^v \left( v^2-2vy+y^2 \right) \mathrm{dy dv}
+  </la-tex><br>
+  <la-tex display="block">
+    = \rho \int_0^1 \frac{v^3}{3} \mathrm{dv}
+    = \frac{\rho}{12}
+  </la-tex><br>
   <p></p>
 </div>
 
