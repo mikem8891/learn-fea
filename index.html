@@ -6,7 +6,7 @@
     <title>Learn Finite Element Analysis</title>
     <link
       rel="stylesheet"
-      href="https://fred-wang.github.io/MathFonts/LatinModern/mathfonts.css" />
+      href="https://fred-wang.github.io/MathFonts/FiraMath/mathfonts.css" />
     <link
       rel="stylesheet"
       href="style.css" />
@@ -15,7 +15,7 @@
     <script>
       window.onload = function() {
         const sheet = new CSSStyleSheet();
-        sheet.replaceSync("math{font-family: Latin Modern Math;}");
+        sheet.replaceSync("math{font-family: Fira Math;}");
         for(const elem of document.getElementsByTagName("la-tex")){
           elem.shadowRoot.adoptedStyleSheets = [sheet];
         }
@@ -187,12 +187,37 @@ function used to calculate stress and strain.</p>
 <la-tex display="block">
   \mathbf{B} = \mathbf{L}(N) = 
   \begin{bmatrix}
-  \frac{\partial N}{\partial x} & 0 \\
-  0 & \frac{\partial N}{\partial y} \\
-  \frac{\partial N}{\partial y} &
-  \frac{\partial N}{\partial x}
-\end{bmatrix}
+    \frac{\partial N}{\partial x} & 0 \\
+    0 & \frac{\partial N}{\partial y} \\
+    \frac{\partial N}{\partial y} &
+    \frac{\partial N}{\partial x}
+  \end{bmatrix}
 </la-tex>
+
+<div class="example">
+  <h3>Example</h3>
+  <p>Lets calculate <la-tex>\mathbf{B}</la-tex> for the trail functions above.</p>
+<la-tex display="block">
+  \mathbf{B}_1 = 
+  \begin{bmatrix}
+    -1 &  0 \\
+    0  & -1 \\
+    -1 & -1
+  \end{bmatrix} ,
+  \mathbf{B}_2 = 
+  \begin{bmatrix}
+    1 & 0 \\
+    0 & 0 \\
+    0 & 1
+  \end{bmatrix},
+  \mathbf{B}_3 = 
+  \begin{bmatrix}
+    0 & 0 \\
+    0 & 1 \\
+    1 & 0
+  \end{bmatrix}
+</la-tex><br>
+</div>
 
 <p>The strain and stress can be approximated using the equations below.</p>
 
@@ -342,9 +367,10 @@ stress <la-tex>\tau_f</la-tex>.</p>
   </la-tex><br>
   <la-tex display="block">
     = \rho \int_0^1 \int_0^{v} w^2 \text{ dw dv}
-    = \rho \int_0^1 \frac{v^3}{3} \text{ dv}
+    = \frac{\rho}{3} \int_0^1 v^3 \text{ dv}
     = \frac{\rho}{12}
   </la-tex>
+  
   <p>The result is the same for <la-tex>M_{22}</la-tex> and <la-tex>M_{33}</la-tex>.
   Now we look at <la-tex>i=1</la-tex> and <la-tex>j=2</la-tex>.</p>
   <la-tex display="block">
@@ -355,6 +381,21 @@ stress <la-tex>\tau_f</la-tex>.</p>
   </la-tex><br>
   <la-tex display="block">
     = \rho \int_0^1 (1-v) \int_0^{v} w \text{ dw dv}
+  </la-tex><br>
+  <la-tex display="block">
+    = \frac{\rho}{2} \int_0^1 (1-v)v^2 \text{ dv}
+    = \frac{\rho}{24}
+  </la-tex>
+  <p>The result is the same for <la-tex>M_{13}</la-tex>, <la-tex>M_{21}</la-tex>,
+  <la-tex>M_{23}</la-tex>, <la-tex>M_{31}</la-tex>, and <la-tex>M_{32}</la-tex>.
+  Written as a matrix, the result looks like this.</p>
+  <la-tex display="block">
+  \mathbf{M} = \frac{\rho}{24}
+  \begin{bmatrix}
+    2 & 1 & 1 \\
+    1 & 2 & 1 \\
+    1 & 1 & 2
+  \end{bmatrix}
   </la-tex><br>
 </div>
 
