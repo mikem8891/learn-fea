@@ -3,11 +3,13 @@
 }
 body{
   font-family: Arial, Helvetica, sans-serif;
+  color: #E0DBD1;
+  background-color: #31343A;
 }
 .example {
-  border-color: lightgrey;
+  border-color: #E0DBD1;
   border-style: solid;
-  border-width: 1px;
+  border-width: 0.1em;
   margin-top: 1em;
   padding-left: 1em;
 }
