@@ -261,8 +261,8 @@ the boundary.  </p>
 the element.</p>
 
 <la-tex display="block">
-  \mathbf{f}_{bj} + \mathbf{f}_{sj} - \sum_i \mathbf{K}_j\mathbf{u}_i = 
-  \sum_i M_j \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}
+  \mathbf{f}_{bj} + \mathbf{f}_{sj} - \sum_i \mathbf{K}_{ij}\mathbf{u}_i = 
+  \sum_i M_{ij} \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}
 </la-tex>
 <br>
 <la-tex display="block">
@@ -338,10 +338,7 @@ stress <la-tex>\tau_f</la-tex>.</p>
   \begin{pmatrix}
     \frac{dy}{ds} \\
     -\frac{dx}{ds}
-  \end{pmatrix}
-</la-tex>
-<br>
-<la-tex display="block">
+  \end{pmatrix}, 
   \hat{\mathbf{T}} = 
   \begin{pmatrix}
     \frac{dx}{ds} \\
