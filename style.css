@@ -13,3 +13,7 @@ body{
   margin-top: 1em;
   padding-left: 1em;
 }
+.page{
+  max-width: 624px;
+  margin: auto;
+}
