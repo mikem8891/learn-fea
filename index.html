@@ -144,7 +144,7 @@ at their common boundary.  The solution is approximated as the sum below.</p>
   \mathbf{u}(\mathbf{x},t)\approx\sum_i{N_i(\mathbf{x}) \mathbf{u}_i(t)}
 </la-tex>
 
-<p>Where <la-tex>N_i</la-tex> are trail functions and <la-tex>\mathbf{u_i}</la-tex>
+<p>Where <la-tex>N_i</la-tex> are trail functions and <la-tex>\mathbf u_i</la-tex>
 are the values of the solution at each node.  The trail functions are determined
 by the domain and the type of elements used.  A trial function for node i will have
 a value of 1 at node i and 0 at all other nodes.  In addition, the trail function
@@ -155,7 +155,7 @@ element is 1.</p>
 
 <div class="example">
 <h3>Example</h3>
-<p>Before solving for <la-tex>\mathbf{u}_i</la-tex> lets look at an example of a
+Lets look at an example of
 trail functions.  The simpliest 2D element is a linear triangular element. This
 element is not accurate for structural finite element, so we will look at better
 elements later.  Let <la-tex>D</la-tex> be the triangular domain of an element
@@ -179,9 +179,9 @@ and zero at the other nodes.</p>
 
 <p>Since the approximate solution is a production of a space-only dependent
 function (<la-tex>N_i(\mathbf{x})</la-tex>) and a time-only dependent value
-(<la-tex>\mathbf{u}_i(t)</la-tex>), the stress and strain on depend only the 
+(<la-tex>\mathbf{u}_i(t)</la-tex>), the stress and strain only depend on the 
 derivatives of the trail functions and only the value at the node. For this
-reason we let <la-tex>\mathbf{B}</la-tex> be the derivative of the trail 
+reason, we let <la-tex>\mathbf{B}</la-tex> be the derivative of the trail 
 function used to calculate stress and strain.</p>
 
 <la-tex display="block">
@@ -235,8 +235,8 @@ solution.</p>
   \sum_i{\rho N_i \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}}
 </la-tex>
 
-<p>We will multiple Newton's second law above by <la-tex>N_j</la-tex> the nodes'
-trail functions to generate a system of ordinary differential equations that we
+<p>We will multiple Newton's second law above by <la-tex>N_j</la-tex>, the nodes'
+trail functions, to generate a system of ordinary differential equations that we
 can solve.</p>
 
 <la-tex display="block">
