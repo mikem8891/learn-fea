@@ -6,6 +6,11 @@ body{
   color: #E0DBD1;
   background-color: #31343A;
 }
+@media print {
+  div.page {
+    color: black;
+  }
+}
 .example {
   border-color: #E0DBD1;
   border-style: solid;
