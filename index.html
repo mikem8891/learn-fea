@@ -473,7 +473,54 @@ stress <la-tex>\tau_f</la-tex> on the surface.</p>
 <la-tex display="block">
   ds = \sqrt{dx^2 + dy^2}
 </la-tex>
-
+<div class="example">
+  <h3>Example</h3>
+  <p>Lets calculate <la-tex>\mathbf f_s</la-tex>.  We will consider a bearing stress
+  <la-tex>\sigma_b</la-tex>on the left side of the element.  </p>
+  <la-tex display="block">
+  \begin{pmatrix} 
+    x \\ y
+  \end{pmatrix} =
+  \begin{pmatrix} 
+    0 \\ 1
+  \end{pmatrix} 
+  - t \,
+  \begin{pmatrix} 
+    0 \\ 1
+  \end{pmatrix} 
+  </la-tex><br>
+  <la-tex display="block">
+  \mathbf{f}_{s1} =
+  \int_{\partial D}
+    N_1
+    \left(
+      \sigma_b \, \hat{\mathbf{N}} +
+      \tau_f   \, \hat{\mathbf{T}}
+    \right)
+    ds
+  </la-tex><br>
+  <la-tex display="block">
+  =
+  \int_{\partial D}
+    (1-x-y) \,
+    \sigma_b \, 
+    \begin{pmatrix}
+      dy \\
+      -dx
+    \end{pmatrix}
+  </la-tex><br>
+  <la-tex display="block">
+  =
+  -\int_0^1
+    t \,
+    \sigma_b \, 
+    \begin{pmatrix}
+      \frac{dy}{dt} \\
+      -\frac{dx}{dt}
+    \end{pmatrix}
+    dt
+  </la-tex>
+</div>
 
     </div>
   </body>
