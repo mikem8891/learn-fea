@@ -3,16 +3,17 @@
 }
 body{
   font-family: Arial, Helvetica, sans-serif;
-  color: #E0DBD1;
-  background-color: #31343A;
+  color: #DDD;
+  background-color: #333;
 }
 @media print {
-  div.page {
+  body {
     color: black;
+    background-color: white;
   }
 }
 .example {
-  border-color: #E0DBD1;
+  border-color: #DDD;
   border-style: solid;
   border-width: 0.1em;
   margin-top: 1em;
