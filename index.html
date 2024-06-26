@@ -174,7 +174,7 @@ and zero at the other nodes.</p>
   <la-tex>N_2 = x</la-tex><br>
   <la-tex>N_3 = y</la-tex>
 </div>
-<p></p>
+<br>
 </div>
 
 <p>Since the approximate solution is a production of a space-only dependent
@@ -473,21 +473,30 @@ stress <la-tex>\tau_f</la-tex> on the surface.</p>
 <la-tex display="block">
   ds = \sqrt{dx^2 + dy^2}
 </la-tex>
+<p>Note <la-tex>\sigma_b</la-tex> is negative for a compressive stress.  
+<la-tex>\tau_f</la-tex>, <la-tex>\hat\mathbf T</la-tex> and <la-tex>\oint_{\partial D}</la-tex> go 
+counterclockwise around <la-tex>D</la-tex>.  <la-tex>\hat\mathbf N</la-tex> 
+points outward.</p>
+
 <div class="example">
   <h3>Example</h3>
   <p>Lets calculate <la-tex>\mathbf f_s</la-tex>.  We will consider a bearing stress
   <la-tex>\sigma_b</la-tex>on the left side of the element.  </p>
+  let,
+  <div style="max-width: fit-content; margin: auto;">
+    <la-tex>x = 0</la-tex><br>
+    <la-tex>y = 1-t</la-tex><br>
+  </div><br>
+  <la-tex display="block">N_1 = 1-x-y = t</la-tex><br>
   <la-tex display="block">
-  \begin{pmatrix} 
-    x \\ y
-  \end{pmatrix} =
-  \begin{pmatrix} 
-    0 \\ 1
-  \end{pmatrix} 
-  - t \,
-  \begin{pmatrix} 
-    0 \\ 1
-  \end{pmatrix} 
+  \hat{\mathbf{N}} \, ds=
+  \begin{pmatrix}
+    \frac{dy}{dt} \\
+    -\frac{dx}{dt}
+  \end{pmatrix} \, dt=
+  \begin{pmatrix}
+    -1 \\ 0
+  \end{pmatrix} \, dt
   </la-tex><br>
   <la-tex display="block">
   \mathbf{f}_{s1} =
@@ -500,26 +509,16 @@ stress <la-tex>\tau_f</la-tex> on the surface.</p>
     ds
   </la-tex><br>
   <la-tex display="block">
-  =
-  \int_{\partial D}
-    (1-x-y) \,
-    \sigma_b \, 
-    \begin{pmatrix}
-      dy \\
-      -dx
-    \end{pmatrix}
+  = \sigma_b
+  \begin{pmatrix}
+    -1 \\ 0
+  \end{pmatrix}
+  \int_0^1 t \, dt
+  = \frac{\sigma_b}{2}
+  \begin{pmatrix}
+    -1 \\ 0
+  \end{pmatrix}
   </la-tex><br>
-  <la-tex display="block">
-  =
-  -\int_0^1
-    t \,
-    \sigma_b \, 
-    \begin{pmatrix}
-      \frac{dy}{dt} \\
-      -\frac{dx}{dt}
-    \end{pmatrix}
-    dt
-  </la-tex>
 </div>
 
     </div>
