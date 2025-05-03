@@ -24,7 +24,7 @@
   </head>
   <body>
     <div class="page">
-<h1>Learn FEA</h1>
+<h1>Learn Finite Element Analysis</h1>
 
 <h2>Intro to Mechanics of Materials</h2>
 
@@ -38,7 +38,7 @@ shear <la-tex>(\tau)</la-tex> stresses.</p>
 \mathbf{u} = 
 \begin{pmatrix}
   u_x \\ u_y
-\end{pmatrix}
+\end{pmatrix} \:\:\:\: displacement
 </la-tex>
 <br>
 <la-tex display="block">
@@ -51,14 +51,14 @@ shear <la-tex>(\tau)</la-tex> stresses.</p>
   \frac{\partial u_y}{\partial y} \\
   \frac{\partial u_x}{\partial y} +
   \frac{\partial u_y}{\partial x}
-\end{pmatrix}
+\end{pmatrix} \:\:\:\: strain
 </la-tex>
 <br>
 <la-tex display="block">
   \mathbf{\sigma} =
   \begin{pmatrix}
     \sigma_x \\ \sigma_y \\ \tau_{xy}
-  \end{pmatrix}
+  \end{pmatrix} \:\:\:\: stress
 </la-tex>
 
 <p>Let <la-tex>\mathbf{L}</la-tex> be a differential operator for converting 
@@ -107,7 +107,7 @@ shown is for the plane stress condition; that is <la-tex>\sigma_z = 0</la-tex>.
 <p>Where <la-tex>\mathbf{f}</la-tex> is the sum of forces per unit volume and 
 <la-tex>\rho</la-tex> is the density.  We are concerned with the
 stress in the material, but other forces can be added, as needed.  Let 
-<la-tex>\mathbf{f}_s</la-tex> be the force due to stress.</p>
+<la-tex>\mathbf{f}_s</la-tex> be the net force due to stress.</p>
 
 <la-tex display="block">
   \mathbf{f}_s=
@@ -123,9 +123,9 @@ stress in the material, but other forces can be added, as needed.  Let
   \end{pmatrix}
 </la-tex>
 
-<p>Let <la-tex>\mathbf{f}_b</la-tex> be the sum of other forces, such as body
-forces like  gravity and magnetism, reference-frame forces like centifugal force
-and coriolis force.</p>
+<p>Let <la-tex>\mathbf{f}_b</la-tex> be the sum of other forces per unit volume,
+such as body forces like  gravity and magnetism, reference-frame forces like
+centrifugal force and coriolis force.</p>
 
 <la-tex display="block">
   \mathbf{f}_b + \mathbf{L}^T(\mathbf{\sigma}) =
@@ -137,7 +137,7 @@ and coriolis force.</p>
 <p>Finite element method is used to solve partial differential equations on domains
 with complex geometry.  This is in contrast to finite difference method which usually 
 requires a domain to be easily divided into equal sized tiles or blocks.  Finite
-element method uses elements made up of nodes.  Adjecent elements share the nodes
+element method uses elements made up of nodes.  Adjacent elements share the nodes
 at their common boundary.  The solution is approximated as the sum below.</p>
 
 <la-tex display="block">
@@ -149,14 +149,14 @@ are the values of the solution at each node.  The trail functions are determined
 by the domain and the type of elements used.  A trial function for node i will have
 a value of 1 at node i and 0 at all other nodes.  In addition, the trail function
 will be 0 outside of any elements it is a part of.  Depending on the type of
-element, the trail function may be linear, quadratic, or some other distrbution.
-When all the trail functions in an element are sumed, the value across the entire 
+element, the trail function may be linear, quadratic, or some other distribution.
+When all the trail functions in an element are summed, the value across the entire 
 element is 1.</p>
 
 <div class="example">
 <h3>Example</h3>
 Lets look at an example of
-trail functions.  The simpliest 2D element is a linear triangular element. This
+trail functions.  The simplest 2D element is a linear triangular element. This
 element is not accurate for structural finite element, so we will look at better
 elements later.  Let <la-tex>D</la-tex> be the triangular domain of an element
 between nodes at (0, 0), (1, 0), and (0, 1).
@@ -177,7 +177,7 @@ and zero at the other nodes.</p>
 <br>
 </div>
 
-<p>Since the approximate solution is a production of a space-only dependent
+<p>Since the approximate solution is a product of a space-only dependent
 function (<la-tex>N_i(\mathbf{x})</la-tex>) and a time-only dependent value
 (<la-tex>\mathbf{u}_i(t)</la-tex>), the stress and strain only depend on the 
 derivatives of the trail functions and only the value at the node. For this
@@ -255,7 +255,7 @@ the boundary.  </p>
   \sum_i{\rho N_i N_j \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}}
 </la-tex>
 
-<p>We will give each term its own variable and intregrate over the domain of
+<p>We will give each term its own variable and integrate over the domain of
 the element.</p>
 
 <la-tex display="block">
@@ -289,7 +289,7 @@ the element.</p>
   <h3>Example</h3>
   <p>Now lets calculate mass values and stiffness matrices using the trails 
   functions from above.  We will start with the mass value for <la-tex>i=1</la-tex> and 
-  <la-tex>j=1</la-tex>.  For covenience, we will apply
+  <la-tex>j=1</la-tex>.  For convenience, we will apply
   the substitution <la-tex>v = 1-x</la-tex> and <la-tex>w = v-y</la-tex>.</p>
   <la-tex display="block">
     M_{11} = \rho \iint_D {N_1}^2 \mathrm{dA}
@@ -303,8 +303,9 @@ the element.</p>
     = \frac{\rho}{12}
   </la-tex>
   
-  <p>The result is the same for <la-tex>M_{22}</la-tex> and <la-tex>M_{33}</la-tex>.
-  Now we look at <la-tex>i=1</la-tex> and <la-tex>j=2</la-tex>.</p>
+  <p>The result is the same for <la-tex>M_{22}</la-tex> and 
+  <la-tex>M_{33}</la-tex>. Now we look at <la-tex>i=1</la-tex> and 
+  <la-tex>j=2</la-tex>.</p>
   <la-tex display="block">
     M_{12} = \rho \iint_D N_1 N_2 \text{ dA}
   </la-tex><br>
@@ -330,7 +331,7 @@ the element.</p>
   \end{bmatrix}
   </la-tex><br>
   <p>Now we will look at the stiffness matrix for <la-tex>i=1</la-tex> and 
-  <la-tex>j=1</la-tex>. For covenience, we will apply
+  <la-tex>j=1</la-tex>. For convenience, we will apply
   the substitution <la-tex>E' = E/(1-\nu^2)</la-tex>. </p>
   <la-tex display="block">
   \mathbf{K}_{11} = 
@@ -440,8 +441,8 @@ boundary.  <la-tex>\partial D</la-tex> is the boundary of domain <la-tex>D</la-t
       \sigma_y dx
     \end{pmatrix}
 </la-tex>
-<p>It is probably more useful to apply boundary conditions in terms of 
-the normal bearing stress <la-tex>\sigma_b</la-tex> and the frictional shear
+<p>It is more useful to apply boundary conditions in terms of 
+the bearing stress <la-tex>\sigma_b</la-tex> and the shear friction
 stress <la-tex>\tau_f</la-tex> on the surface.</p>
 <la-tex display="block">
   \mathbf{f}_{sj} =
@@ -487,7 +488,7 @@ points outward.</p>
     <la-tex>x = 0</la-tex><br>
     <la-tex>y = 1-t</la-tex><br>
   </div><br>
-  <la-tex display="block">N_1 = 1-x-y = t</la-tex><br>
+  <la-tex display="block">N_1 = 1-x-y = t , \: \tau_f = 0</la-tex><br>
   <la-tex display="block">
   \hat{\mathbf{N}} \, ds=
   \begin{pmatrix}
@@ -518,10 +519,113 @@ points outward.</p>
   \begin{pmatrix}
     -1 \\ 0
   \end{pmatrix}
-  </la-tex>
-  <p><la-tex>N_2</la-tex> is entirely on the right side; therefore, <la-tex>\mathbf{f}_{s2} = 0</la-tex></p>
+  </la-tex><br>
+  <p><la-tex>N_2</la-tex> is zero on the entire left side.</p>
+  <la-tex display="block">
+    N_2 = x = 0 , \: 
+    \mathbf{f}_{s2} = 
+    \begin{pmatrix}
+      0 \\ 0
+    \end{pmatrix}
+  </la-tex><br>
+  <la-tex display="block">
+    N_3 = y = 1 - t
+  </la-tex><br>
+  <la-tex display="block">
+    \mathbf{f}_{s3} =
+    \sigma_b
+    \begin{pmatrix}
+      -1 \\ 0
+    \end{pmatrix}
+    \int^{1}_{0} 1 - t \, dt
+    = \frac{\sigma_b}{2}
+    \begin{pmatrix}
+      -1 \\ 0
+    \end{pmatrix}
+  </la-tex><br>
 </div>
-
+<p>Finally, lets solve for the displacement, strain, and stress of element.  
+For now, we will not consider any body forces, just the external forces. 
+Additionally, we will only consider static equilibrium.
+These assumption can be summarized as the two constraints below.
+</p>
+<la-tex display="block">
+  \mathbf{f}_{bj} =
+  \begin{pmatrix}
+    0 \\ 0
+  \end{pmatrix} ,\:
+  \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2} =
+  \begin{pmatrix}
+    0 \\ 0
+  \end{pmatrix} 
+</la-tex>
+<p>With these constraints, Newton's second law on the element simplifies as 
+follows.</p>
+<la-tex display="block">
+  \sum_i \mathbf{K}_{ij}\mathbf{u}_i = 
+  \mathbf{f}_{sj}
+</la-tex>
+<p>This is a set of linear equations, two equations for each node. This can be solved directly using 
+Gaussian elimination or approximated using Jacobi or Gauss-Seidel iterative 
+methods.  Gaussian elimination is slow, while Jacobi or Gauss-Seidel iterative 
+methods are faster and easier to implement but less accurate.  Gauss-Seidel 
+method is faster and uses less memory than Jacobi method; however, Jacobi 
+method lends itself well to massively parallel computing that can be run on GPUs.  
+There is a risk that Gauss-Seidel or Jacobi method will not converge on a 
+solution; however, static structural FEA has a good chance of converging with 
+these methods.</p>
+<div class="example">
+  <p>Using the element from the previous examples we will calculate the the displacement, 
+  strain, and stress.  The element has three nodes, for a total of six equations to be solved.
+  We will use the following values to get a concrete solution.</p>
+  <la-tex display="block">
+    E' = 30,000 ; \:
+    G  = 10,000 ; \:
+    \sigma_b = -30
+  </la-tex><br>
+  <la-tex display="block">
+    \begin{bmatrix}
+      TBD
+    \end{bmatrix}
+    \begin{pmatrix}
+      u_{x1} \\ 
+      u_{y1} \\ 
+      u_{x2} \\ 
+      u_{y2} \\ 
+      u_{x3} \\ 
+      u_{y3} \\ 
+    \end{pmatrix} = 
+    \begin{pmatrix}
+      f_{sx1} \\ 
+      f_{sy1} \\ 
+      f_{sx2} \\ 
+      f_{sy2} \\ 
+      f_{sx3} \\ 
+      f_{sy3} \\ 
+    \end{pmatrix}
+  </la-tex><br>
+  <la-tex display="block">
+    \begin{bmatrix}
+      TBD & TBD
+    \end{bmatrix}
+    \begin{pmatrix}
+      u_{x1} \\ 
+      u_{y1} \\ 
+      u_{x2} \\ 
+      u_{y2} \\ 
+      u_{x3} \\ 
+      u_{y3}
+    \end{pmatrix} = 
+    \begin{pmatrix}
+      15_{} \\ 
+      0_{} \\ 
+      0_{} \\ 
+      0_{} \\ 
+      15_{} \\ 
+      0_{}
+    \end{pmatrix}
+  </la-tex><br>
+</div>
     </div>
   </body>
 </html>
