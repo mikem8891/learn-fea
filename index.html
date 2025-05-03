@@ -565,7 +565,17 @@ follows.</p>
   \sum_i \mathbf{K}_{ij}\mathbf{u}_i = 
   \mathbf{f}_{sj}
 </la-tex>
-<p>This is a set of linear equations, two equations for each node. This can be solved directly using 
+<p>This is a set of linear equations, two equations for each node.  Unfortunately 
+this system of equations cannot be solved as-is.  Right now the system has infinite
+solutions.  If you imagine a force applied to the element, there is nothing 
+keeping it from flying off.  Some of the nodes need to be restrained.  The 
+combination of restrained nodes and applied loads provides our boundary conditions.
+Nodes are restrained by setting their displacement.  Now we will separate the 
+equations by the equations with unknown displacements <la-tex>(\mathbf{u}_u)</la-tex>
+and known forces <la-tex>(\mathbf{f}_k)</la-tex>, and the equations with known 
+displacements <la-tex>(\mathbf{u}_k)</la-tex> and unknown forces 
+<la-tex>(\mathbf{f}_u)</la-tex>.</p>
+<p>This can be solved directly using 
 Gaussian elimination or approximated using Jacobi or Gauss-Seidel iterative 
 methods.  Gaussian elimination is slow, while Jacobi or Gauss-Seidel iterative 
 methods are faster and easier to implement but less accurate.  Gauss-Seidel 
