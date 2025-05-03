@@ -608,6 +608,7 @@ There is a risk that Gauss-Seidel or Jacobi method will not converge on a
 solution; however, static structural FEA has a good chance of converging with 
 these methods.</p>
 <div class="example"> 
+  <h3>Example</h3>
   <p>Using the element from the previous examples we will calculate the the displacement, 
   strain, and stress.  The element has three nodes, for a total of six equations to be solved.
   </p>
@@ -631,61 +632,59 @@ these methods.</p>
   </la-tex>
   <p>We will use the following values to get a concrete solution.  Nodes 1 and 2 
     will be restrained to have no displacement.</p>
-    <la-tex display="block">
-      E' = 30000 , \:\:
-      G  = 10000 , \:\:
-      \sigma_b = -30
-    </la-tex><br>
-    <la-tex display="block">
-      \mathbf{u}_1 =
-      \mathbf{u}_2 =
-      \begin{pmatrix}
-        0 \\ 
-        0 
-      \end{pmatrix}
-    </la-tex><br>
-    <la-tex display="block">
+  <la-tex display="block">
+    E' = 30000 , \:\:
+    G  = 10000 , \:\:
+    \sigma_b = -30
+  </la-tex><br>
+  <la-tex display="block">
+    \mathbf{u}_1 =
+    \mathbf{u}_2 =
+    \begin{pmatrix}
+      0 \\ 
+      0 
+    \end{pmatrix}
+  </la-tex>
+  <p>To solve for <la-tex>\mathbf{u}_3</la-tex>, we use the third equation from
+  above.  the equation has been simplified based on the constraints on Nodes 1 and 2.</p>
+  <la-tex display="block">
+    \mathbf{K}_{33} \mathbf{u}_3 =
+    \mathbf{f}_{s3}
+  </la-tex><br>
+  <la-tex display="block">
+    \frac 1 2
     \begin{bmatrix}
-      TBD
+      G & 0_{} \\ 
+      0_{} & E'
     \end{bmatrix}
     \begin{pmatrix}
-      u_{x1} \\ 
-      u_{y1} \\ 
-      u_{x2} \\ 
-      u_{y2} \\ 
       u_{x3} \\ 
-      u_{y3} \\ 
-    \end{pmatrix} = 
+      u_{y3}
+    \end{pmatrix} =
     \begin{pmatrix}
-      f_{sx1} \\ 
-      f_{sy1} \\ 
-      f_{sx2} \\ 
-      f_{sy2} \\ 
       f_{sx3} \\ 
-      f_{sy3} \\ 
+      f_{sy3}
     \end{pmatrix}
   </la-tex><br>
   <la-tex display="block">
     \begin{bmatrix}
-      TBD & TBD
+      5000 & 0_{} \\ 
+      0_{} & 15000
     \end{bmatrix}
     \begin{pmatrix}
-      0_{} \\ 
-      0_{} \\ 
-      0_{} \\ 
-      0_{} \\ 
       u_{x3} \\ 
       u_{y3}
-    \end{pmatrix} = 
+    \end{pmatrix} =
     \begin{pmatrix}
-      f_{sx1} \\ 
-      f_{sy1} \\ 
-      f_{sx2} \\ 
-      f_{sy2} \\ 
       15_{} \\ 
       0_{}
     \end{pmatrix}
   </la-tex><br>
+  <la-tex display="block">
+    u_{x3} = 0.003, \:
+    u_{y3} = 0
+  </la-tex>
+  <p>Now we can calculate the forces at Nodes 1 and 2.</p>
 </div>
     </div>
   </body>
