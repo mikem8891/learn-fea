@@ -586,8 +586,19 @@ known displacements <la-tex>(\mathbf{u}_k)</la-tex> and unknown displacements
   \mathbf{K}_{uu}\mathbf{u}_u= 
   \mathbf{f}_u
 </la-tex>
-<p>The top equation  </p>
-<p>This can be solved directly using 
+<p>First solve for <la-tex>(\mathbf{u}_u)</la-tex> in the top equation.
+Then solve for <la-tex>(\mathbf{f}_u)</la-tex> using the bottom equation.</p>
+<la-tex display="block">
+  \mathbf{K}_{ku}\mathbf{u}_u= 
+  \mathbf{f}_k -
+  \mathbf{K}_{kk}\mathbf{u}_k
+</la-tex><br>
+<la-tex display="block">
+  \mathbf{f}_u =
+  \mathbf{K}_{uk}\mathbf{u}_k +
+  \mathbf{K}_{uu}\mathbf{u}_u
+</la-tex>
+<p>The top equation can be solved directly using 
 Gaussian elimination or approximated using Jacobi or Gauss-Seidel iterative 
 methods.  Gaussian elimination is slow, while Jacobi or Gauss-Seidel iterative 
 methods are faster and easier to implement but less accurate.  Gauss-Seidel 
@@ -596,16 +607,44 @@ method lends itself well to massively parallel computing that can be run on GPUs
 There is a risk that Gauss-Seidel or Jacobi method will not converge on a 
 solution; however, static structural FEA has a good chance of converging with 
 these methods.</p>
-<div class="example">
+<div class="example"> 
   <p>Using the element from the previous examples we will calculate the the displacement, 
   strain, and stress.  The element has three nodes, for a total of six equations to be solved.
-  We will use the following values to get a concrete solution.</p>
+  </p>
   <la-tex display="block">
-    E' = 30,000 ; \:
-    G  = 10,000 ; \:
-    \sigma_b = -30
+    \mathbf{K}_{11} \mathbf{u}_1 +
+    \mathbf{K}_{21} \mathbf{u}_2 +
+    \mathbf{K}_{31} \mathbf{u}_3 =
+    \mathbf{f}_{s1}
   </la-tex><br>
   <la-tex display="block">
+    \mathbf{K}_{12} \mathbf{u}_1 +
+    \mathbf{K}_{22} \mathbf{u}_2 +
+    \mathbf{K}_{32} \mathbf{u}_3 =
+    \mathbf{f}_{s2}
+  </la-tex><br>
+  <la-tex display="block">
+    \mathbf{K}_{13} \mathbf{u}_1 +
+    \mathbf{K}_{23} \mathbf{u}_2 +
+    \mathbf{K}_{33} \mathbf{u}_3 =
+    \mathbf{f}_{s3}
+  </la-tex>
+  <p>We will use the following values to get a concrete solution.  Nodes 1 and 2 
+    will be restrained to have no displacement.</p>
+    <la-tex display="block">
+      E' = 30000 , \:\:
+      G  = 10000 , \:\:
+      \sigma_b = -30
+    </la-tex><br>
+    <la-tex display="block">
+      \mathbf{u}_1 =
+      \mathbf{u}_2 =
+      \begin{pmatrix}
+        0 \\ 
+        0 
+      \end{pmatrix}
+    </la-tex><br>
+    <la-tex display="block">
     \begin{bmatrix}
       TBD
     \end{bmatrix}
@@ -631,18 +670,18 @@ these methods.</p>
       TBD & TBD
     \end{bmatrix}
     \begin{pmatrix}
-      u_{x1} \\ 
-      u_{y1} \\ 
-      u_{x2} \\ 
-      u_{y2} \\ 
+      0_{} \\ 
+      0_{} \\ 
+      0_{} \\ 
+      0_{} \\ 
       u_{x3} \\ 
       u_{y3}
     \end{pmatrix} = 
     \begin{pmatrix}
-      15_{} \\ 
-      0_{} \\ 
-      0_{} \\ 
-      0_{} \\ 
+      f_{sx1} \\ 
+      f_{sy1} \\ 
+      f_{sx2} \\ 
+      f_{sy2} \\ 
       15_{} \\ 
       0_{}
     \end{pmatrix}
