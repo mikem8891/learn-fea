@@ -547,7 +547,7 @@ points outward.</p>
 <p>Finally, lets solve for the displacement, strain, and stress of element.  
 For now, we will not consider any body forces, just the external forces. 
 Additionally, we will only consider static equilibrium.
-These assumption can be summarized as the two constraints below.
+These two constraints can be summarized by the two equations below.
 </p>
 <la-tex display="block">
   \mathbf{f}_{bj} =
@@ -570,21 +570,23 @@ this system of equations cannot be solved as-is.  Right now the system has infin
 solutions.  If you imagine a force applied to the element, there is nothing 
 keeping it from flying off.  Some of the nodes need to be restrained.  The 
 combination of restrained nodes and applied loads provides our boundary conditions.
-Nodes are restrained by setting their displacement.  Now we will separate the 
-equations by the equations with unknown displacements <la-tex>(\mathbf{u}_u)</la-tex>
-and known forces <la-tex>(\mathbf{f}_k)</la-tex>, and the equations with known 
-displacements <la-tex>(\mathbf{u}_k)</la-tex> and unknown forces 
-<la-tex>(\mathbf{f}_u)</la-tex>.</p>
+Nodes are restrained by setting their displacement.  Now we will rearrange the 
+equations by the equations with 
+known forces <la-tex>(\mathbf{f}_k)</la-tex>, and the equations with unknown forces 
+<la-tex>(\mathbf{f}_u)</la-tex>. The terms of the equations are rearranged in terms of 
+known displacements <la-tex>(\mathbf{u}_k)</la-tex> and unknown displacements 
+<la-tex>(\mathbf{u}_u)</la-tex></p>
 <la-tex display="block">
-  \mathbf{K}_{ku}\mathbf{u}_u +
-  \mathbf{K}_{kk}\mathbf{u}_k= 
+  \mathbf{K}_{kk}\mathbf{u}_k +
+  \mathbf{K}_{ku}\mathbf{u}_u= 
   \mathbf{f}_k
 </la-tex><br>
 <la-tex display="block">
-  \mathbf{K}_{uu}\mathbf{u}_u +
-  \mathbf{K}_{uk}\mathbf{u}_k= 
+  \mathbf{K}_{uk}\mathbf{u}_k +
+  \mathbf{K}_{uu}\mathbf{u}_u= 
   \mathbf{f}_u
 </la-tex>
+<p>The top equation  </p>
 <p>This can be solved directly using 
 Gaussian elimination or approximated using Jacobi or Gauss-Seidel iterative 
 methods.  Gaussian elimination is slow, while Jacobi or Gauss-Seidel iterative 
