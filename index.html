@@ -26,7 +26,9 @@
     <div class="page">
 <h1>Learn Finite Element Analysis</h1>
 
-<h2>Intro to Mechanics of Materials</h2>
+<h2 id="2d-material-mech">
+  Intro to Mechanics of Materials
+</h2>
 
 <p>Starting with a 2D solid material. Let <la-tex>\mathbf{u}</la-tex> be the
 displacement field of the material.  Let <la-tex>\mathbf{\epsilon}</la-tex> be the normal 
@@ -132,7 +134,9 @@ centrifugal force and coriolis force.</p>
   \rho \frac{\partial^2 \mathbf{u}}{\partial t^2}
 </la-tex>
 
-<h2>Basics of Finite Element Method</h2>
+<h2 id="2d-tri-lin-element">
+  Basics of Finite Elements
+</h2>
 
 <p>Finite element method is used to solve partial differential equations on domains
 with complex geometry.  This is in contrast to finite difference method which usually 
@@ -153,7 +157,7 @@ element, the trail function may be linear, quadratic, or some other distribution
 When all the trail functions in an element are summed, the value across the entire 
 element is 1.</p>
 
-<div class="example">
+<div id="2d-tri-lin-trail-ex" class="example">
 <h3>Example</h3>
 Lets look at an example of
 trail functions.  The simplest 2D element is a linear triangular element. This
@@ -194,14 +198,15 @@ function used to calculate stress and strain.</p>
   \end{bmatrix}
 </la-tex>
 
-<div class="example">
+<div id="2d-tri-lin-trail-der-ex" class="example">
   <h3>Example</h3>
-  <p>Lets calculate <la-tex>\mathbf{B}</la-tex> for the trail functions above.</p>
+  <p>Lets calculate <la-tex>\mathbf{B}</la-tex> for the trail functions from the
+    <a href="#2d-tri-lin-trail-ex">example</a> above.</p>
 <la-tex display="block">
   \mathbf{B}_1 = 
   \begin{bmatrix}
     -1 &  0 \\
-    0  & -1 \\
+     0 & -1 \\
     -1 & -1
   \end{bmatrix} ,\:
   \mathbf{B}_2 = 
@@ -285,10 +290,10 @@ the element.</p>
 <la-tex>\mathbf{K}</la-tex> is the stiffness, and 
 <la-tex>M</la-tex> is the mass.</p>
 
-<div class="example">
+<div id="2d-tri-lin-stiffness-ex" class="example">
   <h3>Example</h3>
   <p>Now lets calculate mass values and stiffness matrices using the trails 
-  functions from above.  We will start with the mass value for <la-tex>i=1</la-tex> and 
+  functions from the <a href="#2d-tri-lin-trail-ex">example</a> above.  We will start with the mass value for <la-tex>i=1</la-tex> and 
   <la-tex>j=1</la-tex>.  For convenience, we will apply
   the substitution <la-tex>v = 1-x</la-tex> and <la-tex>w = v-y</la-tex>.</p>
   <la-tex display="block">
@@ -727,6 +732,7 @@ these methods.</p>
     \mathbf{f}_{s2} =
     \mathbf{K}_{32} \mathbf{u}_3
   </la-tex><br>
+  <!--
   <la-tex display="block">
     \begin{pmatrix}
       f_{sx2} \\ 
@@ -756,6 +762,7 @@ these methods.</p>
       0
     \end{pmatrix}
   </la-tex><br> 
+  -->
   <la-tex display="block">
     f_{sx2} = 0, \:
     f_{sy2} = 15
@@ -765,62 +772,66 @@ these methods.</p>
     \mathbf{\epsilon} = \sum_i{\mathbf{B}_i \mathbf{u}_i} = 
     \mathbf{B}_3 \mathbf{u}_3
   </la-tex><br>
-<la-tex display="block">
-\begin{pmatrix}
-  \epsilon_x \\ \epsilon_y \\ \gamma_{xy}
-\end{pmatrix} =
-  \begin{bmatrix}
-    0 & 0 \\
-    0 & 1 \\
-    1 & 0
-  \end{bmatrix}
+  <la-tex display="block">
+    \begin{pmatrix}
+      \epsilon_x \\ \epsilon_y \\ \gamma_{xy}
+    \end{pmatrix} =
+    \begin{bmatrix}
+      0 & 0 \\
+      0 & 1 \\
+      1 & 0
+    \end{bmatrix}
     \begin{pmatrix}
       0.003 \\ 
       0
     \end{pmatrix} =
     \begin{pmatrix}
-  0 \\ 0 \\ 0.003
-\end{pmatrix}
-</la-tex><br>
-<la-tex display="block">
-\mathbf{\sigma} =
-\mathbf{E\epsilon} 
-</la-tex><br>
-<la-tex display="block">
- \begin{pmatrix}
-    \sigma_x \\ \sigma_y \\ \tau_{xy}
-  \end{pmatrix} =
-  \begin{bmatrix}
-  E' & E'\nu & 0 \\ 
-  E'\nu & E' & 0 \\
-  0 & 0 & G
-\end{bmatrix}
-\begin{pmatrix}
-  \epsilon_x \\ \epsilon_y \\ \gamma_{xy}
-\end{pmatrix}
-</la-tex><br>
-<la-tex display="block">
- =
-\begin{bmatrix}
-  30000 & 9000 & 0 \\ 
-  9000 & 30000 & 0 \\
-  0 & 0 & 10000
-\end{bmatrix}
-\begin{pmatrix}
-  0 \\ 0 \\ 0.003
-\end{pmatrix}
-</la-tex><br>
-<la-tex display="block">
-  \begin{pmatrix}
-    \sigma_x \\ \sigma_y \\ \tau_{xy}
-  \end{pmatrix} =
-  \begin{pmatrix}
-  0 \\ 0 \\ 30
-\end{pmatrix}
-</la-tex>
-<p>Notice these stresses and strains are uniform throughout the entire element.
-this makes for a poor approximation of the actual stress and strain.  This is 
-why linear elements are poor for modeling material mechanics.</p>
+      0 \\ 0 \\ 0.003
+    \end{pmatrix}
+  </la-tex><br>
+  <la-tex display="block">
+    \mathbf{\sigma} =
+    \mathbf{E\epsilon} 
+  </la-tex><br>
+  <la-tex display="block">
+    \begin{pmatrix}
+      \sigma_x \\ \sigma_y \\ \tau_{xy}
+    \end{pmatrix} =
+    \begin{bmatrix}
+      E' & E'\nu & 0 \\ 
+      E'\nu & E' & 0 \\
+      0 & 0 & G
+    \end{bmatrix}
+    \begin{pmatrix}
+      \epsilon_x \\ \epsilon_y \\ \gamma_{xy}
+    \end{pmatrix}
+  </la-tex><br>
+  <la-tex display="block">
+    =
+    \begin{bmatrix}
+      30000 & 9000 & 0 \\ 
+      9000 & 30000 & 0 \\
+      0 & 0 & 10000
+    \end{bmatrix}
+    \begin{pmatrix}
+      0 \\ 0 \\ 0.003
+    \end{pmatrix}
+  </la-tex><br>
+  <la-tex display="block">
+    \begin{pmatrix}
+      \sigma_x \\ \sigma_y \\ \tau_{xy}
+    \end{pmatrix} =
+    \begin{pmatrix}
+      0 \\ 0 \\ 30
+    \end{pmatrix}
+  </la-tex>
+  <p>Notice these stresses and strains are uniform throughout the entire element.
+  This makes for a poor approximation of the actual stresses and strains.  This is 
+  why linear elements are bad for modeling material mechanics.  An actual part 
+  with these loads would have non-uniform stresses, including bending.  A single
+  linear element cannot not model bending or transverse shear stress.  To 
+  properly model these stresses we would need many linear elements or a few more
+  sophisticated elements, like quadratic elements.</p>
 </div>
     </div>
   </body>

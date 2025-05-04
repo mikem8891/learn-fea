@@ -6,6 +6,21 @@ body{
   color: Gainsboro;
   background-color: #333A40;
 }
+a:link {
+  color: #bcbcdc;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:visited {
+  color: #dcbcdc;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover {
+  color: Gainsboro;
+  background-color: transparent;
+  text-decoration: underline;
+}
 @media print {
   body {
     color: black;
