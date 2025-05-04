@@ -760,7 +760,7 @@ these methods.</p>
     f_{sx2} = 0, \:
     f_{sy2} = 15
   </la-tex>
-  <p>Now strains.</p>
+  <p>Now strains and stresses.</p>
   <la-tex display="block">
     \mathbf{\epsilon} = \sum_i{\mathbf{B}_i \mathbf{u}_i} = 
     \mathbf{B}_3 \mathbf{u}_3
@@ -780,6 +780,42 @@ these methods.</p>
     \end{pmatrix} =
     \begin{pmatrix}
   0 \\ 0 \\ 0.003
+\end{pmatrix}
+</la-tex><br>
+<la-tex display="block">
+\mathbf{\sigma} =
+\mathbf{E\epsilon} 
+</la-tex><br>
+<la-tex display="block">
+ \begin{pmatrix}
+    \sigma_x \\ \sigma_y \\ \tau_{xy}
+  \end{pmatrix} =
+  \begin{bmatrix}
+  E' & E'\nu & 0 \\ 
+  E'\nu & E' & 0 \\
+  0 & 0 & G
+\end{bmatrix}
+\begin{pmatrix}
+  \epsilon_x \\ \epsilon_y \\ \gamma_{xy}
+\end{pmatrix}
+</la-tex><br>
+<la-tex display="block">
+ =
+\begin{bmatrix}
+  30000 & 9000 & 0 \\ 
+  9000 & 30000 & 0 \\
+  0 & 0 & 10000
+\end{bmatrix}
+\begin{pmatrix}
+  0 \\ 0 \\ 0.003
+\end{pmatrix}
+</la-tex><br>
+<la-tex display="block">
+  \begin{pmatrix}
+    \sigma_x \\ \sigma_y \\ \tau_{xy}
+  \end{pmatrix} =
+  \begin{pmatrix}
+  0 \\ 0 \\ 30
 \end{pmatrix}
 </la-tex>
 <p></p>
