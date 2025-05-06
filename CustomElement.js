@@ -1,6 +1,8 @@
 (function() {
     "use strict";
 
+    const SHEET = new CSSStyleSheet();
+    SHEET.replaceSync("math{font-family: inherit;}");
     
     function updateMathMLOutput(aElement) {
       var tex = aElement.textContent,
@@ -19,8 +21,6 @@
         aElement.shadowRoot.innerHTML =
           "<math><merror><mtext>" + tex + "</mtext></merror></math>";
       }
-      const SHEET = new CSSStyleSheet();
-      SHEET.replaceSync("math{font-family: inherit;}");
       aElement.shadowRoot.adoptedStyleSheets = [SHEET];
     }
 
