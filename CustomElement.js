@@ -1,6 +1,9 @@
 (function() {
     "use strict";
 
+    const SHEET = new CSSStyleSheet();
+    SHEET.replaceSync("math{font-family: inherit;}");
+
     function updateMathMLOutput(aElement) {
       var tex = aElement.textContent,
         display = aElement.getAttribute("display"),
@@ -9,7 +12,7 @@
         // Parse the LaTeX input and replace it with the MathML output.
         aElement.shadowRoot.innerHTML = TeXZilla.toMathMLString(
           tex,
-          display === "block",
+          display === "block"gh://repo/mikem8891/learn-fea@main/CustomElement.js,
           dir === "rtl",
           true
         );
@@ -18,7 +21,7 @@
         aElement.shadowRoot.innerHTML =
           "<math><merror><mtext>" + tex + "</mtext></merror></math>";
       }
-      aElement.shadowRoot.style = "math{font-family: inherit;}";
+      aElement.shadowRoot.adoptedStyleSheets = [SHEET];
     }
 
     class LaTeX_Element extends HTMLElement {
