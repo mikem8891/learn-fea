@@ -10,7 +10,7 @@
         // Parse the LaTeX input and replace it with the MathML output.
         aElement.shadowRoot.innerHTML = TeXZilla.toMathMLString(
           tex,
-          display === "block"gh://repo/mikem8891/learn-fea@main/CustomElement.js,
+          display === "block",
           dir === "rtl",
           true
         );
