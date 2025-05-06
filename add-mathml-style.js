@@ -1,4 +1,5 @@
-addStyle();
+document.addEventListener("DOMContentLoaded",addStyle);
+
 function addStyle() {
   const sheet = new CSSStyleSheet();
   sheet.replaceSync("math{font-family: Fira Math;}");
