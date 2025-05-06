@@ -1,4 +1,5 @@
-window.onload = function() {
+addStyle();
+function addStyle() {
   const sheet = new CSSStyleSheet();
   sheet.replaceSync("math{font-family: Fira Math;}");
   for(const elem of document.getElementsByTagName("la-tex")){
