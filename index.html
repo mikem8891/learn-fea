@@ -12,15 +12,7 @@
       href="style.css" />
     <script src="https://fred-wang.github.io/TeXZilla/TeXZilla-min.js"></script>
     <script src="https://fred-wang.github.io/TeXZilla/examples/customElement.js"></script>
-    <script>
-      window.onload = function() {
-        const sheet = new CSSStyleSheet();
-        sheet.replaceSync("math{font-family: Fira Math;}");
-        for(const elem of document.getElementsByTagName("la-tex")){
-          elem.shadowRoot.adoptedStyleSheets = [sheet];
-        }
-      }
-    </script>
+    <script src="/add-mathml-style.js"></script>
   </head>
   <body>
     <div class="page">
@@ -832,6 +824,44 @@ these methods.</p>
   linear element cannot not model bending or transverse shear stress.  To 
   properly model these stresses we would need many linear elements or a few more
   sophisticated elements, like quadratic elements.</p>
+</div>
+<h2 id="multi-element">
+  Elements Working Together
+</h2>
+<p>Using multiple elements is not that much different from using a 
+  single element.  The elements interact through their mutual nodes. Each 
+  element needs to have its properties calculated.  As a review, the trail 
+  functions are defined for each node on the domain of the element, then the 
+  stiffness matrix is calculated for each node of the element.  You may notice 
+  that the stiffness matrices for some of the nodes have already been calculated
+  from previous elements; however, they do not apply to the domain of any new
+  element you add.  To get the full stiffness matrix you need to sum the matrices 
+  over the domains of all the elements.
+</p>
+<la-tex display="block">
+  \mathbf{K}_{ij} = 
+  \iint_D \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i \mathrm{dA} = 
+  \sum_k \iint_{D_k} \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i \mathrm{dA}
+</la-tex>
+<p>Where, <la-tex>D_k</la-tex> is the domain of the <la-tex>k^{th}</la-tex>
+  element and <la-tex>D</la-tex> is the union of all the element domains.  The 
+  same applies for the mass.
+</p>
+<div class="example">
+  <h3>Example</h3>
+  <p>Expanding from the previous <a href="#2d-tri-lin-trail-ex">example</a> of a single triangular linear element, 
+    we will add a second element to create a square.  The new element will share 
+    Nodes 2 and 3 and introduce Node 4 at (1, 1).  The domain of this second element will 
+    be denoted <la-tex>D_2.</la-tex>
+  </p>
+  <la-tex display="block">
+    D_2 = \{ (x, y) : x&lt;1,\,y&lt;1,\,1&lt;x+y\}
+  </la-tex><br>
+  <div style="max-width: fit-content; margin: auto;">
+    <la-tex>N_2 = 1-y</la-tex><br>
+    <la-tex>N_3 = 1-x</la-tex><br>
+    <la-tex>N_4 = x+y-1</la-tex>
+  </div><br>
 </div>
     </div>
   </body>
