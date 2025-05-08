@@ -11,9 +11,7 @@
       rel="stylesheet"
       href="style.css" />
     <script src="https://fred-wang.github.io/TeXZilla/TeXZilla-min.js"></script>
-    <!--<script src="https://fred-wang.github.io/TeXZilla/examples/customElement.js"></script>-->
-    <script src="./CustomElement.js"></script>
-    <!--<script src="./add-mathml-style.js"></script>-->
+    <script src="./latex-element.js"></script>
   </head>
   <body>
     <div class="page">
@@ -283,7 +281,7 @@ the element.</p>
 <la-tex>\mathbf{K}</la-tex> is the stiffness, and 
 <la-tex>M</la-tex> is the mass.</p>
 
-<div id="2d-tri-lin-stiffness-ex" class="example">
+<div class="example">
   <h3>Example</h3>
   <p>Now lets calculate mass values and stiffness matrices using the trails 
   functions from the <a href="#2d-tri-lin-trail-ex">example</a> above.  We will start with the mass value for <la-tex>i=1</la-tex> and 
@@ -328,38 +326,26 @@ the element.</p>
     1 & 1 & 2
   \end{bmatrix}
   </la-tex><br>
-  <p>Now we will look at the stiffness matrix for <la-tex>i=1</la-tex> and 
-  <la-tex>j=1</la-tex>. For convenience, we will apply
-  the substitution <la-tex>E' = E/(1-\nu^2)</la-tex>. </p>
+  <p id="2d-tri-lin-stiffness-ex">Now we will look at the stiffness matrix for 
+    <la-tex>i=1</la-tex> and <la-tex>j=1</la-tex>. For convenience, we will apply
+    the substitution <la-tex>E' = E/(1-\nu^2)</la-tex>. 
+  </p>
   <la-tex display="block">
-  \mathbf{K}_{11} = 
-  \iint_D \mathbf{B}^T_1\mathbf{E}\mathbf{B}_1 \mathrm{dA}
+    \mathbf{K}_{ij} = 
+    \iint_D \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i \mathrm{dA}
   </la-tex><br>
   <la-tex display="block">
-  = \mathbf{B}^T_1
-  \begin{bmatrix}
-    E' & E'\nu & 0 \\ 
-    E'\nu & E' & 0 \\
-    0 & 0 & G
-  \end{bmatrix}
-  \begin{bmatrix}
-    -1 &  0 \\
-    0  & -1 \\
-    -1 & -1
-  \end{bmatrix}
-  \iint_D \mathrm{dA}
-  </la-tex><br>
-  <la-tex display="block">
-  = \frac{1}{2}
-  \begin{bmatrix}
-    -1 &  0 & -1 \\
-    0  & -1 & -1
-  \end{bmatrix}
-  \begin{bmatrix}
-    -E' & -E'\nu \\ 
-    -E'\nu & -E' \\
-    -G & -G
-  \end{bmatrix}
+    \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i = 
+    \begin{bmatrix}
+      E' \frac{\partial N_i}{\partial x} \frac{\partial N_j}{\partial x} + 
+      G  \frac{\partial N_i}{\partial y} \frac{\partial N_j}{\partial y} & 
+      E'\nu \frac{\partial N_i}{\partial y} \frac{\partial N_j}{\partial x} + 
+      G     \frac{\partial N_i}{\partial x} \frac{\partial N_j}{\partial y} \\ 
+      E'\nu \frac{\partial N_i}{\partial x} \frac{\partial N_j}{\partial y}+ 
+      G     \frac{\partial N_i}{\partial y} \frac{\partial N_j}{\partial x} & 
+      E' \frac{\partial N_i}{\partial y} \frac{\partial N_j}{\partial y} + 
+      G  \frac{\partial N_i}{\partial x} \frac{\partial N_j}{\partial x}
+    \end{bmatrix}
   </la-tex><br>
   <la-tex display="block">
   \mathbf K_11 = \frac{1}{2}
