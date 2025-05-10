@@ -1,7 +1,12 @@
 //@ts-check
 
-import * as initWasm from "./pkg/learn_fea.js";
+import initWasm, {Matrix} from "./pkg/learn_fea.js";
 
-const wasm = await initWasm.default();
+const wasm = await initWasm();
+
+const matrix = Matrix.identity(3);
+
+alert(`${matrix.get(1, 1)}`);
+
 
 wasm.greet();
