@@ -1,6 +1,6 @@
 use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Matrix<const R: usize, const C: usize> {
     values: [[f64; C]; R]
 }
@@ -29,6 +29,21 @@ impl<const R: usize, const C: usize> From<[[f64; C]; R]> for Matrix<R, C> {
         Matrix {values}
     }
 }
+
+impl From<&Matrix<2,1>> for (f64, f64) {
+    fn from(matrix: &Matrix<2,1>) -> Self {
+        let [[x], [y]] = matrix.values;
+        (x, y)
+    }
+}
+
+impl From<Matrix<2,1>> for (f64, f64) {
+    fn from(matrix: Matrix<2,1>) -> Self {
+        let [[x], [y]] = matrix.values;
+        (x, y)
+    }
+}
+
 
 impl<const R: usize, const C: usize> AddAssign<&Matrix<R, C>> for Matrix<R, C> {
     fn add_assign(&mut self, rhs: &Matrix<R, C>) {
@@ -92,11 +107,30 @@ impl<const I: usize, const J: usize, const K: usize>
     Mul<&Matrix<J, K>> for &Matrix<I, J> {
     type Output = Matrix<I, K>;
 
-    fn mul(self, rhs: &Matrix<J, K>) -> Self::Output {4
+    fn mul(self, rhs: &Matrix<J, K>) -> Self::Output {
         let mut prod = Matrix::zero();
         for i in 0..I {
             for k in 0..K {
-                let prod_ik = 0.0;
+                let mut prod_ik = 0.0;
+                for j in 0..J {
+                    prod_ik += self[(i, j)] * rhs[(j, k)];
+                }
+                prod[(i, k)] = prod_ik;
+            }
+        }
+        prod
+    }
+}
+
+impl<const I: usize, const J: usize, const K: usize> 
+    Mul<Matrix<J, K>> for Matrix<I, J> {
+    type Output = Matrix<I, K>;
+
+    fn mul(self, rhs: &Matrix<J, K>) -> Self::Output {
+        let mut prod = Matrix::zero();
+        for i in 0..I {
+            for k in 0..K {
+                let mut prod_ik = 0.0;
                 for j in 0..J {
                     prod_ik += self[(i, j)] * rhs[(j, k)];
                 }
