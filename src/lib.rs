@@ -1,9 +1,11 @@
 mod utils;
 mod matrix;
+mod global_matrix;
 
 use matrix::*;
+use global_matrix::*;
 
-use std::{cell::Cell, ops::{Add, AddAssign, Index, IndexMut, Mul, Sub}};
+use std::{cell::Cell, vec};
 
 use wasm_bindgen::prelude::*;
 
@@ -21,35 +23,85 @@ pub fn greet() {
 #[wasm_bindgen]
 pub fn main() {
     let elasticity = plane_stress_matrix(30000.0, 10000.0, 0.3);
-    let nodes = [
+    let nodes: Vec<_> = [
         (0.0, 0.0),
         (1.0, 0.0),
         (0.0, 1.0),
         (1.0, 1.0),
-    ].map(|p| Node2D::zero_at(p));
+    ].map(|p| Node2D::zero_at(p)).into();
     let element_node_indices = [
         [0, 1, 2],
         [1, 2, 3],
     ];
-    let elements = element_node_indices
-        .map(|ni| T3Element::new(&nodes, ni));
-    const ZERO_2X2: Matrix<2, 2> = Matrix::<2, 2>::zero();
-    let size = 2 * nodes.len();
-    let mut global_stiffness = vec![vec![0.0; size]; size];
-    for element in elements {
-        let node_indices = &element.nodes_indices;
-        let stiffness_matrices = element.get_stiffness_matrices(elasticity);
-        for (i, &node_i) in node_indices.iter().enumerate() {
-            for (j, &node_j) in node_indices.iter().enumerate() {
-                let stiffness_ij = stiffness_matrices[i][j];
-                global_stiffness[node_i + 0][node_j + 0] += stiffness_ij[(0, 0)];
-                global_stiffness[node_i + 1][node_j + 0] += stiffness_ij[(1, 0)];
-                global_stiffness[node_i + 0][node_j + 1] += stiffness_ij[(0, 1)];
-                global_stiffness[node_i + 1][node_j + 1] += stiffness_ij[(1, 1)];
+    let elements: Vec<_> = element_node_indices
+        .map(|ni| T3Element::new(&nodes, ni)).into();
+    let model = Fea2DStaticModel::new(nodes, elements);
+
+
+
+}
+
+struct Fea2DStaticModel<const N: usize, E: Element2D<N>> {
+    nodes: Vec<Node2D>,
+    elements: Vec<E>,
+}
+
+impl<const N:usize, E: Element2D<N>> Fea2DStaticModel<N, E> {
+    fn new(nodes: Vec<Node2D>, elements: Vec<E>) -> Self {
+
+        const ZERO_2X2: Matrix<2, 2> = Matrix::<2, 2>::zero();
+        let size = 2 * nodes.len();
+        let mut global_stiffness = vec![vec![Matrix::zero(); size]; size];
+        for element in elements {
+            let node_indices = &element.nodes_indices;
+            let stiffness_matrices = element.get_stiffness_matrices(elasticity);
+            for (i, &node_i) in node_indices.iter().enumerate() {
+                for (j, &node_j) in node_indices.iter().enumerate() {
+                    let stiffness_ij = stiffness_matrices[i][j];
+                    global_stiffness[node_i][node_j] += &stiffness_ij;
+                }
             }
         }
-    }
+        let mut global_stiffness = flatten(global_stiffness);
 
+        Fea2DStaticModel { nodes, elements }
+    }
+}
+
+fn get_known_force_indices(nodes: &[Node2D]) -> Vec<usize> {
+    let mut indices = vec![];
+    for (i, node) in nodes.iter().enumerate() {
+        let (known_x, known_y) = &node.known;
+        match known_x {
+            NodeKnownType::Force => indices.push(2 * i),
+            NodeKnownType::Displacement => {},
+        }
+        match known_y {
+            NodeKnownType::Force => indices.push(2 * i + 1),
+            NodeKnownType::Displacement => {},
+        }
+    }
+    indices
+}
+
+fn flatten<const R: usize, const C: usize>(
+    mut block_mat: Vec<Vec<Matrix<R, C>>>
+) -> Vec<Vec<f64>> {
+    let mut global_mat = vec![vec![]; R];
+    for block_i  in 0..block_mat.len() {
+        let block_row = &mut block_mat[block_i];
+        for block_j in 0..block_row.len() {
+            let matrix = block_row[block_j];
+            for mat_i in 0..R {
+                for mat_j in 0..C {
+                    global_mat[R * block_i + mat_i]
+                        .push(matrix[(mat_i, mat_j)]);
+                }
+            }
+        }
+        *block_row = vec![];
+    }
+    global_mat
 }
 
 #[allow(non_snake_case)]
@@ -109,10 +161,11 @@ impl From<(f64, f64)> for Matrix<2, 1> {
     }
 }
 
-trait Element2D {
-    fn contains(point: Point2D) -> bool;
-    fn value_at(point: Point2D) -> Vector<2>;
-
+trait Element2D<const N: usize> {
+    fn get_stiffness_matrices(
+        &self, 
+        elasticity: Matrix<3, 3>
+    ) -> [[Matrix<2, 2>; N]; N];
 }
 
 struct T3Element<'a> {
@@ -123,49 +176,6 @@ struct T3Element<'a> {
 impl<'a> T3Element<'a> {
     const fn new(nodes: &'a [Node2D], nodes_indices: [usize; 3]) -> Self {
         T3Element { nodes, nodes_indices }
-    }
-
-    #[allow(non_snake_case)]
-    fn get_stiffness(&self, i: usize, j: usize) -> Matrix<2, 2> {
-        let trial = self.get_trial_functions();
-        let (dni_dx, dni_dy) = trial[i].gradient().into();
-        let diff_i: Matrix<3, 2> = [
-            [dni_dx,    0.0],
-            [   0.0, dni_dy],
-            [dni_dy, dni_dx],
-        ].into();
-        let (dnj_dx, dnj_dy) = trial[j].gradient().into();
-        let diff_j: Matrix<2, 3> = [
-            [dnj_dx,    0.0, dnj_dy],
-            [   0.0, dnj_dy, dnj_dx],
-        ].into();
-        let E = plane_stress_matrix(30000.0, 10000.0, 0.3);
-        diff_j * E * diff_i
-    }
-
-    #[allow(non_snake_case)]
-    fn get_stiffness_matrices(
-        &self, 
-        elasticity: Matrix<3,3>
-    ) -> [[Matrix<2, 2>; 3]; 3] {
-        let mut stiffness_matrices = [[Matrix::zero(); 3]; 3];
-        let trial_fns = self.get_trial_functions();
-        let trial_grads = trial_fns.map(|tf| tf.gradient().into());
-        for (i, &(dNi_dx, dNi_dy)) in trial_grads.iter().enumerate() {
-            for (j, &(dNj_dx, dNj_dy)) in trial_grads.iter().enumerate() {
-                let diff_i: Matrix<3, 2> = [
-                    [dNi_dx,    0.0],
-                    [   0.0, dNi_dy],
-                    [dNi_dy, dNi_dx],
-                ].into();
-                let diff_j: Matrix<2, 3> = [
-                    [dNj_dx,    0.0, dNj_dy],
-                    [   0.0, dNj_dy, dNj_dx],
-                ].into();
-                stiffness_matrices[i][j] = diff_j * elasticity * diff_i;
-            }
-        }
-        stiffness_matrices
     }
 
     fn get_trial_functions(&'a self) -> [T3TrailFunction<'a>; 3] {
@@ -190,6 +200,33 @@ impl<'a> T3Element<'a> {
         let n_10 = n_1 - n_0;
         let n_20 = n_2 - n_0;
         n_10.x() * n_20.y() - n_10.y() * n_20.x()
+    }
+}
+
+impl Element2D<3> for T3Element<'_> {
+    #[allow(non_snake_case)]
+    fn get_stiffness_matrices(
+        &self, 
+        elasticity: Matrix<3,3>
+    ) -> [[Matrix<2, 2>; 3]; 3] {
+        let mut stiffness_matrices = [[Matrix::zero(); 3]; 3];
+        let trial_fns = self.get_trial_functions();
+        let trial_grads = trial_fns.map(|tf| tf.gradient().into());
+        for (i, &(dNi_dx, dNi_dy)) in trial_grads.iter().enumerate() {
+            for (j, &(dNj_dx, dNj_dy)) in trial_grads.iter().enumerate() {
+                let diff_i: Matrix<3, 2> = [
+                    [dNi_dx,    0.0],
+                    [   0.0, dNi_dy],
+                    [dNi_dy, dNi_dx],
+                ].into();
+                let diff_j: Matrix<2, 3> = [
+                    [dNj_dx,    0.0, dNj_dy],
+                    [   0.0, dNj_dy, dNj_dx],
+                ].into();
+                stiffness_matrices[i][j] = diff_j * elasticity * diff_i;
+            }
+        }
+        stiffness_matrices
     }
 }
 
@@ -220,92 +257,3 @@ impl<'a> T3TrailFunction<'a> {
         [[dNda * dadx + dNdb * dbdx], [dNda * dady + dNdb * dbdy]].into()
     }
 }
-
-#[wasm_bindgen]
-impl GlobalMatrix {
-
-    fn new(matrix: &[&[f64]]) -> Self {
-        let rows = matrix.len();
-        let cols = matrix[0].len();
-        let mut new_mat = Self::zeros(rows, cols);
-        for row in 0..rows {
-            for col in 0..cols {
-                new_mat[(row, col)] = matrix[row][col];
-            }
-        }
-        new_mat
-    }
-
-    pub fn zeros(rows: usize, cols: usize) -> Self {
-        let values = vec![0.0; rows * cols].into_boxed_slice();
-        GlobalMatrix {rows, cols, values}
-    }
-
-    pub fn identity(size: usize) -> Self {
-        let mut matrix = Self::zeros(size, size);
-        for diag in 0..size {
-            matrix[(diag, diag)] = 1.0;
-        }
-        matrix
-    }
-
-    pub fn get(&self, row: usize, col: usize) -> f64 {
-        self[(row, col)]
-    }
-
-    pub fn add(&self, rhs: &Self) -> Self {
-        self + rhs
-    }
-    pub fn mul(&self, rhs: &Self) -> Self {
-        self * rhs
-    }
-}
-
-impl Index<(usize, usize)> for GlobalMatrix {
-    type Output = f64;
-
-    fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
-        let index = row * self.cols + col; 
-        &self.values[index]
-    }
-}
-
-impl IndexMut<(usize, usize)> for GlobalMatrix {
-    fn index_mut(&mut self, (row, col): (usize, usize)) -> &mut Self::Output {
-        let index = row * self.cols + col; 
-        &mut self.values[index]
-    }
-}
-
-impl Add for &GlobalMatrix {
-    type Output = GlobalMatrix;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        let mut sum = GlobalMatrix::zeros(self.rows, self.cols);
-        for row in 0..self.rows {
-            for col in 0..self.cols {
-                sum[(row, col)] = self[(row, col)] + rhs[(row, col)];
-            }
-        }
-        sum
-    }
-}
-
-impl Mul for &GlobalMatrix {
-    type Output = GlobalMatrix;
-
-    fn mul(self, rhs: Self) -> Self::Output {
-        assert_eq!(self.cols, rhs.rows);
-
-        let mut prod = GlobalMatrix::zeros(self.rows, rhs.cols);
-        for i in 0..self.rows {
-            for j in 0..rhs.cols {
-                for k in 0..self.cols {
-                    prod[(i, j)] += self[(i, k)] * rhs[(k, j)];
-                }
-            }
-        }
-        prod
-    }
-}
-

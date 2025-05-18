@@ -126,7 +126,7 @@ impl<const I: usize, const J: usize, const K: usize>
     Mul<Matrix<J, K>> for Matrix<I, J> {
     type Output = Matrix<I, K>;
 
-    fn mul(self, rhs: &Matrix<J, K>) -> Self::Output {
+    fn mul(self, rhs: Matrix<J, K>) -> Self::Output {
         let mut prod = Matrix::zero();
         for i in 0..I {
             for k in 0..K {
