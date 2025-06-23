@@ -44,6 +44,12 @@ impl From<Matrix<2,1>> for (f64, f64) {
     }
 }
 
+impl From<(f64, f64)> for Matrix<2, 1> {
+    fn from((x, y): (f64, f64)) -> Self {
+        let values = [[x],[y]];
+        Matrix::new(values)
+    }
+}
 
 impl<const R: usize, const C: usize> AddAssign<&Matrix<R, C>> for Matrix<R, C> {
     fn add_assign(&mut self, rhs: &Matrix<R, C>) {

@@ -10,14 +10,11 @@ pub struct GlobalMatrix {
 impl GlobalMatrix {
 
     pub fn new<T>(matrix: &[T]) -> Self 
-    where for<'a> &'a T: IntoIterator<Item = f64>{
+    where for<'a> &'a T: IntoIterator<Item = &'a f64>{
         let mut values = vec![];
         for row in matrix {
-            let mut global_row = vec![];
-            for value in row {
-                global_row.push(value);
-            }
-            values.push(global_row.into_boxed_slice());
+            let global_row: Box<[f64]> = row.into_iter().map(|&n| n).collect();
+            values.push(global_row);
         }
         let values = values.into_boxed_slice();
         GlobalMatrix { values }

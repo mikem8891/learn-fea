@@ -5,7 +5,7 @@ mod global_matrix;
 use matrix::*;
 use global_matrix::*;
 
-use std::{cell::Cell, vec};
+use std::vec;
 
 use wasm_bindgen::prelude::*;
 
@@ -33,52 +33,90 @@ pub fn main() {
         [0, 1, 2],
         [1, 2, 3],
     ];
-    let elements: Vec<_> = element_node_indices
-        .map(|ni| T3Element::new(&nodes, ni)).into();
-    let model = Fea2DStaticModel::new(nodes, elements);
-
-
+    let mut model = Fea2DStaticModel::new(&*nodes);
+    model.add_elements(&element_node_indices);
+    model.create_stiffness_matrix::<3, T3Element>(elasticity);
 
 }
 
-struct Fea2DStaticModel<const N: usize, E: Element2D<N>> {
-    nodes: Vec<Node2D>,
-    elements: Vec<E>,
+struct Fea2DStaticModel {
+    nodes: Box<[Node2D]>,
+    /// Node index list of elements
+    /// 
+    /// Each `Box<[usize]>` in the `nil_of_elements` is a list of node indices
+    /// for an element.
+    nil_for_elements: Vec<Box<[usize]>>,
+    stiffness: Option<GlobalMatrix>,
 }
 
-impl<const N:usize, E: Element2D<N>> Fea2DStaticModel<N, E> {
-    fn new(nodes: Vec<Node2D>, elements: Vec<E>) -> Self {
+impl Fea2DStaticModel {
 
+    fn new(nodes: &[Node2D]) -> Self {
+        Fea2DStaticModel { 
+            nodes: Box::from(nodes), 
+            nil_for_elements: vec![], 
+            stiffness: None,
+        }
+    }
+
+    fn add_elements<NIL>(&mut self, nil_for_elements: &[NIL])
+    where for<'c> &'c NIL: IntoIterator<Item = &'c usize> {
+        for nil in nil_for_elements {
+            let nil: Box<_> = nil.into_iter().map(|&i| i).collect();
+            self.nil_for_elements.push(nil); 
+        }
+    }
+
+    fn get_element<const N: usize, E: Element2D<N>>(
+        &self, indices: &[usize]
+    ) -> E {
+        let nodes: [Node2D; N] = 
+            core::array::from_fn::<_, N, _>(|i| self.nodes[indices[i]]);
+        Element2D::new(nodes)
+    }
+
+    fn create_stiffness_matrix<const N: usize, E: Element2D<N>>(
+        &self, 
+        elasticity: Matrix<3, 3>
+    ) -> Vec<Vec<f64>> {
         const ZERO_2X2: Matrix<2, 2> = Matrix::<2, 2>::zero();
-        let size = 2 * nodes.len();
+        let size = 2 * self.nodes.len();
         let mut global_stiffness = vec![vec![Matrix::zero(); size]; size];
-        for element in elements {
-            let node_indices = &element.nodes_indices;
+        for element_node_indices in self.nil_for_elements.iter() {
+            let element: E = self.get_element(&element_node_indices);
             let stiffness_matrices = element.get_stiffness_matrices(elasticity);
-            for (i, &node_i) in node_indices.iter().enumerate() {
-                for (j, &node_j) in node_indices.iter().enumerate() {
+            for (i, &node_i) in element_node_indices.iter().enumerate() {
+                for (j, &node_j) in element_node_indices.iter().enumerate() {
                     let stiffness_ij = stiffness_matrices[i][j];
                     global_stiffness[node_i][node_j] += &stiffness_ij;
                 }
             }
         }
-        let mut global_stiffness = flatten(global_stiffness);
+        let global_stiffness = flatten(global_stiffness);
+        global_stiffness
+    } 
 
-        Fea2DStaticModel { nodes, elements }
+    fn set_stiffness_matrix<const N: usize, E: Element2D<N>>(
+        &mut self, 
+        elasticity: Matrix<3, 3>
+    ) {
+        let global_stiffness = self.create_stiffness_matrix::<N, E>(elasticity);
+        self.stiffness = Some(GlobalMatrix::new(&global_stiffness));
     }
+
 }
 
 fn get_known_force_indices(nodes: &[Node2D]) -> Vec<usize> {
     let mut indices = vec![];
     for (i, node) in nodes.iter().enumerate() {
-        let (known_x, known_y) = &node.known;
+        let [known_x, known_y] = &node.known;
         match known_x {
-            NodeKnownType::Force => indices.push(2 * i),
-            NodeKnownType::Displacement => {},
+            KnownType::Force => indices.push(2 * i),
+            KnownType::Displacement => {},
         }
         match known_y {
-            NodeKnownType::Force => indices.push(2 * i + 1),
-            NodeKnownType::Displacement => {},
+            KnownType::Force => indices.push(2 * i + 1),
+            KnownType::Displacement => {},
         }
     }
     indices
@@ -115,70 +153,52 @@ const fn plane_stress_matrix(E: f64, G: f64, nu: f64) -> Matrix<3,3> {
     Matrix::new(values)
 }
 
-
-
-#[wasm_bindgen]
-#[derive(Debug, Clone)]
-pub struct GlobalMatrix {
-    rows: usize,
-    cols: usize,
-    values: Box<[f64]>,
-}
-
-
 type Vector<const D: usize> = Matrix<D, 1>;
 
 type Point2D = Vector<2>;
 
-enum NodeKnownType {
-    Force,
+#[derive(Debug, Clone, Copy)]
+enum KnownType {
+    Force, 
     Displacement,
 }
 
+#[derive(Debug, Clone, Copy)]
 struct Node2D {
     position: Point2D,
-    displacement: Cell<Vector<2>>, 
-    force: Cell<Vector<2>>,
-    known: (NodeKnownType, NodeKnownType),
+    displacement: Vector<2>, 
+    force: Vector<2>,
+    known: [KnownType; 2],
 }
 
 impl Node2D {
     fn zero_at(position: (f64, f64)) -> Self {
         let position = position.into();
-        let displacement = Cell::new(Matrix::zero());
-        let force = Cell::new(Matrix::zero());
-        type Known = NodeKnownType;
-        let known = (Known::Force, Known::Force);
-        Node2D {position, displacement, force, known }
-    }
-}
-
-
-impl From<(f64, f64)> for Matrix<2, 1> {
-    fn from((x, y): (f64, f64)) -> Self {
-        let values = [[x],[y]];
-        Matrix::new(values)
+        let displacement = Matrix::zero();
+        let force = Matrix::zero();
+        let known = [KnownType::Force, KnownType::Force];
+        Node2D {position, displacement, force, known}
     }
 }
 
 trait Element2D<const N: usize> {
+    fn new(nodes: [Node2D; N]) -> Self;
     fn get_stiffness_matrices(
         &self, 
         elasticity: Matrix<3, 3>
     ) -> [[Matrix<2, 2>; N]; N];
 }
 
-struct T3Element<'a> {
-    nodes: &'a [Node2D],
-    nodes_indices: [usize; 3],
+struct T3Element {
+    nodes: [Node2D; 3],
 }
 
-impl<'a> T3Element<'a> {
-    const fn new(nodes: &'a [Node2D], nodes_indices: [usize; 3]) -> Self {
-        T3Element { nodes, nodes_indices }
+impl T3Element {
+    const fn new(nodes: [Node2D; 3]) -> Self {
+        T3Element { nodes }
     }
 
-    fn get_trial_functions(&'a self) -> [T3TrailFunction<'a>; 3] {
+    fn get_trial_functions(&self) -> [T3TrailFunction; 3] {
         [
             T3TrailFunction { element: self, index: 0 },
             T3TrailFunction { element: self, index: 1 },
@@ -187,7 +207,7 @@ impl<'a> T3Element<'a> {
     }
 
     const fn get_node(&self, i: usize) -> &Node2D {
-        &self.nodes[self.nodes_indices[i]]
+        &self.nodes[i]
     }
     const fn get_position(&self, i: usize) -> &Point2D {
         &self.get_node(i).position
@@ -203,7 +223,12 @@ impl<'a> T3Element<'a> {
     }
 }
 
-impl Element2D<3> for T3Element<'_> {
+impl Element2D<3> for T3Element {
+    
+    fn new(nodes: [Node2D; 3]) -> Self {
+        T3Element { nodes }
+    }
+
     #[allow(non_snake_case)]
     fn get_stiffness_matrices(
         &self, 
@@ -231,7 +256,7 @@ impl Element2D<3> for T3Element<'_> {
 }
 
 struct T3TrailFunction<'a> {
-    element: &'a T3Element<'a>,
+    element: &'a T3Element,
     index: u8, 
 }
 
