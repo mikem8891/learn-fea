@@ -9,17 +9,6 @@ pub struct GlobalMatrix {
 
 impl GlobalMatrix {
 
-    pub fn new<T>(matrix: &[T]) -> Self 
-    where for<'a> &'a T: IntoIterator<Item = &'a f64>{
-        let mut values = vec![];
-        for row in matrix {
-            let global_row: Box<[f64]> = row.into_iter().map(|&n| n).collect();
-            values.push(global_row);
-        }
-        let values = values.into_boxed_slice();
-        GlobalMatrix { values }
-    }
-
     pub fn zeros(rows: usize, cols: usize) -> Self {
         let row = vec![0.0; cols].into_boxed_slice();
         let values = vec![row; rows].into_boxed_slice();
@@ -57,7 +46,6 @@ impl GlobalMatrix {
             }
         }
     }
-
 }
 
 impl Index<(usize, usize)> for GlobalMatrix {
@@ -71,41 +59,5 @@ impl Index<(usize, usize)> for GlobalMatrix {
 impl IndexMut<(usize, usize)> for GlobalMatrix {
     fn index_mut(&mut self, (row, col): (usize, usize)) -> &mut Self::Output {
         &mut self.values[row][col]
-    }
-}
-
-impl Add for &GlobalMatrix {
-    type Output = GlobalMatrix;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        let (num_of_rows, num_of_cols) = self.size();
-        let mut sum = GlobalMatrix::zeros(num_of_rows, num_of_cols);
-        for row in 0..num_of_rows {
-            for col in 0..num_of_cols {
-                sum[(row, col)] = self[(row, col)] + rhs[(row, col)];
-            }
-        }
-        sum
-    }
-}
-
-impl Mul for &GlobalMatrix {
-    type Output = GlobalMatrix;
-
-    #[allow(non_snake_case)]
-    fn mul(self, rhs: Self) -> Self::Output {
-
-        let (I, J) = self.size();
-        let K = rhs.num_of_cols();
-        assert_eq!(self.num_of_cols(), rhs.num_of_rows());
-
-        let mut prod_matrix = GlobalMatrix::zeros(I, K);
-        for i in 0..I {
-            for k in 0..K {
-                let prod = (0..J).map(|j| self[(i, j)] * rhs[(j, k)]).sum();
-                prod_matrix[(i, k)] = prod;
-            }
-        }
-        prod_matrix
     }
 }
