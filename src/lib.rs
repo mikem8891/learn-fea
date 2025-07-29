@@ -23,29 +23,24 @@ pub fn greet() {
 #[wasm_bindgen]
 pub fn main() {
     let elasticity = plane_stress_matrix(30000.0, 10000.0, 0.3);
-    let nodes: Vec<_> = [
+    let nodes = [
         (0.0, 0.0),
         (1.0, 0.0),
         (0.0, 1.0),
         (1.0, 1.0),
-    ].map(|p| Node2D::zero_at(p)).into();
+    ].map(|p| Node2D::zero_at(p));
     let element_node_indices = [
         [0, 1, 2],
         [1, 2, 3],
     ];
-    let mut model = Fea2DStaticModel::new(&*nodes);
-    model.add_elements(&element_node_indices);
-    model.create_stiffness_matrix::<3, T3Element>(elasticity);
+    let mut model = Fea2DStaticModel::new(&nodes);
+    model.create_stiffness_matrix(elasticity);
 
 }
 
 struct Fea2DStaticModel {
-    nodes: Box<[Node2D]>,
-    /// Node index list of elements
-    /// 
-    /// Each `Box<[usize]>` in the `nil_of_elements` is a list of node indices
-    /// for an element.
-    nil_for_elements: Vec<Box<[usize]>>,
+    nodes: Vec<Node2D>,
+    elements: Vec<T3Element>,
     stiffness: Option<GlobalMatrix>,
 }
 
@@ -53,33 +48,19 @@ impl Fea2DStaticModel {
 
     fn new(nodes: &[Node2D]) -> Self {
         Fea2DStaticModel { 
-            nodes: Box::from(nodes), 
-            nil_for_elements: vec![], 
+            nodes: nodes.into(), 
+            elements: vec![], 
             stiffness: None,
         }
     }
 
-    fn add_elements<NIL>(&mut self, nil_for_elements: &[NIL])
-    where for<'c> &'c NIL: IntoIterator<Item = &'c usize> {
-        for nil in nil_for_elements {
-            let nil: Box<_> = nil.into_iter().map(|&i| i).collect();
-            self.nil_for_elements.push(nil); 
-        }
-    }
-
-    fn get_element<const N: usize, E: Element2D<N>>(
-        &self, indices: &[usize]
-    ) -> E {
-        let nodes: [Node2D; N] = 
-            core::array::from_fn::<_, N, _>(|i| self.nodes[indices[i]]);
-        Element2D::new(nodes)
-    }
-
     /// TODO: allow indexing into sub matrices
-    fn create_stiffness_matrix<const N: usize, E: Element2D<N>>(
+    fn create_stiffness_matrix(
         &self, 
         elasticity: Matrix<3, 3>
     ) -> Vec<Vec<f64>> {
+        todo!();
+        /* 
         const ZERO_2X2: Matrix<2, 2> = Matrix::<2, 2>::zero();
         let size = 2 * self.nodes.len();
         let mut global_stiffness = vec![vec![Matrix::zero(); size]; size];
@@ -95,13 +76,14 @@ impl Fea2DStaticModel {
         }
         let global_stiffness = flatten(global_stiffness);
         global_stiffness
+        */
     } 
 
-    fn set_stiffness_matrix<const N: usize, E: Element2D<N>>(
+    fn set_stiffness_matrix(
         &mut self, 
         elasticity: Matrix<3, 3>
     ) {
-        let global_stiffness = self.create_stiffness_matrix::<N, E>(elasticity);
+        let global_stiffness = self.create_stiffness_matrix(elasticity);
         todo!();
         //self.stiffness = Some(GlobalMatrix::new(&global_stiffness));
     }
@@ -184,61 +166,37 @@ impl Node2D {
     }
 }
 
-trait Element2D<const N: usize> {
-    fn new(nodes: [Node2D; N]) -> Self;
-    fn get_stiffness_matrices(
-        &self, 
-        elasticity: Matrix<3, 3>
-    ) -> [[Matrix<2, 2>; N]; N];
-}
-
 struct T3Element {
-    nodes: [Node2D; 3],
+    /** indices of the nodes from the FEA model */
+    indices: [usize; 3],
 }
 
 impl T3Element {
-    const fn new(nodes: [Node2D; 3]) -> Self {
-        T3Element { nodes }
+    const fn new(indices: [usize; 3]) -> Self {
+        T3Element { indices }
     }
 
-    fn get_trial_functions(&self) -> [T3TrailFunction; 3] {
+    fn get_trial_functions(&self, model: Fea2DStaticModel) -> [T3TrailFunction; 3] {
+        let positions = [0, 1, 2].map(|i| model.nodes[self.indices[i]].position);
         [
-            T3TrailFunction { element: self, index: 0 },
-            T3TrailFunction { element: self, index: 1 },
-            T3TrailFunction { element: self, index: 2 },
+            T3TrailFunction { positions, index: 0 },
+            T3TrailFunction { positions, index: 1 },
+            T3TrailFunction { positions, index: 2 },
         ]
     }
 
-    const fn get_node(&self, i: usize) -> &Node2D {
-        &self.nodes[i]
-    }
-    const fn get_position(&self, i: usize) -> &Point2D {
-        &self.get_node(i).position
-    }
-
-    fn area(&self) -> f64 {
-        let n_0 = *self.get_position(0);
-        let n_1 = *self.get_position(1);
-        let n_2 = *self.get_position(2);
-        let n_10 = n_1 - n_0;
-        let n_20 = n_2 - n_0;
-        n_10[(0, 0)] * n_20[(1, 0)] - n_10[(1, 0)] * n_20[(0, 0)]
-    }
-}
-
-impl Element2D<3> for T3Element {
-    
-    fn new(nodes: [Node2D; 3]) -> Self {
-        T3Element { nodes }
+    const fn get_indices(&self) -> &[usize; 3] {
+        &self.indices
     }
 
     #[allow(non_snake_case)]
     fn get_stiffness_matrices(
-        &self, 
+        &self,
+        model: Fea2DStaticModel,
         elasticity: Matrix<3,3>
     ) -> [[Matrix<2, 2>; 3]; 3] {
         let mut stiffness_matrices = [[Matrix::zero(); 3]; 3];
-        let trial_fns = self.get_trial_functions();
+        let trial_fns = self.get_trial_functions(model);
         let trial_grads = trial_fns.map(|tf| tf.gradient());
         for (i, &dNi) in trial_grads.iter().enumerate() {
             for (j, &dNj) in trial_grads.iter().enumerate() {
@@ -260,18 +218,19 @@ impl Element2D<3> for T3Element {
     }
 }
 
-struct T3TrailFunction<'a> {
-    element: &'a T3Element,
+struct T3TrailFunction {
+    positions: [Point2D; 3],
+    /** index (0, 1, 2) of the trial function */
     index: u8, 
 }
 
-impl<'a> T3TrailFunction<'a> {
+impl T3TrailFunction {
 
     #[allow(non_snake_case)]
     fn gradient(&self) -> Vector<2> {
-        let [[x0], [y0]] = (*self.element.get_position(0)).into();
-        let [[x1], [y1]] = (*self.element.get_position(1)).into();
-        let [[x2], [y2]] = (*self.element.get_position(2)).into();
+        let [[x0], [y0]] = self.positions[0].into();
+        let [[x1], [y1]] = self.positions[1].into();
+        let [[x2], [y2]] = self.positions[2].into();
         let area = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
         let dadx = (y2 - y0) / area;
         let dady = (x0 - x2) / area;
