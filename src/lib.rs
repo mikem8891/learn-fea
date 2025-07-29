@@ -75,6 +75,7 @@ impl Fea2DStaticModel {
         Element2D::new(nodes)
     }
 
+    /// TODO: allow indexing into sub matrices
     fn create_stiffness_matrix<const N: usize, E: Element2D<N>>(
         &self, 
         elasticity: Matrix<3, 3>
@@ -88,7 +89,7 @@ impl Fea2DStaticModel {
             for (i, &node_i) in element_node_indices.iter().enumerate() {
                 for (j, &node_j) in element_node_indices.iter().enumerate() {
                     let stiffness_ij = stiffness_matrices[i][j];
-                    global_stiffness[node_i][node_j] += &stiffness_ij;
+                    global_stiffness[node_i][node_j] += stiffness_ij;
                 }
             }
         }
@@ -101,7 +102,8 @@ impl Fea2DStaticModel {
         elasticity: Matrix<3, 3>
     ) {
         let global_stiffness = self.create_stiffness_matrix::<N, E>(elasticity);
-        self.stiffness = Some(GlobalMatrix::new(&global_stiffness));
+        todo!();
+        //self.stiffness = Some(GlobalMatrix::new(&global_stiffness));
     }
 
 }
@@ -172,7 +174,8 @@ struct Node2D {
 }
 
 impl Node2D {
-    fn zero_at(position: (f64, f64)) -> Self {
+    fn zero_at((x, y): (f64, f64)) -> Self {
+        let position = [[x], [y]]; 
         let position = position.into();
         let displacement = Matrix::zero();
         let force = Matrix::zero();
@@ -214,12 +217,12 @@ impl T3Element {
     }
 
     fn area(&self) -> f64 {
-        let n_0 = self.get_position(0);
-        let n_1 = self.get_position(1);
-        let n_2 = self.get_position(2);
+        let n_0 = *self.get_position(0);
+        let n_1 = *self.get_position(1);
+        let n_2 = *self.get_position(2);
         let n_10 = n_1 - n_0;
         let n_20 = n_2 - n_0;
-        n_10.x() * n_20.y() - n_10.y() * n_20.x()
+        n_10[(0, 0)] * n_20[(1, 0)] - n_10[(1, 0)] * n_20[(0, 0)]
     }
 }
 
@@ -236,9 +239,11 @@ impl Element2D<3> for T3Element {
     ) -> [[Matrix<2, 2>; 3]; 3] {
         let mut stiffness_matrices = [[Matrix::zero(); 3]; 3];
         let trial_fns = self.get_trial_functions();
-        let trial_grads = trial_fns.map(|tf| tf.gradient().into());
-        for (i, &(dNi_dx, dNi_dy)) in trial_grads.iter().enumerate() {
-            for (j, &(dNj_dx, dNj_dy)) in trial_grads.iter().enumerate() {
+        let trial_grads = trial_fns.map(|tf| tf.gradient());
+        for (i, &dNi) in trial_grads.iter().enumerate() {
+            for (j, &dNj) in trial_grads.iter().enumerate() {
+                let [[dNi_dx], [dNi_dy]] = dNi.into();
+                let [[dNj_dx], [dNj_dy]] = dNj.into();
                 let diff_i: Matrix<3, 2> = [
                     [dNi_dx,    0.0],
                     [   0.0, dNi_dy],
@@ -264,9 +269,9 @@ impl<'a> T3TrailFunction<'a> {
 
     #[allow(non_snake_case)]
     fn gradient(&self) -> Vector<2> {
-        let (x0, y0) = self.element.get_position(0).into();
-        let (x1, y1) = self.element.get_position(1).into();
-        let (x2, y2) = self.element.get_position(2).into();
+        let [[x0], [y0]] = (*self.element.get_position(0)).into();
+        let [[x1], [y1]] = (*self.element.get_position(1)).into();
+        let [[x2], [y2]] = (*self.element.get_position(2)).into();
         let area = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
         let dadx = (y2 - y0) / area;
         let dady = (x0 - x2) / area;

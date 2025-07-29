@@ -25,6 +25,12 @@ impl<const R: usize, const C: usize> From<[[f64; C]; R]> for Matrix<R, C> {
     }
 }
 
+impl<const R: usize, const C: usize> From<Matrix<R, C>> for [[f64; C]; R] {
+    fn from(matrix: Matrix<R, C>) -> Self {
+        matrix.values
+    }
+}
+
 
 impl<const R: usize, const C: usize> AddAssign<Matrix<R, C>> for Matrix<R, C> {
     fn add_assign(&mut self, rhs: Matrix<R, C>) {
@@ -40,7 +46,7 @@ impl<const R: usize, const C: usize> Add for Matrix<R, C> {
     type Output = Matrix<R, C>;
 
     fn add(mut self, rhs: Self) -> Self::Output {
-        self += &rhs;
+        self += rhs;
         self
     }
 }
@@ -59,7 +65,7 @@ impl<const R: usize, const C: usize> Sub for Matrix<R, C> {
     type Output = Self;
 
     fn sub(mut self, rhs: Self) -> Self::Output {
-        self -= &rhs;
+        self -= rhs;
         self
     }
 }
