@@ -1,3 +1,7 @@
+
+#[cfg(test)]
+mod test;
+
 use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
 
 #[derive(Debug, Clone, Copy)]
