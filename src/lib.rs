@@ -22,7 +22,7 @@ pub fn greet() {
 
 #[wasm_bindgen]
 pub fn main() {
-    let elasticity = plane_stress_matrix(30000.0, 10000.0, 0.3);
+    let elasticity = plane_stress_matrix(30000.0, 0.3);
     let nodes = [
         (0.0, 0.0),
         (1.0, 0.0),
@@ -99,13 +99,10 @@ fn create_stiffness_matrix(
     let mut global_stiffness = GlobalMatrix::zeros(size, size);
     for element in elements {
         let stiffness_matrices = element.get_stiffness_matrices(nodes, elasticity);
-        for (i, &node_i) in element.indices.iter().enumerate() {
-            for (j, &node_j) in element.indices.iter().enumerate() {
-                let stiffness_ij = stiffness_matrices[i][j];
-                let (i_gs, j_gs) = (2 * node_i, 2 * node_j);
-                
-                global_stiffness[node_i][node_j] += stiffness_ij;
-            }
+        for ((i, j), stiffness_ij) in stiffness_matrices {
+            let (i_gs, j_gs) = (2 * i, 2 * j);
+            
+            global_stiffness[i][j] += stiffness_ij;
         }
     }
     todo!();
@@ -132,8 +129,9 @@ fn flatten<const R: usize, const C: usize>(
 }
 
 #[allow(non_snake_case)]
-const fn plane_stress_matrix(E: f64, G: f64, nu: f64) -> Matrix<3,3> {
+const fn plane_stress_matrix(E: f64, nu: f64) -> Matrix<3,3> {
     let Ep = E / (1.0 - nu * nu);
+    let G = E / (2.0 * (1.0 + nu));
     let values = [
         [     Ep, Ep * nu, 0.0],
         [Ep * nu,      Ep, 0.0],
@@ -199,9 +197,8 @@ impl T3Element {
         &self,
         nodes: &[Node2D],
         elasticity: Matrix<3,3>
-    ) -> ([(usize, usize); 9], [Matrix<2, 2>; 9]) {
-        let mut stiffness_matrices = [Matrix::zero(); 9];
-        let mut indices = [(0, 0); 9];
+    ) -> Vec<((usize, usize), Matrix<2, 2>)> {
+        let mut stiffness_matrices = vec![];
         let trial_fns = self.get_trial_functions(nodes);
         let trial_grads = trial_fns.map(|tf| tf.gradient());
         for (i, &dNi) in trial_grads.iter().enumerate() {
@@ -217,8 +214,9 @@ impl T3Element {
                     [dNj_dx,    0.0, dNj_dy],
                     [   0.0, dNj_dy, dNj_dx],
                 ].into();
-                indices[3 * i + j] = (self.indices[i], self.indices[j]);
-                stiffness_matrices[3 * i + j] = diff_j * elasticity * diff_i;
+                let index = (self.indices[i], self.indices[j]);
+                let stiffness_matrix = diff_j * elasticity * diff_i;
+                stiffness_matrices.push((index, stiffness_matrix));
             }
         }
         stiffness_matrices
