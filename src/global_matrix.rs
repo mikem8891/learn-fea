@@ -1,4 +1,4 @@
-use std::ops::{Add, Index, IndexMut, Mul};
+use std::{ops::{Index, IndexMut, Mul}, range::Range};
 
 use crate::matrix::Matrix;
 
@@ -23,11 +23,11 @@ impl GlobalMatrix {
         matrix
     }
 
-    fn num_of_rows(&self) -> usize {
+    fn rows(&self) -> usize {
         self.values.len()
     }
 
-    fn num_of_cols(&self) -> usize {
+    fn cols(&self) -> usize {
         self.values[0].len()
     }
 

@@ -1,6 +1,6 @@
 mod utils;
 mod matrix;
-mod global_matrix;
+pub mod global_matrix;
 
 use matrix::*;
 use global_matrix::*;
@@ -29,28 +29,28 @@ pub fn main() {
         (0.0, 1.0),
         (1.0, 1.0),
     ].map(|p| Node2D::zero_at(p));
-    let element_node_indices = [
+    let elements = [
         [0, 1, 2],
         [1, 2, 3],
-    ];
-    let mut model = Fea2DStaticModel::new(&nodes);
-    model.create_stiffness_matrix(elasticity);
+    ].map(|i| T3Element::new(i));
+    let stiffness = create_stiffness_matrix(&nodes, &elements, elasticity);
+    let mut model = Fea2DStaticModel::new();
 
 }
 
 struct Fea2DStaticModel {
     nodes: Vec<Node2D>,
     elements: Vec<T3Element>,
-    stiffness: Option<GlobalMatrix>,
+    stiffness: GlobalMatrix,
 }
 
 impl Fea2DStaticModel {
 
-    fn new(nodes: &[Node2D]) -> Self {
+    fn new() -> Self {
         Fea2DStaticModel { 
-            nodes: nodes.into(), 
+            nodes: vec![], 
             elements: vec![], 
-            stiffness: None,
+            stiffness: GlobalMatrix::identity(0),
         }
     }
 
@@ -90,20 +90,25 @@ impl Fea2DStaticModel {
 
 }
 
-fn get_known_force_indices(nodes: &[Node2D]) -> Vec<usize> {
-    let mut indices = vec![];
-    for (i, node) in nodes.iter().enumerate() {
-        let [known_x, known_y] = &node.known;
-        match known_x {
-            KnownType::Force => indices.push(2 * i),
-            KnownType::Displacement => {},
-        }
-        match known_y {
-            KnownType::Force => indices.push(2 * i + 1),
-            KnownType::Displacement => {},
+fn create_stiffness_matrix(
+    nodes: &[Node2D],
+    elements: &[T3Element],
+    elasticity: Matrix<3, 3>
+) -> GlobalMatrix {
+    let size = 2 * nodes.len();
+    let mut global_stiffness = GlobalMatrix::zeros(size, size);
+    for element in elements {
+        let stiffness_matrices = element.get_stiffness_matrices(nodes, elasticity);
+        for (i, &node_i) in element.indices.iter().enumerate() {
+            for (j, &node_j) in element.indices.iter().enumerate() {
+                let stiffness_ij = stiffness_matrices[i][j];
+                let (i_gs, j_gs) = (2 * node_i, 2 * node_j);
+                
+                global_stiffness[node_i][node_j] += stiffness_ij;
+            }
         }
     }
-    indices
+    todo!();
 }
 
 fn flatten<const R: usize, const C: usize>(
@@ -176,8 +181,8 @@ impl T3Element {
         T3Element { indices }
     }
 
-    fn get_trial_functions(&self, model: Fea2DStaticModel) -> [T3TrailFunction; 3] {
-        let positions = [0, 1, 2].map(|i| model.nodes[self.indices[i]].position);
+    fn get_trial_functions(&self, nodes: &[Node2D]) -> [T3TrailFunction; 3] {
+        let positions = [0, 1, 2].map(|i| nodes[self.indices[i]].position);
         [
             T3TrailFunction { positions, index: 0 },
             T3TrailFunction { positions, index: 1 },
@@ -192,11 +197,12 @@ impl T3Element {
     #[allow(non_snake_case)]
     fn get_stiffness_matrices(
         &self,
-        model: Fea2DStaticModel,
+        nodes: &[Node2D],
         elasticity: Matrix<3,3>
-    ) -> [[Matrix<2, 2>; 3]; 3] {
-        let mut stiffness_matrices = [[Matrix::zero(); 3]; 3];
-        let trial_fns = self.get_trial_functions(model);
+    ) -> ([(usize, usize); 9], [Matrix<2, 2>; 9]) {
+        let mut stiffness_matrices = [Matrix::zero(); 9];
+        let mut indices = [(0, 0); 9];
+        let trial_fns = self.get_trial_functions(nodes);
         let trial_grads = trial_fns.map(|tf| tf.gradient());
         for (i, &dNi) in trial_grads.iter().enumerate() {
             for (j, &dNj) in trial_grads.iter().enumerate() {
@@ -211,7 +217,8 @@ impl T3Element {
                     [dNj_dx,    0.0, dNj_dy],
                     [   0.0, dNj_dy, dNj_dx],
                 ].into();
-                stiffness_matrices[i][j] = diff_j * elasticity * diff_i;
+                indices[3 * i + j] = (self.indices[i], self.indices[j]);
+                stiffness_matrices[3 * i + j] = diff_j * elasticity * diff_i;
             }
         }
         stiffness_matrices
