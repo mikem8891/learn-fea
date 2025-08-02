@@ -29,16 +29,25 @@ pub fn main() {
         (0.0, 1.0),
         (1.0, 1.0),
     ].map(|p| Node2D::zero_at(p));
+    let known_displacements = [0, 1];
+    let fixed_node = [KnownType::Displacement, KnownType::Displacement];
+    let forces = [
+        (2, [15.0, 0.0])
+    ].map(|(i, [fx, fy])| (i, [[fx], [fy]].into()));
     let elements = [
         [0, 1, 2],
         [1, 2, 3],
     ].map(|i| T3Element::new(i));
-    let stiffness = create_stiffness_matrix(&nodes, &elements, elasticity);
-    let mut model = Fea2DStaticModel::new();
-
+    let mut model = Fea2DStaticModel::new(elasticity);
+    model.add_nodes(&nodes);
+    known_displacements.iter().for_each(|&i| *model.known_at(i) = fixed_node);
+    forces.iter().for_each(|&(i, f)| *model.force_at(i) = f);
+    model.add_elements(&elements);
+    
 }
 
 struct Fea2DStaticModel {
+    elasticity: Matrix<3,3>,
     nodes: Vec<Node2D>,
     elements: Vec<T3Element>,
     stiffness: GlobalMatrix,
@@ -46,86 +55,54 @@ struct Fea2DStaticModel {
 
 impl Fea2DStaticModel {
 
-    fn new() -> Self {
+    fn new(elasticity: Matrix<3,3>) -> Self {
         Fea2DStaticModel { 
+            elasticity,
             nodes: vec![], 
             elements: vec![], 
             stiffness: GlobalMatrix::identity(0),
         }
     }
 
-    /// TODO: allow indexing into sub matrices
-    fn create_stiffness_matrix(
-        &self, 
-        elasticity: Matrix<3, 3>
-    ) -> Vec<Vec<f64>> {
-        todo!();
-        /* 
-        const ZERO_2X2: Matrix<2, 2> = Matrix::<2, 2>::zero();
-        let size = 2 * self.nodes.len();
-        let mut global_stiffness = vec![vec![Matrix::zero(); size]; size];
-        for element_node_indices in self.nil_for_elements.iter() {
-            let element: E = self.get_element(&element_node_indices);
-            let stiffness_matrices = element.get_stiffness_matrices(elasticity);
-            for (i, &node_i) in element_node_indices.iter().enumerate() {
-                for (j, &node_j) in element_node_indices.iter().enumerate() {
-                    let stiffness_ij = stiffness_matrices[i][j];
-                    global_stiffness[node_i][node_j] += stiffness_ij;
+    pub fn add_nodes(&mut self, nodes: &[Node2D]) {
+        self.nodes.extend_from_slice(nodes);
+    }
+
+    pub fn add_elements(&mut self, elements: &[T3Element]) {
+        self.elements.extend_from_slice(elements);
+        self.create_stiffness_matrix();
+    }
+
+    pub fn known_at(&mut self, index: usize) -> &mut [KnownType; 2] {
+        &mut self.nodes[index].known
+    }
+
+    pub fn force_at(&mut self, index: usize) -> &mut Matrix<2, 1> {
+        &mut self.nodes[index].force
+    }
+
+    fn create_stiffness_matrix(&mut self) {
+        let size = 2 * &self.nodes.len();
+        let mut global_stiffness = GlobalMatrix::zeros(size, size);
+        for element in &self.elements {
+            let stiffnesses = element.get_stiffness_matrices(&self.nodes, self.elasticity);
+            for ((i, j), stiffness_ij) in stiffnesses {
+                let (i_gs, j_gs) = (2 * i, 2 * j);
+                for k in 0..(stiffness_ij.rows()) {
+                    for l in 0..(stiffness_ij.cols()) {
+                        let (m, n) = (i_gs + k, j_gs + l);
+                        global_stiffness[(m, n)] += stiffness_ij[(i, j)]
+                    }
                 }
             }
         }
-        let global_stiffness = flatten(global_stiffness);
-        global_stiffness
-        */
-    } 
-
-    fn set_stiffness_matrix(
-        &mut self, 
-        elasticity: Matrix<3, 3>
-    ) {
-        let global_stiffness = self.create_stiffness_matrix(elasticity);
+        self.stiffness = global_stiffness;
+    }
+    pub fn step_guass_seidel(&mut self) {
         todo!();
-        //self.stiffness = Some(GlobalMatrix::new(&global_stiffness));
+        let displacements = vec![];
+        let forces = vec![];
     }
-
-}
-
-fn create_stiffness_matrix(
-    nodes: &[Node2D],
-    elements: &[T3Element],
-    elasticity: Matrix<3, 3>
-) -> GlobalMatrix {
-    let size = 2 * nodes.len();
-    let mut global_stiffness = GlobalMatrix::zeros(size, size);
-    for element in elements {
-        let stiffness_matrices = element.get_stiffness_matrices(nodes, elasticity);
-        for ((i, j), stiffness_ij) in stiffness_matrices {
-            let (i_gs, j_gs) = (2 * i, 2 * j);
-            
-            global_stiffness[i][j] += stiffness_ij;
-        }
-    }
-    todo!();
-}
-
-fn flatten<const R: usize, const C: usize>(
-    mut block_mat: Vec<Vec<Matrix<R, C>>>
-) -> Vec<Vec<f64>> {
-    let mut global_mat = vec![vec![]; R];
-    for block_i  in 0..block_mat.len() {
-        let block_row = &mut block_mat[block_i];
-        for block_j in 0..block_row.len() {
-            let matrix = block_row[block_j];
-            for mat_i in 0..R {
-                for mat_j in 0..C {
-                    global_mat[R * block_i + mat_i]
-                        .push(matrix[(mat_i, mat_j)]);
-                }
-            }
-        }
-        *block_row = vec![];
-    }
-    global_mat
 }
 
 #[allow(non_snake_case)]
@@ -169,6 +146,7 @@ impl Node2D {
     }
 }
 
+#[derive(Debug,Clone, Copy)]
 struct T3Element {
     /** indices of the nodes from the FEA model */
     indices: [usize; 3],

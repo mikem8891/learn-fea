@@ -17,6 +17,12 @@ impl<const R: usize, const C: usize> Matrix<R, C> {
     pub const fn new(values: [[f64; C]; R]) -> Self {
         Matrix {values}
     }
+    pub const fn rows(&self) -> usize {
+        R
+    }
+    pub const fn cols(&self) -> usize {
+        C
+    }
 }
 
 impl<const R: usize, const C: usize> From<[[f64; C]; R]> for Matrix<R, C> {

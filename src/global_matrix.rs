@@ -1,4 +1,4 @@
-use std::{ops::{Index, IndexMut, Mul}, range::Range};
+use std::ops::{Index, IndexMut};
 
 use crate::matrix::Matrix;
 
