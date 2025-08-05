@@ -1,4 +1,9 @@
 struct RefMatrix<'a> {
-    values: &'a mut f64
+    values: Vec<Vec<&'a mut f64>>
 }
 
+macro_rules! impl_matrix_math_for {
+    (mat:$ident) => {
+        
+    }
+}
