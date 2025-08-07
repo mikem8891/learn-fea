@@ -1,9 +1,12 @@
 mod utils;
 mod matrix;
+mod ref_matrix;
+mod macros;
 pub mod global_matrix;
 
 use matrix::*;
 use global_matrix::*;
+use ref_matrix::*;
 
 use std::vec;
 
@@ -100,8 +103,8 @@ impl Fea2DStaticModel {
     }
     pub fn step_guass_seidel(&mut self) {
         todo!();
-        let displacements = vec![];
-        let forces = vec![];
+        //let displacements = vec![];
+        //let forces = vec![];
     }
 }
 
