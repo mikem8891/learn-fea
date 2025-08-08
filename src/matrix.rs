@@ -2,7 +2,7 @@
 #[cfg(test)]
 mod test;
 
-use std::{ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign}, path::Iter};
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign}; 
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix<const R: usize, const C: usize> {

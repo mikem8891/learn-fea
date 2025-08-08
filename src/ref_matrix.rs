@@ -1,6 +1,6 @@
 
 use std::ops::{Index, IndexMut, Mul};
-use crate::macros;
+//use crate::macros;
 
 struct RefVector<'a> {
     values: Box<[&'a mut f64]>
