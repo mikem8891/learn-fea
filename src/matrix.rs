@@ -2,7 +2,7 @@
 #[cfg(test)]
 mod test;
 
-use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
+use std::{ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign}, path::Iter};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix<const R: usize, const C: usize> {
@@ -108,3 +108,33 @@ impl<const R: usize, const C: usize> IndexMut<(usize, usize)> for Matrix<R, C> {
         &mut self.values[row][col]
     }
 }
+
+#[derive(Debug, Clone, Copy)]
+pub struct Vector<const R: usize> {
+    values: [f64; R],
+}
+
+impl<const R: usize> Vector<R> {
+    pub const fn new(values: [f64; R]) -> Self {
+        Vector { values }
+    }
+
+    pub const fn zero() -> Self {
+        Vector { values: [0.0; R] }
+    }
+
+    pub const fn len(&self) -> usize {
+        R
+    }
+}
+
+impl<'a, const R: usize> IntoIterator for &'a mut Vector<R> {
+    type Item = &'a mut f64;
+
+    type IntoIter = std::slice::IterMut<'a, f64>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.values.iter_mut()
+    }
+}
+

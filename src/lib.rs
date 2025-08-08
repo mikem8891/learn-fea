@@ -101,11 +101,22 @@ impl Fea2DStaticModel {
         }
         self.stiffness = global_stiffness;
     }
+
     pub fn step_guass_seidel(&mut self) {
+
         todo!();
         //let displacements = vec![];
         //let forces = vec![];
     }
+
+    fn get_ref_vectors(&mut self) -> (RefVector, RefVector) {
+        let mut displacements = vec![];
+        let mut forces = vec![];
+        for node in self.nodes.iter_mut() {
+            displacements.push(node.displacement);
+        }
+    }
+
 }
 
 #[allow(non_snake_case)]
@@ -119,8 +130,6 @@ const fn plane_stress_matrix(E: f64, nu: f64) -> Matrix<3,3> {
     ];
     Matrix::new(values)
 }
-
-type Vector<const D: usize> = Matrix<D, 1>;
 
 type Point2D = Vector<2>;
 
@@ -140,10 +149,10 @@ struct Node2D {
 
 impl Node2D {
     fn zero_at((x, y): (f64, f64)) -> Self {
-        let position = [[x], [y]]; 
-        let position = position.into();
-        let displacement = Matrix::zero();
-        let force = Matrix::zero();
+        let position = [x, y]; 
+        let position = Vector::new(position);
+        let displacement = Vector::zero();
+        let force = Vector::zero();
         let known = [KnownType::Force, KnownType::Force];
         Node2D {position, displacement, force, known}
     }
