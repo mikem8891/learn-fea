@@ -97,24 +97,28 @@ impl Fea2DStaticModel {
     }
 
     pub fn step_guass_seidel(&mut self) {
-        let mut displacements = vec![];
-        let mut forces = vec![];
-        let mut knowns = vec![];
-        for node in &self.nodes {
-            displacements.push(node.displacement[0]);
-            displacements.push(node.displacement[1]);
-            forces.push(node.force[0]);
-            forces.push(node.force[1]);
-            knowns.push(node.known[0]);
-            knowns.push(node.known[1]);
-        }
-        let displacements = heap::Vector::new(displacements);
-        let forces = heap::Vector::new(forces);
-        todo!();
-        for i in 0..self.nodes.len() {
+        let len = self.nodes.len();
+        let mut u = vec![0.0; len];
+        let mut f = vec![0.0; len];
+        let mut known_u = vec![];
+        let mut known_f = vec![];
+        for i in 0..len {
+            let node = self.nodes[i];
             for j in 0..2 {
-                *self.nodes.displacement[j] = displacements[2*i + j];
-                *self.nodes.force[j] = forces[2*i + j];
+                u[2*i + j] = node.displacement[j];
+                f[2*i + j] = node.force[j];
+            }
+        }
+        let u = heap::Vector::new(u);
+        let f = heap::Vector::new(f);
+        
+        todo!();
+        
+        for i in 0..len {
+            let node = &mut self.nodes[i];
+            for j in 0..2 {
+                *node.displacement = u[2*i + j];
+                *node.force        = f[2*i + j];
             }
         }
     }
