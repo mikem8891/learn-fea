@@ -1,18 +1,19 @@
 use std::ops::{Index, IndexMut};
 
-use crate::matrix::Matrix;
+use crate::stack;
+use crate::heap::Vector;
 
 #[derive(Debug, Clone)]
-pub struct GlobalMatrix {
-    values: Box<[Box<[f64]>]>,
+pub struct Matrix {
+    rows: Box<[Vector]>,
 }
 
-impl GlobalMatrix {
+impl Matrix {
 
     pub fn zeros(rows: usize, cols: usize) -> Self {
-        let row = vec![0.0; cols].into_boxed_slice();
-        let values = vec![row; rows].into_boxed_slice();
-        GlobalMatrix { values }
+        let row = Vector::zeros(cols);
+        let rows = vec![row; rows].into_boxed_slice();
+        Matrix { rows }
     }
 
     pub fn identity(size: usize) -> Self {
@@ -24,20 +25,20 @@ impl GlobalMatrix {
     }
 
     fn rows(&self) -> usize {
-        self.values.len()
+        self.rows.len()
     }
 
     fn cols(&self) -> usize {
-        self.values[0].len()
+        self.rows[0].len()
     }
 
     fn size(&self) -> (usize, usize) {
-        (self.values.len(), self.values[0].len())
+        (self.rows.len(), self.rows[0].len())
     }
 
     pub fn add_assign_with<const R: usize, const C: usize> (
         &mut self, 
-        matrix: Matrix<R, C>,
+        matrix: stack::Matrix<R, C>,
         dest: (usize, usize)
     ) {
         for i in 0..R {
@@ -48,16 +49,30 @@ impl GlobalMatrix {
     }
 }
 
-impl Index<(usize, usize)> for GlobalMatrix {
+impl Index<(usize, usize)> for Matrix {
     type Output = f64;
 
     fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
-        &self.values[row][col]
+        &self[row][col]
     }
 }
 
-impl IndexMut<(usize, usize)> for GlobalMatrix {
+impl Index<usize> for Matrix {
+    type Output = Vector;
+
+    fn index(&self, row: usize) -> &Self::Output {
+        &self.rows[row]
+    }
+}
+
+impl IndexMut<(usize, usize)> for Matrix {
     fn index_mut(&mut self, (row, col): (usize, usize)) -> &mut Self::Output {
-        &mut self.values[row][col]
+        &mut self[row][col]
+    }
+}
+
+impl IndexMut<usize> for Matrix {
+    fn index_mut(&mut self, row: usize) -> &mut Self::Output {
+        &mut self.rows[row]
     }
 }

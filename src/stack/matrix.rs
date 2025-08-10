@@ -2,20 +2,22 @@
 #[cfg(test)]
 mod test;
 
-use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign}; 
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
+use crate::stack::Vector;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix<const R: usize, const C: usize> {
-    values: [[f64; C]; R]
+    rows: [Vector<C>; R]
 }
 
 impl<const R: usize, const C: usize> Matrix<R, C> {
-    pub const fn zero() -> Self {
-        let values = [[0.0; C]; R];
-        Matrix {values}
+    pub const fn zeros() -> Self {
+        let rows = [Vector::zeros(); R];
+        Matrix {rows}
     }
-    pub const fn new(values: [[f64; C]; R]) -> Self {
-        Matrix {values}
+    pub fn new(values: [[f64; C]; R]) -> Self {
+        let rows = values.map(|r| Vector::new(r));
+        Matrix {rows}
     }
     pub const fn rows(&self) -> usize {
         R
@@ -27,16 +29,9 @@ impl<const R: usize, const C: usize> Matrix<R, C> {
 
 impl<const R: usize, const C: usize> From<[[f64; C]; R]> for Matrix<R, C> {
     fn from(values: [[f64; C]; R]) -> Self {
-        Matrix {values}
+        Matrix::new(values)
     }
 }
-
-impl<const R: usize, const C: usize> From<Matrix<R, C>> for [[f64; C]; R] {
-    fn from(matrix: Matrix<R, C>) -> Self {
-        matrix.values
-    }
-}
-
 
 impl<const R: usize, const C: usize> AddAssign<Matrix<R, C>> for Matrix<R, C> {
     fn add_assign(&mut self, rhs: Matrix<R, C>) {
@@ -76,12 +71,24 @@ impl<const R: usize, const C: usize> Sub for Matrix<R, C> {
     }
 }
 
+impl<const R: usize, const C: usize> Mul<Vector<C>> for Matrix<R, C> {
+    type Output = Vector<R>;
+
+    fn mul(self, vec: Vector<C>) -> Self::Output {
+        let mut prod = Vector::zeros();
+        for (prod, row) in (&mut prod).into_iter().zip(self.rows) {
+            *prod = row * vec;
+        }
+        prod
+    }
+}
+
 impl<const I: usize, const J: usize, const K: usize> 
     Mul<Matrix<J, K>> for Matrix<I, J> {
     type Output = Matrix<I, K>;
 
     fn mul(self, rhs: Matrix<J, K>) -> Self::Output {
-        let mut prod = Matrix::zero();
+        let mut prod = Matrix::zeros();
         for i in 0..I {
             for k in 0..K {
                 let mut prod_ik = 0.0;
@@ -99,42 +106,14 @@ impl<const R: usize, const C: usize> Index<(usize, usize)> for Matrix<R, C> {
     type Output = f64;
 
     fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
-        &self.values[row][col]
+        &self.rows[row][col]
     }
 }
 
 impl<const R: usize, const C: usize> IndexMut<(usize, usize)> for Matrix<R, C> {
     fn index_mut(&mut self, (row, col): (usize, usize)) -> &mut Self::Output {
-        &mut self.values[row][col]
+        &mut self.rows[row][col]
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct Vector<const R: usize> {
-    values: [f64; R],
-}
-
-impl<const R: usize> Vector<R> {
-    pub const fn new(values: [f64; R]) -> Self {
-        Vector { values }
-    }
-
-    pub const fn zero() -> Self {
-        Vector { values: [0.0; R] }
-    }
-
-    pub const fn len(&self) -> usize {
-        R
-    }
-}
-
-impl<'a, const R: usize> IntoIterator for &'a mut Vector<R> {
-    type Item = &'a mut f64;
-
-    type IntoIter = std::slice::IterMut<'a, f64>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.values.iter_mut()
-    }
-}
 
