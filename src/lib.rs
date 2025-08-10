@@ -108,6 +108,15 @@ impl Fea2DStaticModel {
             knowns.push(node.known[0]);
             knowns.push(node.known[1]);
         }
+        let displacements = heap::Vector::new(displacements);
+        let forces = heap::Vector::new(forces);
+        todo!();
+        for i in 0..self.nodes.len() {
+            for j in 0..2 {
+                *self.nodes.displacement[j] = displacements[2*i + j];
+                *self.nodes.force[j] = forces[2*i + j];
+            }
+        }
     }
 
 
