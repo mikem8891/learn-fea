@@ -122,7 +122,7 @@ impl Fea2DStaticModel {
         for _step in steps {
             for i in known_f {
                 let k_i = self.stiffness[i];
-                
+                u[i] = (f[i] - k_i * u) / k_i + u[i];
             }
         }
         
