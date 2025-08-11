@@ -119,7 +119,7 @@ impl Fea2DStaticModel {
         let u = heap::Vector::new(u);
         let f = heap::Vector::new(f);
         
-        for _step in steps {
+        for _step in 0..steps {
             for i in known_f {
                 let k_i = self.stiffness[i];
                 u[i] = (f[i] - k_i * u) / k_i + u[i];
