@@ -41,6 +41,7 @@ pub fn main() {
     forces.iter().for_each(|&(i, f)| *model.force_at(i) = f);
     model.add_elements(&elements);
     model.step_guass_seidel(10);
+    alert(format!("u_3x={}", model.nodes[2].displacement[0]));
 }
 
 struct Fea2DStaticModel {
