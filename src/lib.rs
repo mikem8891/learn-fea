@@ -96,7 +96,7 @@ impl Fea2DStaticModel {
         self.stiffness = global_stiffness;
     }
 
-    pub fn step_guass_seidel(&mut self) {
+    pub fn step_guass_seidel(&mut self, steps: usize) {
         let len = self.nodes.len();
         let mut u = vec![0.0; len];
         let mut f = vec![0.0; len];
@@ -118,6 +118,18 @@ impl Fea2DStaticModel {
         }
         let u = heap::Vector::new(u);
         let f = heap::Vector::new(f);
+        
+        for _step in steps {
+            for i in known_f {
+                let k_i = self.stiffness[i];
+                
+            }
+        }
+        
+        for i in known_u {
+            let k_i = self.stiffness[i];
+            f[i] = k_i * u;
+        }
         
         todo!();
         
