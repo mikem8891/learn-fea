@@ -105,9 +105,9 @@ impl Fea2DStaticModel {
         for i in 0..len {
             let node = self.nodes[i];
             for j in 0..2 {
-                let idx = 2*i + j;
-                u[2*i + j] = node.displacement[j];
-                f[2*i + j] = node.force[j];
+                let idx = 2 * i + j;
+                u[idx] = node.displacement[j];
+                f[idx] = node.force[j];
                 match node.known {
                     KnownType::Displacement =>
                         known_u.push(idx),
@@ -118,26 +118,21 @@ impl Fea2DStaticModel {
         }
         let u = heap::Vector::new(u);
         let f = heap::Vector::new(f);
-        
         for _step in 0..steps {
             for i in known_f {
                 let k_i = self.stiffness[i];
                 u[i] = (f[i] - k_i * u) / k_i + u[i];
             }
         }
-        
         for i in known_u {
             let k_i = self.stiffness[i];
             f[i] = k_i * u;
         }
-        
-        todo!();
-        
         for i in 0..len {
             let node = &mut self.nodes[i];
             for j in 0..2 {
-                *node.displacement = u[2*i + j];
-                *node.force        = f[2*i + j];
+                *node.displacement = u[2 * i + j];
+                *node.force        = f[2 * i + j];
             }
         }
     }
