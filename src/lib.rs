@@ -40,7 +40,7 @@ pub fn main() {
     known_displacements.iter().for_each(|&i| *model.known_at(i) = fixed_node);
     forces.iter().for_each(|&(i, f)| *model.force_at(i) = f);
     model.add_elements(&elements);
-    
+    model.step_guass_seidel(10);
 }
 
 struct Fea2DStaticModel {
@@ -136,8 +136,6 @@ impl Fea2DStaticModel {
             }
         }
     }
-
-
 }
 
 #[allow(non_snake_case)]
