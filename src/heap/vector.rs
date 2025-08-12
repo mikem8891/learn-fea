@@ -1,4 +1,4 @@
-use std::ops::{Index, IndexMut};
+use std::ops::{Index, IndexMut, Mul};
 
 
 #[derive(Debug, Clone)]
@@ -17,6 +17,22 @@ impl Vector {
     }
 
     pub const fn len(&self) -> usize { self.comp.len() }
+
+    pub fn dot(&self, rhs: &Self) -> f64 {
+        let mut prod = 0.0;
+        for (&l, &r) in self.comp.iter().zip(rhs.comp.iter()) {
+            prod += l * r;
+        }
+        prod
+    }
+}
+
+impl Mul for &Vector {
+    type Output = f64;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        self.dot(rhs)
+    }
 }
 
 impl Index<usize> for Vector {

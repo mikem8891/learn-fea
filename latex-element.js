@@ -2,7 +2,7 @@
     "use strict";
 
     const SHEET = new CSSStyleSheet();
-    SHEET.replaceSync("math{font-family: inherit;}");
+    SHEET.replaceSync("math{font-family: inherit; overflow-x: auto; overflow-y: hidden;}");
     
     function updateMathMLOutput(aElement) {
       var tex = aElement.textContent,

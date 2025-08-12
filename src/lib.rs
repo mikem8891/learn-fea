@@ -41,7 +41,7 @@ pub fn main() {
     forces.iter().for_each(|&(i, f)| *model.force_at(i) = f);
     model.add_elements(&elements);
     model.step_guass_seidel(10);
-    alert(format!("u_3x={}", model.nodes[2].displacement[0]));
+    alert(&format!("u_3x={}", model.nodes[2].displacement[0]));
 }
 
 struct Fea2DStaticModel {
@@ -109,7 +109,7 @@ impl Fea2DStaticModel {
                 let idx = 2 * i + j;
                 u[idx] = node.displacement[j];
                 f[idx] = node.force[j];
-                match node.known {
+                match node.known[j] {
                     KnownType::Displacement =>
                         known_u.push(idx),
                     KnownType::Force =>
@@ -117,23 +117,23 @@ impl Fea2DStaticModel {
                 }
             }
         }
-        let u = heap::Vector::new(u);
-        let f = heap::Vector::new(f);
+        let mut u = heap::Vector::new(u.into_boxed_slice());
+        let mut f = heap::Vector::new(f.into_boxed_slice());
         for _step in 0..steps {
-            for i in known_f {
-                let k_i = self.stiffness[i];
-                u[i] = (f[i] - k_i * u) / k_i + u[i];
+            for &i in &known_f {
+                let k_i = &self.stiffness[i];
+                u[i] = (f[i] - k_i * &u) / k_i[i] + u[i];
             }
         }
         for i in known_u {
-            let k_i = self.stiffness[i];
-            f[i] = k_i * u;
+            let k_i = &self.stiffness[i];
+            f[i] = k_i * &u;
         }
         for i in 0..len {
             let node = &mut self.nodes[i];
             for j in 0..2 {
-                *node.displacement = u[2 * i + j];
-                *node.force        = f[2 * i + j];
+                node.displacement[j] = u[2 * i + j];
+                node.force[j]        = f[2 * i + j];
             }
         }
     }
