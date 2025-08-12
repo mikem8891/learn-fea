@@ -6,3 +6,5 @@ const wasm = await initWasm();
 
 
 wasm.greet();
+
+wasm.main();

@@ -40,8 +40,9 @@ pub fn main() {
     known_displacements.iter().for_each(|&i| *model.known_at(i) = fixed_node);
     forces.iter().for_each(|&(i, f)| *model.force_at(i) = f);
     model.add_elements(&elements);
-    model.step_guass_seidel(10);
-    alert(&format!("u_3x={}", model.nodes[2].displacement[0]));
+    model.step_guass_seidel(100);
+    alert(&format!("u_3 = {:?}", model.nodes[2].displacement));
+    alert(&format!("u_4 = {:?}", model.nodes[3].displacement));
 }
 
 struct Fea2DStaticModel {
@@ -89,7 +90,7 @@ impl Fea2DStaticModel {
                 for k in 0..(stiffness_ij.rows()) {
                     for l in 0..(stiffness_ij.cols()) {
                         let (m, n) = (i_gs + k, j_gs + l);
-                        global_stiffness[(m, n)] += stiffness_ij[(i, j)]
+                        global_stiffness[(m, n)] += stiffness_ij[(k, l)]
                     }
                 }
             }
@@ -99,8 +100,8 @@ impl Fea2DStaticModel {
 
     pub fn step_guass_seidel(&mut self, steps: usize) {
         let len = self.nodes.len();
-        let mut u = vec![0.0; len];
-        let mut f = vec![0.0; len];
+        let mut u = vec![0.0; 2 * len];
+        let mut f = vec![0.0; 2 * len];
         let mut known_u = vec![];
         let mut known_f = vec![];
         for i in 0..len {
