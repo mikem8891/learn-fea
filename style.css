@@ -44,3 +44,16 @@ a:hover {
 la-tex {
   font-family: Fira Math;
 }
+div.sidebar{
+  float: left;
+  width: var(--sidebar-width);
+  height: inherit;
+  overflow: auto;
+}
+div.main-content{
+  float: left;
+  width: calc(100vw - var(--sidebar-width));
+  height: inherit;
+  overflow: auto;
+  box-shadow: 0px 0px 10px inset;
+}
