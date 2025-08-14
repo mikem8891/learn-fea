@@ -102,6 +102,15 @@ impl<const I: usize, const J: usize, const K: usize>
     }
 }
 
+impl<const R: usize, const C: usize> Mul<f64> for Matrix<R, C>{
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        let prod = std::array::from_fn(|i| (self.rows[i] * rhs).into());
+        Matrix::new(prod)
+    }
+}
+
 impl<const R: usize, const C: usize> Index<(usize, usize)> for Matrix<R, C> {
     type Output = f64;
 

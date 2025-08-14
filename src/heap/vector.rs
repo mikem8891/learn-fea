@@ -1,4 +1,4 @@
-use std::ops::{Index, IndexMut, Mul};
+use std::{fmt::Display, ops::{Index, IndexMut, Mul}};
 
 
 #[derive(Debug, Clone)]
@@ -46,5 +46,11 @@ impl Index<usize> for Vector {
 impl IndexMut<usize> for Vector {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.comp[index]
+    }
+}
+
+impl Display for Vector {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self.comp)
     }
 }

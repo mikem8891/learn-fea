@@ -41,8 +41,9 @@ pub fn main() {
     forces.iter().for_each(|&(i, f)| *model.force_at(i) = f);
     model.add_elements(&elements);
     model.step_guass_seidel(100);
-    alert(&format!("u_3 = {:?}", model.nodes[2].displacement));
-    alert(&format!("u_4 = {:?}", model.nodes[3].displacement));
+    let u3 = model.nodes[2].displacement;
+    let u4 = model.nodes[3].displacement;
+    alert(&format!(" u_3 = {u3}\n u_4 = {u4}"));
 }
 
 struct Fea2DStaticModel {
@@ -204,6 +205,13 @@ impl T3Element {
         &self.indices
     }
 
+    fn area(&self, nodes: &[Node2D]) -> f64 {
+        let [x0, y0] = nodes[self.indices[0]].position.into();
+        let [x1, y1] = nodes[self.indices[1]].position.into();
+        let [x2, y2] = nodes[self.indices[2]].position.into();
+        ((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)).abs() / 2.0
+    }
+
     #[allow(non_snake_case)]
     fn get_stiffness_matrices(
         &self,
@@ -227,7 +235,8 @@ impl T3Element {
                     [   0.0, dNj_dy, dNj_dx],
                 ].into();
                 let index = (self.indices[i], self.indices[j]);
-                let stiffness_matrix = diff_j * elasticity * diff_i;
+                let area = self.area(nodes);
+                let stiffness_matrix = diff_j * elasticity * diff_i * area;
                 stiffness_matrices.push((index, stiffness_matrix));
             }
         }

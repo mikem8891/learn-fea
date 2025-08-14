@@ -5,6 +5,6 @@ import initWasm, {} from "./pkg/learn_fea.js";
 const wasm = await initWasm();
 
 
-wasm.greet();
+//wasm.greet();
 
 wasm.main();

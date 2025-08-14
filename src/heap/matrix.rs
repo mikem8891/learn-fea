@@ -1,3 +1,4 @@
+use std::fmt::{write, Display};
 use std::ops::{Index, IndexMut};
 
 use crate::stack;
@@ -74,5 +75,15 @@ impl IndexMut<(usize, usize)> for Matrix {
 impl IndexMut<usize> for Matrix {
     fn index_mut(&mut self, row: usize) -> &mut Self::Output {
         &mut self.rows[row]
+    }
+}
+
+impl Display for Matrix {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[");
+        for row in &self.rows {
+            write!(f, "{}, ", row);
+        }
+        write!(f, "]")
     }
 }

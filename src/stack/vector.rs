@@ -1,4 +1,4 @@
-use std::ops::{Add, Index, IndexMut, Mul};
+use std::{fmt::Display, ops::{Add, Index, IndexMut, Mul}};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vector<const N: usize> {
@@ -54,6 +54,15 @@ impl<const N:usize> Mul for Vector<N>{
     }
 }
 
+impl<const N:usize> Mul<f64> for Vector<N>{
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        let prod = std::array::from_fn(|i| self[i] * rhs);
+        Vector::new(prod)
+    }
+}
+
 impl<const N: usize> IntoIterator for Vector<N> {
     type Item = f64;
 
@@ -85,5 +94,11 @@ impl<const N: usize> Index<usize> for Vector<N> {
 impl<const N: usize> IndexMut<usize> for Vector<N> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.comp[index]
+    }
+}
+
+impl<const N: usize> Display for Vector<N> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self.comp)
     }
 }
