@@ -43,7 +43,7 @@ pub fn main() {
     model.step_guass_seidel(100);
     let u3 = model.nodes[2].displacement;
     let u4 = model.nodes[3].displacement;
-    alert(&format!(" u_3 = {u3}\n u_4 = {u4}"));
+    log!(&format!(" u_3 = {u3}\n u_4 = {u4}"));
 }
 
 struct Fea2DStaticModel {
