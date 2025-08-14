@@ -44,6 +44,9 @@ a:hover {
 la-tex {
   font-family: Fira Math;
 }
+:root {
+  --sidebar-width: 300px;
+}
 div.sidebar{
   float: left;
   width: var(--sidebar-width);
