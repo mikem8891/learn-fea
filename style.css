@@ -65,8 +65,8 @@ div.sidebar{
   border-color: Gainsboro;
   border-style: solid;
   border-width: 0.1em;
-  margin-top: 1em;
   padding-left: 1em;
+  padding-top:  1em;
 }
 div.main-content{
   float: left;
