@@ -55,6 +55,7 @@ la-tex {
 }
 div.main {
   height: 100vh;
+  width:  100vw;
 }
 div.sidebar{
   float: left;
