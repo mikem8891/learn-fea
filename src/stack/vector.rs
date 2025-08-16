@@ -25,6 +25,12 @@ impl<const N: usize> Vector<N> {
     }
 }
 
+impl Vector<2> {
+    pub fn cross(&self, rhs: Self) -> f64 {
+        self[0] * rhs[1] - self[1] * rhs[0]
+    }
+}
+
 impl<const N: usize> From<[f64; N]> for Vector<N> {
     fn from(comp: [f64; N]) -> Self {
         Vector::new(comp)
