@@ -1,4 +1,4 @@
-use std::fmt::{write, Display};
+use std::fmt::Display;
 use std::ops::{Index, IndexMut};
 
 use crate::stack;

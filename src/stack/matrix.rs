@@ -33,6 +33,12 @@ impl<const R: usize, const C: usize> From<[[f64; C]; R]> for Matrix<R, C> {
     }
 }
 
+impl<const R: usize, const C: usize> From<[Vector<C>; R]> for Matrix<R, C> {
+    fn from(rows: [Vector<C>; R]) -> Self {
+        Matrix { rows }
+    }
+}
+
 impl<const R: usize, const C: usize> AddAssign<Matrix<R, C>> for Matrix<R, C> {
     fn add_assign(&mut self, rhs: Matrix<R, C>) {
         for row in 0..R {

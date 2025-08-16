@@ -31,4 +31,4 @@ if (document.readyState === 'loading') {
 
 //wasm.greet();
 
-//wasm.main();
+wasm.main();

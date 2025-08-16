@@ -1,3 +1,4 @@
+#[macro_use]
 mod utils;
 pub mod stack;
 pub mod heap;
@@ -43,7 +44,7 @@ pub fn main() {
     model.step_guass_seidel(100);
     let u3 = model.nodes[2].displacement;
     let u4 = model.nodes[3].displacement;
-    log!(&format!(" u_3 = {u3}\n u_4 = {u4}"));
+    log!(" u_3 = {u3}\n u_4 = {u4}");
 }
 
 struct Fea2DStaticModel {
@@ -206,10 +207,15 @@ impl T3Element {
     }
 
     fn area(&self, nodes: &[Node2D]) -> f64 {
-        let [x0, y0] = nodes[self.indices[0]].position.into();
-        let [x1, y1] = nodes[self.indices[1]].position.into();
-        let [x2, y2] = nodes[self.indices[2]].position.into();
-        ((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)).abs() / 2.0
+        use std::array;
+        let pos: [_; 3] = array::from_fn(|i| nodes[self.indices[i]].position);
+        let d1 = pos[1] - pos[0];
+        let d2 = pos[2] - pos[0];
+        d1.cross(d2) / 2.0
+//        let [x0, y0] = nodes[self.indices[0]].position.into();
+//        let [x1, y1] = nodes[self.indices[1]].position.into();
+//        let [x2, y2] = nodes[self.indices[2]].position.into();
+//        ((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)).abs() / 2.0
     }
 
     #[allow(non_snake_case)]
@@ -235,7 +241,7 @@ impl T3Element {
                     [   0.0, dNj_dy, dNj_dx],
                 ].into();
                 let index = (self.indices[i], self.indices[j]);
-                let area = self.area(nodes);
+                let area = self.area(nodes).abs();
                 let stiffness_matrix = diff_j * elasticity * diff_i * area;
                 stiffness_matrices.push((index, stiffness_matrix));
             }
@@ -254,21 +260,20 @@ impl T3TrailFunction {
 
     #[allow(non_snake_case)]
     fn gradient(&self) -> stack::Vector<2> {
-        let [x0, y0] = self.positions[0].into();
-        let [x1, y1] = self.positions[1].into();
-        let [x2, y2] = self.positions[2].into();
-        let area = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
-        let dadx = (y2 - y0) / area;
-        let dady = (x0 - x2) / area;
-        let dbdx = (y0 - y1) / area;
-        let dbdy = (x1 - x0) / area;
-        assert_ne!(area, 0.0, "nodes are colinear");
+        use stack::Vector;
+        use std::array;
+        let pos: [_; 3] = array::from_fn(|i| self.positions[i]);
+        let [delta_1, delta_2] = array::from_fn(|i| pos[i + 1] - pos[0]);
+        let cross = delta_1.cross(delta_2);
+        assert_ne!(cross, 0.0, "nodes are colinear");
+        let grad_alpha = Vector::new([ delta_2.y(), -delta_2.x()]) / cross;
+        let grad_beta  = Vector::new([-delta_1.y(),  delta_1.x()]) / cross;
         let (dNda, dNdb) = match self.index {
             0 => (-1.0, -1.0),
             1 => ( 1.0,  0.0),
             2 => ( 0.0,  1.0),
             _ => unreachable!(),
         };
-        [dNda * dadx + dNdb * dbdx, dNda * dady + dNdb * dbdy].into()
+        dNda * grad_alpha + dNdb * grad_beta
     }
 }
