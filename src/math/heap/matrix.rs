@@ -1,8 +1,8 @@
 use std::fmt::Display;
 use std::ops::{Index, IndexMut};
 
-use crate::stack;
-use crate::heap::Vector;
+use crate::math::stack;
+use crate::math::heap::Vector;
 
 #[derive(Debug, Clone)]
 pub struct Matrix {
@@ -25,17 +25,17 @@ impl Matrix {
         matrix
     }
 
-    fn rows(&self) -> usize {
-        self.rows.len()
-    }
-
-    fn cols(&self) -> usize {
-        self.rows[0].len()
-    }
-
-    fn size(&self) -> (usize, usize) {
-        (self.rows.len(), self.rows[0].len())
-    }
+//    fn rows(&self) -> usize {
+//        self.rows.len()
+//    }
+//
+//    fn cols(&self) -> usize {
+//        self.rows[0].len()
+//    }
+//
+//    fn size(&self) -> (usize, usize) {
+//        (self.rows.len(), self.rows[0].len())
+//    }
 
     pub fn add_assign_with<const R: usize, const C: usize> (
         &mut self, 
@@ -80,9 +80,9 @@ impl IndexMut<usize> for Matrix {
 
 impl Display for Matrix {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[");
+        write!(f, "[").unwrap();
         for row in &self.rows {
-            write!(f, "{}, ", row);
+            write!(f, "{}, ", row).unwrap();
         }
         write!(f, "]")
     }

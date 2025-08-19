@@ -3,7 +3,7 @@
 mod test;
 
 use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
-use crate::stack::Vector;
+use crate::math::stack::Vector;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix<const R: usize, const C: usize> {

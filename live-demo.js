@@ -7,10 +7,9 @@ import * as doc from "./modules/doc.js";
 const wasm = await initWasm();
 
 
-let model = {
-  elasticity: 30_000
-};
+let model = {};
 
+/** @todo set 'change' events  */
 function setup() {
   let elasticity = doc.getInputElementById("elasticity");
   let poissonsRatio = doc.getInputElementById("poissons-ratio");
@@ -21,6 +20,7 @@ function setup() {
   let forceY = doc.getInputElementById("force-y");
   let displacementX = doc.getInputElementById("displacement-x");
   let displacementY = doc.getInputElementById("displacement-y");
+
 }
 
 if (document.readyState === 'loading') {
@@ -28,7 +28,5 @@ if (document.readyState === 'loading') {
 } else {
   setup();
 }
-
-//wasm.greet();
 
 wasm.main();
