@@ -1,10 +1,9 @@
 
+pub mod test;
+
 use std::vec;
 use crate::math::*;
 
-use wasm_bindgen::prelude::*;
-
-#[wasm_bindgen]
 pub struct Lin2DStaticModel {
     elasticity: stack::Matrix<3,3>,
     nodes: Vec<Node2D>,
@@ -59,7 +58,7 @@ impl Lin2DStaticModel {
                 }
             }
         }
-        log!("{:?}", &global_stiffness);
+//        log!("{:?}", &global_stiffness);
         self.stiffness = global_stiffness;
     }
 

@@ -16,12 +16,8 @@ impl<const N: usize> Vector<N> {
 
     pub const fn len(&self) -> usize { N }
 
-    pub fn dot(&self, rhs: Self) -> f64 {
-        let mut prod = 0.0;
-        for (l, r) in self.into_iter().zip(rhs) {
-            prod += l * r;
-        }
-        prod
+    pub fn dot(self, rhs: Self) -> f64 {
+        std::iter::zip(self, rhs).map(|(l, r)| l * r).sum()
     }
 }
 
@@ -98,8 +94,7 @@ impl<const N:usize> Div<f64> for Vector<N>{
     type Output = Self;
 
     fn div(self, rhs: f64) -> Self::Output {
-        let quot = std::array::from_fn(|i| self[i] / rhs);
-        Vector::new(quot)
+        self * rhs.recip()
     }
 }
 
@@ -110,6 +105,16 @@ impl<const N: usize> IntoIterator for Vector<N> {
 
     fn into_iter(self) -> Self::IntoIter {
         self.comp.into_iter()
+    }
+}
+
+impl<'a, const N: usize> IntoIterator for &'a Vector<N> {
+    type Item = &'a f64;
+
+    type IntoIter = std::slice::Iter<'a, f64>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.comp.iter()
     }
 }
 

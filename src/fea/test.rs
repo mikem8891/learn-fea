@@ -1,15 +1,9 @@
-#![no_main]
-#[macro_use]
-mod utils;
-pub mod math;
-pub mod fea;
 
-use fea::*;
+use crate::math;
 
-use wasm_bindgen::prelude::*;
+use super::*;
 
-#[wasm_bindgen]
-pub fn main() {
+pub fn square() {
     let elasticity = math::stack::Matrix::new({
         let E = 30_000.0;
         let nu = 0.3;
@@ -48,11 +42,9 @@ pub fn main() {
     let u_1 = *model.displacement_at(1);
     let u_2 = *model.displacement_at(2);
     let u_3 = *model.displacement_at(3);
-    log!(" u_0 = [{:.5}, {:.5}]", u_0.x(), u_0.y());
-    log!(" u_1 = [{:.5}, {:.5}]", u_1.x(), u_1.y());
-    log!(" u_2 = [{:.5}, {:.5}]", u_2.x(), u_2.y());
-    log!(" u_3 = [{:.5}, {:.5}]", u_3.x(), u_3.y());
-
-    fea::test::square();
+    assert_eq!(format!("[{:.5}, {:.5}]", u_0.x(), u_0.y()), "[0.00000, 0.00000]");
+    assert_eq!(format!("[{:.5}, {:.5}]", u_1.x(), u_1.y()), "[0.00113, 0.00000]");
+    assert_eq!(format!("[{:.5}, {:.5}]", u_2.x(), u_2.y()), "[0.00100, 0.00027]");
+    assert_eq!(format!("[{:.5}, {:.5}]", u_3.x(), u_3.y()), "[0.00213, 0.00027]");
+    log!("fea::test::square ... passed");
 }
-
