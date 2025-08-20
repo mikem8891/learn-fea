@@ -108,16 +108,6 @@ impl<const N: usize> IntoIterator for Vector<N> {
     }
 }
 
-impl<'a, const N: usize> IntoIterator for &'a Vector<N> {
-    type Item = &'a f64;
-
-    type IntoIter = std::slice::Iter<'a, f64>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.comp.iter()
-    }
-}
-
 impl<'a, const N: usize> IntoIterator for &'a mut Vector<N> {
     type Item = &'a mut f64;
 
