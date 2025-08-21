@@ -256,8 +256,8 @@ the boundary.  </p>
 the element.</p>
 
 <la-tex display="block">
-  \mathbf{f}_{bj} + \mathbf{f}_{sj} - \sum_i \mathbf{K}_{ij}\mathbf{u}_i = 
-  \sum_i M_{ij} \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}
+  \mathbf{f}_{bj} + \mathbf{f}_{sj} - \sum_i \mathbf{K}_{ji}\mathbf{u}_i = 
+  \sum_i M_{ji} \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}
 </la-tex>
 <br>
 <la-tex display="block">
@@ -269,13 +269,13 @@ the element.</p>
 </la-tex>
 <br>
 <la-tex display="block">
-  \mathbf{K}_{ij}\mathbf{u}_i = 
+  \mathbf{K}_{ji}\mathbf{u}_i = 
     \iint_D \mathbf{B}^T_j \mathbf{\sigma} \, \mathrm{dA} =
     \left( \iint_D \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i \mathrm{dA} \right) \mathbf{u}_i
 </la-tex>
 <br>
 <la-tex display="block">
-  M_{ij} = \iint_D \rho N_i N_j \mathrm{dA}
+  M_{ji} = \iint_D \rho N_i N_j \mathrm{dA}
 </la-tex>
 
 <p>Where <la-tex>\mathbf{f}_{s}</la-tex> is the force due to the stress,
@@ -321,7 +321,7 @@ the element.</p>
   <la-tex>M_{33}</la-tex>. Now we look at <la-tex>i=1</la-tex> and 
   <la-tex>j=2</la-tex>.</p>
   <la-tex display="block">
-    M_{12} = \rho \iint_D N_1 N_2 \text{ dA}
+    M_{21} = \rho \iint_D N_1 N_2 \text{ dA}
   </la-tex><br>
   <la-tex display="block">
     = \rho \int_0^1 \int_0^{1-x} (1-x-y)x \text{ dy dx}
@@ -354,7 +354,7 @@ the element.</p>
   \end{bmatrix}
   </la-tex><br>
   <la-tex display="block">
-    \mathbf K_12 = \mathbf K_21^T =
+    \mathbf K_21 = \mathbf K_12^T =
     \frac 1 2
     \begin{bmatrix}
       -E' & -E'\nu \\ 
@@ -362,7 +362,7 @@ the element.</p>
     \end{bmatrix}
   </la-tex><br>
   <la-tex display="block">
-    \mathbf K_13 = \mathbf K_31^T =
+    \mathbf K_31 = \mathbf K_13^T =
     \frac 1 2
     \begin{bmatrix}
       -G      & -G \\ 
@@ -370,7 +370,7 @@ the element.</p>
     \end{bmatrix}
   </la-tex><br>
   <la-tex display="block">
-    \mathbf K_23 = \mathbf K_32^T =
+    \mathbf K_32 = \mathbf K_23^T =
     \frac 1 2
     \begin{bmatrix}
       0      & G \\ 
@@ -543,7 +543,7 @@ These two constraints can be summarized by the two equations below.
 <p>With these constraints, Newton's second law on the element simplifies as 
 follows.</p>
 <la-tex display="block">
-  \sum_i \mathbf{K}_{ij}\mathbf{u}_i = 
+  \sum_i \mathbf{K}_{ji}\mathbf{u}_i = 
   \mathbf{f}_{sj}
 </la-tex>
 <p>This is a set of linear equations, two equations for each node.  Unfortunately 
@@ -595,19 +595,19 @@ these methods.</p>
   </p>
   <la-tex display="block">
     \mathbf{K}_{11} \mathbf{u}_1 +
-    \mathbf{K}_{21} \mathbf{u}_2 +
-    \mathbf{K}_{31} \mathbf{u}_3 =
+    \mathbf{K}_{12} \mathbf{u}_2 +
+    \mathbf{K}_{13} \mathbf{u}_3 =
     \mathbf{f}_{s1}
   </la-tex><br>
   <la-tex display="block">
-    \mathbf{K}_{12} \mathbf{u}_1 +
+    \mathbf{K}_{21} \mathbf{u}_1 +
     \mathbf{K}_{22} \mathbf{u}_2 +
-    \mathbf{K}_{32} \mathbf{u}_3 =
+    \mathbf{K}_{23} \mathbf{u}_3 =
     \mathbf{f}_{s2}
   </la-tex><br>
   <la-tex display="block">
-    \mathbf{K}_{13} \mathbf{u}_1 +
-    \mathbf{K}_{23} \mathbf{u}_2 +
+    \mathbf{K}_{31} \mathbf{u}_1 +
+    \mathbf{K}_{32} \mathbf{u}_2 +
     \mathbf{K}_{33} \mathbf{u}_3 =
     \mathbf{f}_{s3}
   </la-tex>
@@ -669,7 +669,7 @@ these methods.</p>
   <p>Now we can calculate the forces at Nodes 1 and 2.</p>
   <la-tex display="block">
     \mathbf{f}_{s1} =
-    \mathbf{K}_{31} \mathbf{u}_3
+    \mathbf{K}_{13} \mathbf{u}_3
   </la-tex><br>
   <la-tex display="block">
     \begin{pmatrix}
@@ -706,39 +706,9 @@ these methods.</p>
   </la-tex><br>
   <la-tex display="block">
     \mathbf{f}_{s2} =
-    \mathbf{K}_{32} \mathbf{u}_3
+    \mathbf{K}_{23} \mathbf{u}_3
   </la-tex><br>
-  <!--
-  <la-tex display="block">
-    \begin{pmatrix}
-      f_{sx2} \\ 
-      f_{sy2}
-    \end{pmatrix} =
-    \frac 1 2
-    \begin{bmatrix}
-      0 & E'\nu \\ 
-      G & 0
-    \end{bmatrix}
-    \begin{pmatrix}
-      u_{x3} \\ 
-      u_{y3}
-    \end{pmatrix}
-  </la-tex><br>
-  <la-tex display="block">
-    \begin{pmatrix}
-      f_{sx2} \\ 
-      f_{sy2}
-    \end{pmatrix} =
-    \begin{bmatrix}
-      0 & 4500 \\ 
-      5000 & 0
-    \end{bmatrix}
-    \begin{pmatrix}
-      0.003 \\ 
-      0
-    \end{pmatrix}
-  </la-tex><br> 
-  -->
+
   <la-tex display="block">
     f_{sx2} = 0, \:
     f_{sy2} = 15
@@ -823,7 +793,7 @@ these methods.</p>
   over the domains of all the elements.
 </p>
 <la-tex display="block">
-  \mathbf{K}_{ij} = 
+  \mathbf{K}_{ji} = 
   \iint_D \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i \mathrm{dA} = 
   \sum_k \iint_{D_k} \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i \mathrm{dA}
 </la-tex>
@@ -850,29 +820,29 @@ these methods.</p>
   <p>Below is our new system of equations.</p>
   <la-tex display="block">
     \mathbf{K}_{11} \mathbf{u}_1 +
-    \mathbf{K}_{21} \mathbf{u}_2 +
-    \mathbf{K}_{31} \mathbf{u}_3 +
-    \mathbf{K}_{41} \mathbf{u}_4 =
+    \mathbf{K}_{12} \mathbf{u}_2 +
+    \mathbf{K}_{13} \mathbf{u}_3 +
+    \mathbf{K}_{14} \mathbf{u}_4 =
     \mathbf{f}_{s1}
   </la-tex><br>
   <la-tex display="block">
-    \mathbf{K}_{12} \mathbf{u}_1 +
+    \mathbf{K}_{21} \mathbf{u}_1 +
     \mathbf{K}_{22} \mathbf{u}_2 +
-    \mathbf{K}_{32} \mathbf{u}_3 +
-    \mathbf{K}_{42} \mathbf{u}_4 =
+    \mathbf{K}_{23} \mathbf{u}_3 +
+    \mathbf{K}_{24} \mathbf{u}_4 =
     \mathbf{f}_{s2}
   </la-tex><br>
   <la-tex display="block">
-    \mathbf{K}_{13} \mathbf{u}_1 +
-    \mathbf{K}_{23} \mathbf{u}_2 +
+    \mathbf{K}_{31} \mathbf{u}_1 +
+    \mathbf{K}_{32} \mathbf{u}_2 +
     \mathbf{K}_{33} \mathbf{u}_3 +
-    \mathbf{K}_{43} \mathbf{u}_4 =
+    \mathbf{K}_{34} \mathbf{u}_4 =
     \mathbf{f}_{s3}
   </la-tex><br>
   <la-tex display="block">
-    \mathbf{K}_{14} \mathbf{u}_1 +
-    \mathbf{K}_{24} \mathbf{u}_2 +
-    \mathbf{K}_{34} \mathbf{u}_3 +
+    \mathbf{K}_{41} \mathbf{u}_1 +
+    \mathbf{K}_{42} \mathbf{u}_2 +
+    \mathbf{K}_{43} \mathbf{u}_3 +
     \mathbf{K}_{44} \mathbf{u}_4 =
     \mathbf{f}_{s4}
   </la-tex>
@@ -881,11 +851,11 @@ these methods.</p>
       = \mathbf {0}</la-tex>.</p>
   <la-tex display="block">
     \mathbf{K}_{33} \mathbf{u}_3 +
-    \mathbf{K}_{43} \mathbf{u}_4 =
+    \mathbf{K}_{34} \mathbf{u}_4 =
     \mathbf{f}_{s3}
   </la-tex><br>
   <la-tex display="block">
-    \mathbf{K}_{34} \mathbf{u}_3 +
+    \mathbf{K}_{43} \mathbf{u}_3 +
     \mathbf{K}_{44} \mathbf{u}_4 =
     \mathbf{f}_{s4}
   </la-tex><br>
@@ -915,8 +885,8 @@ these methods.</p>
     \mathbf{K}^T_43 =
     \frac 1 2
     \begin{bmatrix}
-      -E'     &  -G\\ 
-      -E'\nu  &  -G
+      -E' &  -E'\nu \\ 
+      -G  &  -G
     \end{bmatrix}
   </la-tex><br>
   <la-tex display="block">
