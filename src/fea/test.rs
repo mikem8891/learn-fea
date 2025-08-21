@@ -27,21 +27,26 @@ pub fn square() {
         (2, [-15.0,   5.0]),
         (3, [ 25.0,  15.0])
     ];
+    let mut model = Lin2DStaticModel::new(elasticity);
+    model.add_nodes(&nodes);
     let elements = [
         [0, 1, 2],
         [1, 2, 3],
-    ].map(|i| T3Element::new(i));
-    let mut model = Lin2DStaticModel::new(elasticity);
-    model.add_nodes(&nodes);
-    *model.known_at(0) = [KnownType::Displacement, KnownType::Displacement];
-    *model.known_at(1) = [KnownType::Force, KnownType::Displacement];
-    forces.iter().for_each(|&(i, f)| *model.force_at(i) = f.into());
+    ];
+    let nodes = model.get_nodes();
+    let mut nodes = nodes.borrow_mut();
+    nodes[0].known = [KnownType::Displacement, KnownType::Displacement];
+    nodes[1].known = [KnownType::Force, KnownType::Displacement];
+    forces.iter().for_each(|&(i, f)| nodes[i].force = f.into());
+    std::mem::drop(nodes);
     model.add_elements(&elements);
     model.step_guass_seidel(100);
-    let u_0 = *model.displacement_at(0);
-    let u_1 = *model.displacement_at(1);
-    let u_2 = *model.displacement_at(2);
-    let u_3 = *model.displacement_at(3);
+    let nodes = model.get_nodes();
+    let nodes = nodes.borrow();
+    let u_0 = nodes[0].displacement;
+    let u_1 = nodes[1].displacement;
+    let u_2 = nodes[2].displacement;
+    let u_3 = nodes[3].displacement;
     assert_eq!(format!("[{:.5}, {:.5}]", u_0.x(), u_0.y()), "[0.00000, 0.00000]");
     assert_eq!(format!("[{:.5}, {:.5}]", u_1.x(), u_1.y()), "[0.00113, 0.00000]");
     assert_eq!(format!("[{:.5}, {:.5}]", u_2.x(), u_2.y()), "[0.00100, 0.00027]");

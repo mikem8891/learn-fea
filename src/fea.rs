@@ -1,12 +1,12 @@
 
 pub mod test;
 
-use std::vec;
+use std::{cell::RefCell, rc::Rc, vec};
 use crate::math::*;
 
 pub struct Lin2DStaticModel {
     elasticity: stack::Matrix<3,3>,
-    nodes: Vec<Node2D>,
+    nodes: Rc<RefCell<Vec<Node2D>>>,
     elements: Vec<T3Element>,
     stiffness: heap::Matrix,
 }
@@ -16,38 +16,32 @@ impl Lin2DStaticModel {
     pub fn new(elasticity: stack::Matrix<3,3>) -> Self {
         Lin2DStaticModel { 
             elasticity,
-            nodes: vec![], 
+            nodes: Rc::new(RefCell::new(vec![])), 
             elements: vec![], 
             stiffness: heap::Matrix::identity(0),
         }
     }
 
     pub fn add_nodes(&mut self, nodes: &[Node2D]) {
-        self.nodes.extend_from_slice(nodes);
+        self.nodes.borrow_mut().extend_from_slice(nodes);
     }
 
-    pub fn add_elements(&mut self, elements: &[T3Element]) {
-        self.elements.extend_from_slice(elements);
+    pub fn add_elements(&mut self, elements: &[[usize;3]]) {
+        for &indices in elements {
+            self.elements.push(T3Element::new(self.get_nodes(), indices));
+        }
         self.create_stiffness_matrix();
     }
 
-    pub fn known_at(&mut self, index: usize) -> &mut [KnownType; 2] {
-        &mut self.nodes[index].known
-    }
-
-    pub fn displacement_at(&mut self, index: usize) -> &mut stack::Vector<2> {
-        &mut self.nodes[index].displacement
-    }
-
-    pub fn force_at(&mut self, index: usize) -> &mut stack::Vector<2> {
-        &mut self.nodes[index].force
+    pub fn get_nodes(&self) -> Rc<RefCell<Vec<Node2D>>> {
+        Rc::clone(&self.nodes)
     }
 
     fn create_stiffness_matrix(&mut self) {
-        let size = 2 * &self.nodes.len();
+        let size = 2 * self.nodes.borrow().len();
         let mut global_stiffness = heap::Matrix::zeros(size, size);
         for element in &self.elements {
-            let stiffnesses = element.get_stiffness_matrices(&self.nodes, self.elasticity);
+            let stiffnesses = element.get_stiffness_matrices(self.elasticity);
             for ((i, j), stiffness_ij) in stiffnesses {
                 let (i_gs, j_gs) = (2 * j, 2 * i);
                 for k in 0..(stiffness_ij.rows()) {
@@ -58,18 +52,18 @@ impl Lin2DStaticModel {
                 }
             }
         }
-//        log!("{:?}", &global_stiffness);
         self.stiffness = global_stiffness;
     }
 
     pub fn step_guass_seidel(&mut self, steps: usize) {
-        let len = self.nodes.len();
+        let mut nodes = self.nodes.borrow_mut();
+        let len = nodes.len();
         let mut u = vec![0.0; 2 * len];
         let mut f = vec![0.0; 2 * len];
         let mut known_u = vec![];
         let mut known_f = vec![];
         for i in 0..len {
-            let node = self.nodes[i];
+            let node = nodes[i];
             for j in 0..2 {
                 let idx = 2 * i + j;
                 u[idx] = node.displacement[j];
@@ -95,7 +89,7 @@ impl Lin2DStaticModel {
             f[i] = k_i * &u;
         }
         for i in 0..len {
-            let node = &mut self.nodes[i];
+            let node = &mut nodes[i];
             for j in 0..2 {
                 node.displacement[j] = u[2 * i + j];
                 node.force[j]        = f[2 * i + j];
@@ -125,9 +119,9 @@ pub enum KnownType {
 #[derive(Debug, Clone, Copy)]
 pub struct Node2D {
     position: Point2D,
-    displacement: stack::Vector<2>, 
-    force: stack::Vector<2>,
-    known: [KnownType; 2],
+    pub displacement: stack::Vector<2>, 
+    pub force: stack::Vector<2>,
+    pub known: [KnownType; 2],
 }
 
 impl Node2D {
@@ -142,15 +136,15 @@ impl Node2D {
     }
 }
 
-#[derive(Debug,Clone, Copy)]
+#[derive(Debug)]
 pub struct T3Element {
-    /** indices of the nodes from the FEA model */
+    nodes: Rc<RefCell<Vec<Node2D>>>,
     indices: [usize; 3],
 }
 
 impl T3Element {
-    pub const fn new(indices: [usize; 3]) -> Self {
-        T3Element { indices }
+    pub const fn new(nodes: Rc<RefCell<Vec<Node2D>>>, indices: [usize; 3]) -> Self {
+        T3Element { nodes, indices }
     }
 
     fn get_trial_functions(&self, nodes: &[Node2D]) -> [T3TrailFunction; 3] {
@@ -161,10 +155,6 @@ impl T3Element {
             T3TrailFunction { positions, index: 2 },
         ]
     }
-
-//    const fn get_indices(&self) -> &[usize; 3] {
-//        &self.indices
-//    }
 
     fn area(&self, nodes: &[Node2D]) -> f64 {
         use std::array;
@@ -177,11 +167,11 @@ impl T3Element {
     #[allow(non_snake_case)]
     fn get_stiffness_matrices(
         &self,
-        nodes: &[Node2D],
         elasticity: stack::Matrix<3,3>
     ) -> Vec<((usize, usize), stack::Matrix<2, 2>)> {
+        let nodes = self.nodes.borrow();
         let mut stiffness_matrices = vec![];
-        let trial_fns = self.get_trial_functions(nodes);
+        let trial_fns = self.get_trial_functions(&nodes);
         let trial_grads = trial_fns.map(|tf| tf.gradient());
         for (i, &dNi) in trial_grads.iter().enumerate() {
             for (j, &dNj) in trial_grads.iter().enumerate() {
@@ -197,7 +187,7 @@ impl T3Element {
                     [   0.0, dNj_dy, dNj_dx],
                 ].into();
                 let index = (self.indices[i], self.indices[j]);
-                let area = self.area(nodes).abs();
+                let area = self.area(&nodes).abs();
                 let stiffness_matrix = diff_j * elasticity * diff_i * area;
                 stiffness_matrices.push((index, stiffness_matrix));
             }
