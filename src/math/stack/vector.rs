@@ -1,4 +1,4 @@
-use std::{fmt::Display, ops::{Add, Div, Index, IndexMut, Mul, Sub}};
+use std::{fmt::Display, ops::{Add, AddAssign, Div, Index, IndexMut, Mul, Sub}};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vector<const N: usize> {
@@ -51,6 +51,13 @@ impl<const N:usize> Add for Vector<N> {
     fn add(self, rhs: Self) -> Self::Output {
         let sum = std::array::from_fn(|i| self[i] + rhs[i]);
         Vector::new(sum)
+    }
+}
+impl<const N:usize> AddAssign for Vector<N> {
+    fn add_assign(&mut self, rhs: Self) {
+        for i in 0..N {
+            self[i] += rhs[i];
+        }
     }
 }
 

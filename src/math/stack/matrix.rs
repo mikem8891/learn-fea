@@ -2,7 +2,7 @@
 #[cfg(test)]
 mod test;
 
-use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, Index, IndexMut, Mul, Sub, SubAssign};
 use crate::math::stack::Vector;
 
 #[derive(Debug, Clone, Copy)]
@@ -25,11 +25,39 @@ impl<const R: usize, const C: usize> Matrix<R, C> {
     pub const fn cols(&self) -> usize {
         C
     }
+    pub fn transpose(&self) -> Matrix<C, R> {
+        let mut transpose = Matrix::zeros();
+        for i in 0..R {
+            for j in 0..C {
+                transpose[(j, i)] = self[(i, j)];
+            }
+        }
+        transpose
+    }
+}
+
+impl Matrix<2, 2> {
+    pub fn inv(&self) -> Matrix<2, 2> {
+        let [[a, b], [c, d]] = (*self).into();
+        let det = a * d - b * c;
+        Matrix::new([[d, -b], [-c, a]]) / det
+    }
+
+    pub fn det(&self) -> f64 {
+        let [[a, b], [c, d]] = (*self).into();
+        a * d - b * c
+    }
 }
 
 impl<const R: usize, const C: usize> From<[[f64; C]; R]> for Matrix<R, C> {
     fn from(values: [[f64; C]; R]) -> Self {
         Matrix::new(values)
+    }
+}
+
+impl<const R: usize, const C: usize> From<Matrix<R, C>> for [[f64; C]; R] {
+    fn from(mat: Matrix<R, C>) -> Self {
+        mat.rows.map(|r| r.into())
     }
 }
 
@@ -112,8 +140,15 @@ impl<const R: usize, const C: usize> Mul<f64> for Matrix<R, C>{
     type Output = Self;
 
     fn mul(self, rhs: f64) -> Self::Output {
-        let prod = std::array::from_fn(|i| (self.rows[i] * rhs).into());
-        Matrix::new(prod)
+        self.rows.map(|r| r * rhs).into()
+    }
+}
+
+impl<const R: usize, const C: usize> Div<f64> for Matrix<R, C>{
+    type Output = Matrix<R, C>;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        self * rhs.recip()
     }
 }
 

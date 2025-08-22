@@ -2,7 +2,7 @@
 pub mod test;
 
 use std::{cell::RefCell, rc::Rc, vec};
-use crate::math::*;
+use crate::math::{stack::Matrix, *};
 
 pub struct Lin2DStaticModel {
     elasticity: stack::Matrix<3,3>,
@@ -147,18 +147,54 @@ impl T3Element {
         T3Element { nodes, indices }
     }
 
-    fn get_trial_functions(&self, nodes: &[Node2D]) -> [T3TrailFunction; 3] {
-        let positions = [0, 1, 2].map(|i| nodes[self.indices[i]].position);
-        [
-            T3TrailFunction { positions, index: 0 },
-            T3TrailFunction { positions, index: 1 },
-            T3TrailFunction { positions, index: 2 },
-        ]
+    fn pos(&self) -> [Point2D; 3] {
+        let nodes = self.nodes.borrow();
+        std::array::from_fn(|i| nodes[self.indices[i]].position)
     }
 
-    fn area(&self, nodes: &[Node2D]) -> f64 {
-        use std::array;
-        let pos: [_; 3] = array::from_fn(|i| nodes[self.indices[i]].position);
+    fn get_trial_functions(&self) -> [T3TrailFunction; 3] {
+        let pos = self.pos();
+        [
+            T3TrailFunction {positions: pos},
+            T3TrailFunction {positions: [pos[1], pos[2], pos[0]]},
+            T3TrailFunction {positions: [pos[2], pos[0], pos[1]]},
+        ]
+    }
+    fn get_strain_ops(&self) -> [Matrix<3, 2>; 3] {
+        let trial_fns = self.get_trial_functions();
+        let trial_grads = trial_fns.map(|tf| tf.gradient());
+        trial_grads.map(|grad_N|
+            [
+                [grad_N.x(),        0.0],
+                [       0.0, grad_N.y()],
+                [grad_N.y(), grad_N.x()],
+            ].into())
+    }
+
+    fn get_stress_and_strain_ops(&self) -> 
+    ([Matrix<2, 3>;3], [Matrix<3, 2>;3]) {
+        let strain_ops = self.get_strain_ops();
+        let stress_ops = strain_ops.map(|s| s.transpose());
+        (stress_ops, strain_ops)
+    }
+
+    fn get_strain(&self) -> stack::Vector<3> {
+        let mut strain = stack::Vector::zeros();
+        let nodes = self.nodes.borrow();
+        let strain_ops = self.get_strain_ops();
+        let displacements = self.indices.map(|i| nodes[i].displacement);
+        for (N, u) in std::iter::zip(strain_ops, displacements) {
+            strain += N * u;
+        }
+        strain
+    }
+
+    fn get_stress(&self, elasticity: stack::Matrix<3,3>) -> stack::Vector<3> {
+        elasticity * self.get_strain()
+    }
+
+    fn area(&self) -> f64 {
+        let pos = self.pos();
         let d1 = pos[1] - pos[0];
         let d2 = pos[2] - pos[0];
         d1.cross(d2) / 2.0
@@ -169,27 +205,14 @@ impl T3Element {
         &self,
         elasticity: stack::Matrix<3,3>
     ) -> Vec<((usize, usize), stack::Matrix<2, 2>)> {
-        let nodes = self.nodes.borrow();
         let mut stiffness_matrices = vec![];
-        let trial_fns = self.get_trial_functions(&nodes);
-        let trial_grads = trial_fns.map(|tf| tf.gradient());
-        for (i, &dNi) in trial_grads.iter().enumerate() {
-            for (j, &dNj) in trial_grads.iter().enumerate() {
-                let [dNi_dx, dNi_dy] = dNi.into();
-                let [dNj_dx, dNj_dy] = dNj.into();
-                let diff_i: stack::Matrix<3, 2> = [
-                    [dNi_dx,    0.0],
-                    [   0.0, dNi_dy],
-                    [dNi_dy, dNi_dx],
-                ].into();
-                let diff_j: stack::Matrix<2, 3> = [
-                    [dNj_dx,    0.0, dNj_dy],
-                    [   0.0, dNj_dy, dNj_dx],
-                ].into();
+        let (stress_ops, strain_ops) = self.get_stress_and_strain_ops();
+        for (i, &strain_op) in strain_ops.iter().enumerate() {
+            for (j, &stress_op) in stress_ops.iter().enumerate() {
                 let index = (self.indices[i], self.indices[j]);
-                let area = self.area(&nodes).abs();
-                let stiffness_matrix = diff_j * elasticity * diff_i * area;
-                stiffness_matrices.push((index, stiffness_matrix));
+                let area = self.area().abs();
+                let stiffness_mat = stress_op * elasticity * strain_op * area;
+                stiffness_matrices.push((index, stiffness_mat));
             }
         }
         stiffness_matrices
@@ -198,28 +221,18 @@ impl T3Element {
 
 struct T3TrailFunction {
     positions: [Point2D; 3],
-    /** index (0, 1, 2) of the trial function */
-    index: u8, 
 }
 
 impl T3TrailFunction {
 
     #[allow(non_snake_case)]
     fn gradient(&self) -> stack::Vector<2> {
-        use stack::Vector;
-        use std::array;
-        let pos: [_; 3] = array::from_fn(|i| self.positions[i]);
-        let [delta_1, delta_2] = array::from_fn(|i| pos[i + 1] - pos[0]);
-        let cross = delta_1.cross(delta_2);
-        assert_ne!(cross, 0.0, "nodes are colinear");
-        let grad_alpha = Vector::new([ delta_2.y(), -delta_2.x()]) / cross;
-        let grad_beta  = Vector::new([-delta_1.y(),  delta_1.x()]) / cross;
-        let (dNda, dNdb) = match self.index {
-            0 => (-1.0, -1.0),
-            1 => ( 1.0,  0.0),
-            2 => ( 0.0,  1.0),
-            _ => unreachable!(),
-        };
-        dNda * grad_alpha + dNdb * grad_beta
+        let pos = &self.positions;
+        let [[da_dx, da_dy], [db_dx, db_dy]] = stack::Matrix::new([
+            [pos[1].x() - pos[0].x(), pos[2].x() - pos[0].x()],
+            [pos[1].y() - pos[0].y(), pos[2].y() - pos[0].y()],
+        ]).inv().into();
+        let (dN_da, dN_db) = (-1.0, -1.0);
+        [dN_da * da_dx + dN_db * db_dx, dN_da * da_dy + dN_db * db_dy].into()
     }
 }
