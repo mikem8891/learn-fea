@@ -22,6 +22,51 @@ export function main() {
     wasm.main();
 }
 
+/**
+ * @param {number} e
+ * @param {number} nu
+ * @param {number} g
+ * @returns {Lin2DStaticModel}
+ */
+export function init_fea(e, nu, g) {
+    const ret = wasm.init_fea(e, nu, g);
+    return Lin2DStaticModel.__wrap(ret);
+}
+
+const Lin2DStaticModelFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_lin2dstaticmodel_free(ptr >>> 0, 1));
+
+export class Lin2DStaticModel {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(Lin2DStaticModel.prototype);
+        obj.__wbg_ptr = ptr;
+        Lin2DStaticModelFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        Lin2DStaticModelFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_lin2dstaticmodel_free(ptr, 0);
+    }
+    /**
+     * @returns {number}
+     */
+    nodes_len() {
+        const ret = wasm.lin2dstaticmodel_nodes_len(this.__wbg_ptr);
+        return ret >>> 0;
+    }
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {

@@ -3,7 +3,9 @@ pub mod test;
 
 use std::{cell::RefCell, rc::Rc, vec};
 use crate::math::{stack::Matrix, *};
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 pub struct Lin2DStaticModel {
     elasticity: stack::Matrix<3,3>,
     nodes: Rc<RefCell<Vec<Node2D>>>,
@@ -98,8 +100,16 @@ impl Lin2DStaticModel {
     }
 }
 
+#[wasm_bindgen]
+impl Lin2DStaticModel {
+    pub fn nodes_len(&self) -> usize {
+        self.nodes.borrow().len()
+    }
+}
+
 #[allow(non_snake_case)]
-pub fn plane_stress_matrix(Ep: f64, nu: f64, G: f64) -> stack::Matrix<3,3> {
+pub fn plane_stress_matrix(E: f64, nu: f64, G: f64) -> stack::Matrix<3,3> {
+    let Ep = E / (1.0 - nu * nu);
     let values = [
         [     Ep, Ep * nu, 0.0],
         [Ep * nu,      Ep, 0.0],
