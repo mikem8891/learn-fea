@@ -17,11 +17,6 @@ function getStringFromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
-
-export function main() {
-    wasm.main();
-}
-
 /**
  * @param {number} e
  * @param {number} nu
@@ -31,6 +26,10 @@ export function main() {
 export function init_fea(e, nu, g) {
     const ret = wasm.init_fea(e, nu, g);
     return Lin2DStaticModel.__wrap(ret);
+}
+
+export function main() {
+    wasm.main();
 }
 
 const Lin2DStaticModelFinalization = (typeof FinalizationRegistry === 'undefined')
