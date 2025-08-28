@@ -17,6 +17,12 @@ function getStringFromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
+
+function _assertClass(instance, klass) {
+    if (!(instance instanceof klass)) {
+        throw new Error(`expected instance of ${klass.name}`);
+    }
+}
 /**
  * @param {number} e
  * @param {number} nu
@@ -67,6 +73,15 @@ export class Lin2DStaticModel {
     get_node(index) {
         const ret = wasm.lin2dstaticmodel_get_node(this.__wbg_ptr, index);
         return Node2D.__wrap(ret);
+    }
+    /**
+     * @param {number} index
+     * @param {Node2D} node
+     */
+    set_node(index, node) {
+        _assertClass(node, Node2D);
+        var ptr0 = node.__destroy_into_raw();
+        wasm.lin2dstaticmodel_set_node(this.__wbg_ptr, index, ptr0);
     }
     /**
      * @returns {number}

@@ -14,19 +14,19 @@
       <h1>Inputs</h1>
       <h2>Material Properties</h2>
       <label for="elasticity">Elasticity: </label>
-      <input id="elasticity" value="30000" type="number" />
+      <input id="elasticity" value="30000" type="number" min="0"/>
       <br>
       <label for="poissons-ratio">Poisson's Ratio: </label>
-      <input id="poissons-ratio" value="0.3" type="number" step="0.01" />
+      <input id="poissons-ratio" value="0.3" type="number" step="0.01" min="0" max="0.5"/>
       <br>
       <label for="rigidity">Rigidity: </label>
-      <input id="rigidity" value="10500" type="number" />
+      <input id="rigidity" value="10500" type="number" min="0"/>
       <br>
       <h2>Nodes</h2>
       <button id="add-node">Add Node</button>
       <br>
       <label for="node-index">Index: </label>
-      <input id="node-index" value="0" type="number" />
+      <input id="node-index" value="" type="number" min="0"/>
       <br>
       <h3>Position</h3>
       <label for="position-x">x: </label>
@@ -35,19 +35,31 @@
       <label for="position-y">y: </label>
       <input id="position-y" type="number" />
       <br>
-      <h3>Force</h3>
-      <label for="force-x">x: </label>
-      <input id="force-x" type="number" />
+      <h3>Known</h3>
+      x:
+      <input name="known-x" id="known-displacement-x" type="radio" value="known-displacement-x"/>
+      <label for="known-displacement-x" >displacement</label>
+      <input name="known-x" id="known-force-x" type="radio" value="known-force-x"/>
+      <label for="known-force-x" >force</label>
       <br>
-      <label for="force-y">y: </label>
-      <input id="force-y" type="number" />
-      <br>
+      y:
+      <input name="known-y" id="known-displacement-y" type="radio" value="known-displacement-y"/>
+      <label for="known-displacement-x" >displacement</label>
+      <input name="known-y" id="known-force-y" type="radio" value="known-force-y"/>
+      <label for="known-force-x" >force</label>
       <h3>Displacement</h3>
       <label for="displacement-x">x: </label>
       <input id="displacement-x" type="number" />
       <br>
       <label for="displacement-y">y: </label>
       <input id="displacement-y" type="number" />
+      <br>
+      <h3>Force</h3>
+      <label for="force-x">x: </label>
+      <input id="force-x" type="number" />
+      <br>
+      <label for="force-y">y: </label>
+      <input id="force-y" type="number" />
       <br>
       <h2>Elements</h2>
       <label for="element-index">Index: </label>

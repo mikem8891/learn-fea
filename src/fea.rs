@@ -113,6 +113,10 @@ impl Lin2DStaticModel {
     pub fn get_node(&self, index: usize) -> Node2D {
         self.nodes.borrow()[index]
     }
+
+    pub fn set_node(&mut self, index: usize, node: Node2D) {
+        self.nodes.borrow_mut()[index] = node;
+    }
 }
 
 #[allow(non_snake_case)]
