@@ -105,6 +105,14 @@ impl Lin2DStaticModel {
     pub fn nodes_len(&self) -> usize {
         self.nodes.borrow().len()
     }
+
+    pub fn add_node(&mut self) {
+        self.nodes.borrow_mut().push(Node2D::zero_at((0.0, 0.0)));
+    }
+
+    pub fn get_node(&self, index: usize) -> Node2D {
+        self.nodes.borrow()[index]
+    }
 }
 
 #[allow(non_snake_case)]
@@ -126,12 +134,13 @@ pub enum KnownType {
     Displacement,
 }
 
+#[wasm_bindgen]
 #[derive(Debug, Clone, Copy)]
 pub struct Node2D {
     position: Point2D,
-    pub displacement: stack::Vector<2>, 
-    pub force: stack::Vector<2>,
-    pub known: [KnownType; 2],
+    displacement: stack::Vector<2>, 
+    force: stack::Vector<2>,
+    known: [KnownType; 2],
 }
 
 impl Node2D {
@@ -143,6 +152,46 @@ impl Node2D {
         let force = Vector::zeros();
         let known = [KnownType::Force, KnownType::Force];
         Node2D {position, displacement, force, known}
+    }
+}
+
+#[wasm_bindgen]
+impl Node2D {
+    pub fn get_pos_x(&self) -> f64 {
+        self.position.x()
+    }
+    pub fn get_pos_y(&self) -> f64 {
+        self.position.y()
+    }
+    pub fn set_pos_x(&mut self, value: f64) {
+        self.position[0] = value;
+    }
+    pub fn set_pos_y(&mut self, value: f64) {
+        self.position[1] = value;
+    }
+    pub fn get_disp_x(&self) -> f64 {
+        self.displacement.x()
+    }
+    pub fn get_disp_y(&self) -> f64 {
+        self.displacement.y()
+    }
+    pub fn set_disp_x(&mut self, value: f64) {
+        self.displacement[0] = value;
+    }
+    pub fn set_disp_y(&mut self, value: f64) {
+        self.displacement[1] = value;
+    }
+    pub fn get_force_x(&self) -> f64 {
+        self.force.x()
+    }
+    pub fn get_force_y(&self) -> f64 {
+        self.force.y()
+    }
+    pub fn set_force_x(&mut self, value: f64) {
+        self.force[0] = value;
+    }
+    pub fn set_force_y(&mut self, value: f64) {
+        self.force[1] = value;
     }
 }
 

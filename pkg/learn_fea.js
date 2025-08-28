@@ -57,12 +57,128 @@ export class Lin2DStaticModel {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_lin2dstaticmodel_free(ptr, 0);
     }
+    add_node() {
+        wasm.lin2dstaticmodel_add_node(this.__wbg_ptr);
+    }
+    /**
+     * @param {number} index
+     * @returns {Node2D}
+     */
+    get_node(index) {
+        const ret = wasm.lin2dstaticmodel_get_node(this.__wbg_ptr, index);
+        return Node2D.__wrap(ret);
+    }
     /**
      * @returns {number}
      */
     nodes_len() {
         const ret = wasm.lin2dstaticmodel_nodes_len(this.__wbg_ptr);
         return ret >>> 0;
+    }
+}
+
+const Node2DFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_node2d_free(ptr >>> 0, 1));
+
+export class Node2D {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(Node2D.prototype);
+        obj.__wbg_ptr = ptr;
+        Node2DFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        Node2DFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_node2d_free(ptr, 0);
+    }
+    /**
+     * @returns {number}
+     */
+    get_disp_x() {
+        const ret = wasm.node2d_get_disp_x(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {number}
+     */
+    get_disp_y() {
+        const ret = wasm.node2d_get_disp_y(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @param {number} value
+     */
+    set_disp_x(value) {
+        wasm.node2d_set_disp_x(this.__wbg_ptr, value);
+    }
+    /**
+     * @param {number} value
+     */
+    set_disp_y(value) {
+        wasm.node2d_set_disp_y(this.__wbg_ptr, value);
+    }
+    /**
+     * @returns {number}
+     */
+    get_force_x() {
+        const ret = wasm.node2d_get_force_x(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {number}
+     */
+    get_force_y() {
+        const ret = wasm.node2d_get_force_y(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @param {number} value
+     */
+    set_force_x(value) {
+        wasm.node2d_set_force_x(this.__wbg_ptr, value);
+    }
+    /**
+     * @param {number} value
+     */
+    set_force_y(value) {
+        wasm.node2d_set_force_y(this.__wbg_ptr, value);
+    }
+    /**
+     * @returns {number}
+     */
+    get_pos_x() {
+        const ret = wasm.node2d_get_pos_x(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {number}
+     */
+    get_pos_y() {
+        const ret = wasm.node2d_get_pos_y(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @param {number} value
+     */
+    set_pos_x(value) {
+        wasm.node2d_set_pos_x(this.__wbg_ptr, value);
+    }
+    /**
+     * @param {number} value
+     */
+    set_pos_y(value) {
+        wasm.node2d_set_pos_y(this.__wbg_ptr, value);
     }
 }
 

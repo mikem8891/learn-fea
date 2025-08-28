@@ -42,15 +42,18 @@ function setup() {
   }
 
   addNodeBtn.addEventListener("click", (_evt) => {
-    nodeIndex.value = model.nodes_len().toString();
-    /** @todo add node to model */
-    const ZERO = "0";
-    positionX.value = ZERO;
-    positionY.value = ZERO;
-    displacementX.value = ZERO;
-    displacementY.value = ZERO;
-    forceX.value = ZERO;
-    forceY.value = ZERO;
+    let lastNode = model.nodes_len();
+    nodeIndex.value = lastNode.toString();
+
+    model.add_node();
+    let node = model.get_node(lastNode);
+
+    positionX.value = node.get_pos_x().toString();
+    positionY.value = node.get_pos_y().toString();
+    displacementX.value = node.get_disp_x().toString();
+    displacementY.value = node.get_disp_y().toString();
+    forceX.value = node.get_force_x().toString();
+    forceY.value = node.get_force_y().toString();
 
     positionX.focus();
   });
