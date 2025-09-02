@@ -130,8 +130,10 @@ pub fn plane_stress_matrix(E: f64, nu: f64, G: f64) -> stack::Matrix<3,3> {
     stack::Matrix::new(values)
 }
 
-type Point2D = stack::Vector<2>;
+#[wasm_bindgen]
+pub type Point2D = stack::Vector<2>;
 
+#[wasm_bindgen]
 #[derive(Debug, Clone, Copy)]
 pub enum KnownType {
     Force, 
@@ -196,6 +198,12 @@ impl Node2D {
     }
     pub fn set_force_y(&mut self, value: f64) {
         self.force[1] = value;
+    }
+    pub fn get_known_x(&self) -> KnownType {
+        &self.known[0]
+    }
+    pub fn get_known_y(&self) -> KnownType {
+        &self.known[y]
     }
 }
 
