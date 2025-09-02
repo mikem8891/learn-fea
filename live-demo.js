@@ -22,10 +22,16 @@ function setup() {
   let nodeIndex = doc.getInputElementById("node-index");
   let positionX = doc.getInputElementById("position-x");
   let positionY = doc.getInputElementById("position-y");
-  let knownXDisplacement = doc.getInputElementById("known-displacement-x");
-  let knownYDisplacement = doc.getInputElementById("known-displacement-y");
-  let knownXForce = doc.getInputElementById("known-force-x");
-  let knownYForce = doc.getInputElementById("known-force-y");
+  let known = {
+    displacement: {
+      x: doc.getInputElementById("known-displacement-x"),
+      y: doc.getInputElementById("known-displacement-y")
+    },
+    force: {
+      x: doc.getInputElementById("known-force-x"),
+      y: doc.getInputElementById("known-force-y")
+    },
+  };
   let displacementX = doc.getInputElementById("displacement-x");
   let displacementY = doc.getInputElementById("displacement-y");
   let forceX = doc.getInputElementById("force-x");
@@ -39,14 +45,14 @@ function setup() {
    * @param {Event} [_evt]
    */
   function changeMaterials(_evt) {
-    let e = parseFloat(elasticity.value);
-    let nu = parseFloat(poissonsRatio.value);
-    let g = parseFloat(rigidity.value);
+    const e = parseFloat(elasticity.value);
+    const nu = parseFloat(poissonsRatio.value);
+    const g = parseFloat(rigidity.value);
     model = init_fea(e, nu, g);
   }
 
   addNodeBtn.addEventListener("click", (evt) => {
-    let lastNode = model.nodes_len();
+    const lastNode = model.nodes_len();
     nodeIndex.value = lastNode.toString();
 
     model.add_node();
@@ -61,7 +67,7 @@ function setup() {
       nodeIndex.value = "";
       return;
     }
-    let index = parseInt(nodeIndex.value);
+    const index = parseInt(nodeIndex.value);
     if (index < 0 || isNaN(index)) {
       nodeIndex.value = "0";
       changeNodeIndex(evt);
@@ -72,7 +78,21 @@ function setup() {
       changeNodeIndex(evt);
       return;
     }
-    let node = model.get_node(index);
+    const node = model.get_node(index);
+    
+    setNodeInputsTo(node);
+  }
+  
+  function setNodeInputsTo(node) {
+    const known = {
+      x: node.get_known_x(),
+      y: node.get_known_y()
+    };
+    
+    known.force.x.checked = known.x == KnownType.FORCE;
+    known.force.y.checked = known.y == KnownType.FORCE;
+    known.displacement.x.checked = known.x == KnownType.DISPLACEMENT;
+    known.displacement.y.checked = known.x == KnownType.DISPLACEMENT;
 
     positionX.value = node.get_pos_x().toString();
     positionY.value = node.get_pos_y().toString();
@@ -84,9 +104,19 @@ function setup() {
 
   nodeIndex.addEventListener("change", changeNodeIndex);
 
-  function changeNodeProp(_evt) {
+  function changeNodeProp(evt) {
     let index = parseInt(nodeIndex.value);
     let node = model.get_node(index);
+    
+    if (evt.target == known.force.x) {
+      node.set_known_x(KnownType.FORCE);
+    } else if (evt.target == known.force.y) {
+      node.set_known_y(KnownType.FORCE);
+    } else if (evt.target == known.displacement.x) {
+      node.set_known_x(KnownType.DISPLACEMENT);
+    } else if (evt.target == known.displacement.y) {
+      node.set_known_y(KnownType.DISPLACEMENT);
+    } 
 
     node.set_pos_x(parseFloat(positionX.value));
     node.set_pos_y(parseFloat(positionY.value));
@@ -96,6 +126,8 @@ function setup() {
     node.set_force_y(parseFloat(forceY.value));
 
     model.set_node(index, node);
+    
+    setNodeInputsTo(node);
   }
 
   positionX.addEventListener("change", changeNodeProp);
