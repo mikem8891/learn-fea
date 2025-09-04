@@ -44,9 +44,9 @@
       <br>
       y:
       <input name="known-y" id="known-displacement-y" type="radio" value="known-displacement-y"/>
-      <label for="known-displacement-x" >displacement</label>
+      <label for="known-displacement-y" >displacement</label>
       <input name="known-y" id="known-force-y" type="radio" value="known-force-y"/>
-      <label for="known-force-x" >force</label>
+      <label for="known-force-y" >force</label>
       <h3>Displacement</h3>
       <label for="displacement-x">x: </label>
       <input id="displacement-x" type="number" />
@@ -62,6 +62,8 @@
       <input id="force-y" type="number" />
       <br>
       <h2>Elements</h2>
+      <button id="add-element">Add Element</button>
+      <br>
       <label for="element-index">Index: </label>
       <input id="element-index" type="number" />
       <br>
@@ -74,6 +76,7 @@
     </div>
     <div class="main-content">
       <h1>Outputs</h1>
+      <button id="step-button">step</button>
     </div>
   </div>
   

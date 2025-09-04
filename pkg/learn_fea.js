@@ -18,6 +18,29 @@ function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
 
+let cachedUint32ArrayMemory0 = null;
+
+function getUint32ArrayMemory0() {
+    if (cachedUint32ArrayMemory0 === null || cachedUint32ArrayMemory0.byteLength === 0) {
+        cachedUint32ArrayMemory0 = new Uint32Array(wasm.memory.buffer);
+    }
+    return cachedUint32ArrayMemory0;
+}
+
+function getArrayU32FromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return getUint32ArrayMemory0().subarray(ptr / 4, ptr / 4 + len);
+}
+
+let WASM_VECTOR_LEN = 0;
+
+function passArray32ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 4, 4) >>> 0;
+    getUint32ArrayMemory0().set(arg, ptr / 4);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
+}
+
 function _assertClass(instance, klass) {
     if (!(instance instanceof klass)) {
         throw new Error(`expected instance of ${klass.name}`);
@@ -37,6 +60,14 @@ export function init_fea(e, nu, g) {
 export function main() {
     wasm.main();
 }
+
+/**
+ * @enum {0 | 1}
+ */
+export const KnownType = Object.freeze({
+    Force: 0, "0": "Force",
+    Displacement: 1, "1": "Displacement",
+});
 
 const Lin2DStaticModelFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
@@ -63,6 +94,38 @@ export class Lin2DStaticModel {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_lin2dstaticmodel_free(ptr, 0);
     }
+    /**
+     * @returns {number}
+     */
+    elements_len() {
+        const ret = wasm.lin2dstaticmodel_elements_len(this.__wbg_ptr);
+        return ret >>> 0;
+    }
+    /**
+     * @param {number} index
+     * @returns {Uint32Array}
+     */
+    get_element_indices(index) {
+        const ret = wasm.lin2dstaticmodel_get_element_indices(this.__wbg_ptr, index);
+        var v1 = getArrayU32FromWasm0(ret[0], ret[1]).slice();
+        wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+        return v1;
+    }
+    /**
+     * @param {number} element_index
+     * @param {Uint32Array} new_indices
+     */
+    set_element_indices(element_index, new_indices) {
+        const ptr0 = passArray32ToWasm0(new_indices, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.lin2dstaticmodel_set_element_indices(this.__wbg_ptr, element_index, ptr0, len0);
+    }
+    step() {
+        wasm.lin2dstaticmodel_step(this.__wbg_ptr);
+    }
+    add_elem() {
+        wasm.lin2dstaticmodel_add_elem(this.__wbg_ptr);
+    }
     add_node() {
         wasm.lin2dstaticmodel_add_node(this.__wbg_ptr);
     }
@@ -80,8 +143,7 @@ export class Lin2DStaticModel {
      */
     set_node(index, node) {
         _assertClass(node, Node2D);
-        var ptr0 = node.__destroy_into_raw();
-        wasm.lin2dstaticmodel_set_node(this.__wbg_ptr, index, ptr0);
+        wasm.lin2dstaticmodel_set_node(this.__wbg_ptr, index, node.__wbg_ptr);
     }
     /**
      * @returns {number}
@@ -120,80 +182,125 @@ export class Node2D {
     /**
      * @returns {number}
      */
-    get_disp_x() {
+    get dispX() {
         const ret = wasm.node2d_get_disp_x(this.__wbg_ptr);
         return ret;
     }
     /**
      * @returns {number}
      */
-    get_disp_y() {
+    get dispY() {
         const ret = wasm.node2d_get_disp_y(this.__wbg_ptr);
         return ret;
     }
     /**
      * @param {number} value
      */
-    set_disp_x(value) {
+    set dispX(value) {
         wasm.node2d_set_disp_x(this.__wbg_ptr, value);
     }
     /**
      * @param {number} value
      */
-    set_disp_y(value) {
+    set dispY(value) {
         wasm.node2d_set_disp_y(this.__wbg_ptr, value);
     }
     /**
      * @returns {number}
      */
-    get_force_x() {
+    get forceX() {
         const ret = wasm.node2d_get_force_x(this.__wbg_ptr);
         return ret;
     }
     /**
      * @returns {number}
      */
-    get_force_y() {
+    get forceY() {
         const ret = wasm.node2d_get_force_y(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {KnownType}
+     */
+    get knownX() {
+        const ret = wasm.node2d_get_known_x(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {KnownType}
+     */
+    get knownY() {
+        const ret = wasm.node2d_get_known_y(this.__wbg_ptr);
         return ret;
     }
     /**
      * @param {number} value
      */
-    set_force_x(value) {
+    set forceX(value) {
         wasm.node2d_set_force_x(this.__wbg_ptr, value);
     }
     /**
      * @param {number} value
      */
-    set_force_y(value) {
+    set forceY(value) {
         wasm.node2d_set_force_y(this.__wbg_ptr, value);
+    }
+    /**
+     * @param {KnownType} known
+     */
+    set knownX(known) {
+        wasm.node2d_set_known_x(this.__wbg_ptr, known);
+    }
+    /**
+     * @param {KnownType} known
+     */
+    set knownY(known) {
+        wasm.node2d_set_known_y(this.__wbg_ptr, known);
     }
     /**
      * @returns {number}
      */
-    get_pos_x() {
+    get posX() {
         const ret = wasm.node2d_get_pos_x(this.__wbg_ptr);
         return ret;
     }
     /**
      * @returns {number}
      */
-    get_pos_y() {
+    get posY() {
         const ret = wasm.node2d_get_pos_y(this.__wbg_ptr);
         return ret;
     }
     /**
      * @param {number} value
      */
-    set_pos_x(value) {
+    set posX(value) {
         wasm.node2d_set_pos_x(this.__wbg_ptr, value);
     }
     /**
      * @param {number} value
      */
-    set_pos_y(value) {
+    set posY(value) {
         wasm.node2d_set_pos_y(this.__wbg_ptr, value);
+    }
+}
+
+const T3ElementFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_t3element_free(ptr >>> 0, 1));
+
+export class T3Element {
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        T3ElementFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_t3element_free(ptr, 0);
     }
 }
 
@@ -262,6 +369,7 @@ function __wbg_init_memory(imports, memory) {
 function __wbg_finalize_init(instance, module) {
     wasm = instance.exports;
     __wbg_init.__wbindgen_wasm_module = module;
+    cachedUint32ArrayMemory0 = null;
     cachedUint8ArrayMemory0 = null;
 
 

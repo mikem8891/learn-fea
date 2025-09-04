@@ -5,14 +5,14 @@ use super::*;
 
 pub fn square() {
     let elasticity = math::stack::Matrix::new({
-        let E = 30_000.0;
+        let e = 30_000.0;
         let nu = 0.3;
-        let Ep = E / (1.0 - nu * nu);
-        let G  = 10_000.0;
+        let ep = e / (1.0 - nu * nu);
+        let g  = 10_000.0;
         [
-            [     Ep, Ep * nu, 0.0],
-            [Ep * nu,      Ep, 0.0],
-            [    0.0,     0.0,   G],
+            [     ep, ep * nu, 0.0],
+            [ep * nu,      ep, 0.0],
+            [    0.0,     0.0,   g],
         ]
     });
     let nodes = [

@@ -114,8 +114,25 @@ impl Lin2DStaticModel {
         self.nodes.borrow()[index]
     }
 
-    pub fn set_node(&mut self, index: usize, node: Node2D) {
-        self.nodes.borrow_mut()[index] = node;
+    pub fn set_node(&mut self, index: usize, node: &Node2D) {
+        self.nodes.borrow_mut()[index] = *node;
+    }
+
+    pub fn elements_len(&self) -> usize {
+        self.elements.len()
+    }
+    pub fn add_elem(&mut self) {
+        let len = self.nodes_len();
+        self.add_elements(&[[len - 3, len - 2, len - 1]]);
+    }
+    pub fn get_element_indices(&self, index: usize) -> Box<[usize]> {
+        self.elements[index].indices.into()
+    }
+    pub fn set_element_indices(&mut self, element_index: usize, new_indices: &[usize]) {
+        self.elements[element_index].indices.copy_from_slice(new_indices);
+    }
+    pub fn step(&mut self) {
+        self.step_guass_seidel(1);
     }
 }
 
@@ -130,14 +147,14 @@ pub fn plane_stress_matrix(E: f64, nu: f64, G: f64) -> stack::Matrix<3,3> {
     stack::Matrix::new(values)
 }
 
-#[wasm_bindgen]
-pub type Point2D = stack::Vector<2>;
+type Point2D = stack::Vector<2>;
 
 #[wasm_bindgen]
+#[repr(u8)]
 #[derive(Debug, Clone, Copy)]
 pub enum KnownType {
-    Force, 
-    Displacement,
+    Force = 0, 
+    Displacement = 1,
 }
 
 #[wasm_bindgen]
@@ -163,50 +180,75 @@ impl Node2D {
 
 #[wasm_bindgen]
 impl Node2D {
+    #[wasm_bindgen(getter = posX)]
     pub fn get_pos_x(&self) -> f64 {
         self.position.x()
     }
+    #[wasm_bindgen(getter = posY)]
     pub fn get_pos_y(&self) -> f64 {
         self.position.y()
     }
+    #[wasm_bindgen(setter = posX)]
     pub fn set_pos_x(&mut self, value: f64) {
         self.position[0] = value;
     }
+    #[wasm_bindgen(setter = posY)]
     pub fn set_pos_y(&mut self, value: f64) {
         self.position[1] = value;
     }
+    #[wasm_bindgen(getter = dispX)]
     pub fn get_disp_x(&self) -> f64 {
         self.displacement.x()
     }
+    #[wasm_bindgen(getter = dispY)]
     pub fn get_disp_y(&self) -> f64 {
         self.displacement.y()
     }
+    #[wasm_bindgen(setter = dispX)]
     pub fn set_disp_x(&mut self, value: f64) {
         self.displacement[0] = value;
     }
+    #[wasm_bindgen(setter = dispY)]
     pub fn set_disp_y(&mut self, value: f64) {
         self.displacement[1] = value;
     }
+    #[wasm_bindgen(getter = forceX)]
     pub fn get_force_x(&self) -> f64 {
         self.force.x()
     }
+    #[wasm_bindgen(getter = forceY)]
     pub fn get_force_y(&self) -> f64 {
         self.force.y()
     }
+    #[wasm_bindgen(setter = forceX)]
     pub fn set_force_x(&mut self, value: f64) {
         self.force[0] = value;
     }
+    #[wasm_bindgen(setter = forceY)]
     pub fn set_force_y(&mut self, value: f64) {
         self.force[1] = value;
     }
+    #[wasm_bindgen(getter = knownX)]
     pub fn get_known_x(&self) -> KnownType {
-        &self.known[0]
+        self.known[0]
     }
+    #[wasm_bindgen(getter = knownY)]
     pub fn get_known_y(&self) -> KnownType {
-        &self.known[y]
+        self.known[1]
     }
+    #[wasm_bindgen(setter = knownX)]
+    pub fn set_known_x(&mut self, known: KnownType) {
+        self.known[0] = known;
+    }
+    #[wasm_bindgen(setter = knownY)]
+    pub fn set_known_y(&mut self, known: KnownType) {
+        self.known[1] = known;
+    }
+
 }
 
+
+#[wasm_bindgen]
 #[derive(Debug)]
 pub struct T3Element {
     nodes: Rc<RefCell<Vec<Node2D>>>,
@@ -234,11 +276,11 @@ impl T3Element {
     fn get_strain_ops(&self) -> [Matrix<3, 2>; 3] {
         let trial_fns = self.get_trial_functions();
         let trial_grads = trial_fns.map(|tf| tf.gradient());
-        trial_grads.map(|grad_N|
+        trial_grads.map(|grad_n|
             [
-                [grad_N.x(),        0.0],
-                [       0.0, grad_N.y()],
-                [grad_N.y(), grad_N.x()],
+                [grad_n.x(),        0.0],
+                [       0.0, grad_n.y()],
+                [grad_n.y(), grad_n.x()],
             ].into())
     }
 
@@ -254,8 +296,8 @@ impl T3Element {
         let nodes = self.nodes.borrow();
         let strain_ops = self.get_strain_ops();
         let displacements = self.indices.map(|i| nodes[i].displacement);
-        for (N, u) in std::iter::zip(strain_ops, displacements) {
-            strain += N * u;
+        for (n, u) in std::iter::zip(strain_ops, displacements) {
+            strain += n * u;
         }
         strain
     }
