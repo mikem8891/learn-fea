@@ -41,6 +41,12 @@ function passArray32ToWasm0(arg, malloc) {
     return ptr;
 }
 
+function takeFromExternrefTable0(idx) {
+    const value = wasm.__wbindgen_export_0.get(idx);
+    wasm.__externref_table_dealloc(idx);
+    return value;
+}
+
 function _assertClass(instance, klass) {
     if (!(instance instanceof klass)) {
         throw new Error(`expected instance of ${klass.name}`);
@@ -69,6 +75,25 @@ export const KnownType = Object.freeze({
     Displacement: 1, "1": "Displacement",
 });
 
+const FeaErrorFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_feaerror_free(ptr >>> 0, 1));
+
+export class FeaError {
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        FeaErrorFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_feaerror_free(ptr, 0);
+    }
+}
+
 const Lin2DStaticModelFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_lin2dstaticmodel_free(ptr >>> 0, 1));
@@ -95,11 +120,23 @@ export class Lin2DStaticModel {
         wasm.__wbg_lin2dstaticmodel_free(ptr, 0);
     }
     /**
+     * @param {number} index
+     */
+    delete_node(index) {
+        wasm.lin2dstaticmodel_delete_node(this.__wbg_ptr, index);
+    }
+    /**
      * @returns {number}
      */
     elements_len() {
         const ret = wasm.lin2dstaticmodel_elements_len(this.__wbg_ptr);
         return ret >>> 0;
+    }
+    /**
+     * @param {number} index
+     */
+    delete_element(index) {
+        wasm.lin2dstaticmodel_delete_element(this.__wbg_ptr, index);
     }
     /**
      * @param {number} index
@@ -121,7 +158,16 @@ export class Lin2DStaticModel {
         wasm.lin2dstaticmodel_set_element_indices(this.__wbg_ptr, element_index, ptr0, len0);
     }
     step() {
-        wasm.lin2dstaticmodel_step(this.__wbg_ptr);
+        const ret = wasm.lin2dstaticmodel_step(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    check() {
+        const ret = wasm.lin2dstaticmodel_check(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     add_elem() {
         wasm.lin2dstaticmodel_add_elem(this.__wbg_ptr);
@@ -340,6 +386,10 @@ function __wbg_get_imports() {
     imports.wbg = {};
     imports.wbg.__wbg_log_c222819a41e063d3 = function(arg0) {
         console.log(arg0);
+    };
+    imports.wbg.__wbindgen_error_new = function(arg0, arg1) {
+        const ret = new Error(getStringFromWasm0(arg0, arg1));
+        return ret;
     };
     imports.wbg.__wbindgen_init_externref_table = function() {
         const table = wasm.__wbindgen_export_0;

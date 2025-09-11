@@ -10,15 +10,51 @@ const wasm = await initWasm();
 /** @type {Lin2DStaticModel} */
 let model;
 
-/** @todo set 'change' events  */
 function setup() {
   
   wasm.main();
 
+  setupMaterialInputs();
+  setupNodeInputs();
+  setupElementInputs();
+
+  const stepBtn = doc.getElementById("step-button");
+    
+  stepBtn.addEventListener("click", (evt) => {
+    model.check();
+    model.step();
+    doc.getInputElementById("node-index").dispatchEvent(new Event("change"));
+  });
+  /// TODO: 
+  /// /. add elements
+  /// /. step results
+  /// /. delete nodes and elements
+  /// 4. graphical output
+  /// 5. add error messages
+}
+
+function setupMaterialInputs() {
   const elasticity = doc.getInputElementById("elasticity");
   const poissonsRatio = doc.getInputElementById("poissons-ratio");
   const rigidity = doc.getInputElementById("rigidity");
+
+  elasticity.addEventListener("change", changeMaterials);
+  poissonsRatio.addEventListener("change", changeMaterials);
+  rigidity.addEventListener("change", changeMaterials);
+  
+  function changeMaterials(_evt) {
+    const e = parseFloat(elasticity.value);
+    const nu = parseFloat(poissonsRatio.value);
+    const g = parseFloat(rigidity.value);
+    model = init_fea(e, nu, g);
+  }
+
+  changeMaterials();
+}
+
+function setupNodeInputs() {
   const addNodeBtn = doc.getElementById("add-node");
+  const deleteNodeBtn = doc.getElementById("delete-node");
   const nodeIndex = doc.getInputElementById("node-index");
   const positionX = doc.getInputElementById("position-x");
   const positionY = doc.getInputElementById("position-y");
@@ -36,28 +72,6 @@ function setup() {
   const displacementY = doc.getInputElementById("displacement-y");
   const forceX = doc.getInputElementById("force-x");
   const forceY = doc.getInputElementById("force-y");
-  const addElementBtn = doc.getElementById("add-element");
-  const elementIndex = doc.getInputElementById("element-index");
-  const elementNodes = [
-    doc.getInputElementById("element-node-0"),
-    doc.getInputElementById("element-node-1"), 
-    doc.getInputElementById("element-node-2")
-  ];
-  const stepBtn = doc.getElementById("step-button");
-
-  elasticity.addEventListener("change", changeMaterials);
-  poissonsRatio.addEventListener("change", changeMaterials);
-  rigidity.addEventListener("change", changeMaterials);
-  
-  /**
-   * @param {Event} [_evt]
-   */
-  function changeMaterials(_evt) {
-    const e = parseFloat(elasticity.value);
-    const nu = parseFloat(poissonsRatio.value);
-    const g = parseFloat(rigidity.value);
-    model = init_fea(e, nu, g);
-  }
 
   addNodeBtn.addEventListener("click", (evt) => {
     const lastNode = model.nodes_len();
@@ -66,6 +80,13 @@ function setup() {
     model.add_node();
     changeNodeIndex(evt);
     positionX.select();
+  });
+
+  deleteNodeBtn.addEventListener("click", (evt) => {
+    let index = parseInt(nodeIndex.value);
+  
+    model.delete_node(index);
+    changeNodeIndex(evt);
   });
 
   function changeNodeIndex(evt) {
@@ -89,7 +110,6 @@ function setup() {
   }
 
   /**
-   * 
    * @param {Node2D} node 
    */
   function setNodeInputsTo(node) {
@@ -163,18 +183,28 @@ function setup() {
   known.force.y.addEventListener("click", changeNodeProp);
   known.displacement.x.addEventListener("click", changeNodeProp);
   known.displacement.y.addEventListener("click", changeNodeProp);
-
   positionX.addEventListener("change", changeNodeProp);
   positionY.addEventListener("change", changeNodeProp);
   displacementX.addEventListener("change", changeNodeProp);
   displacementY.addEventListener("change", changeNodeProp);
   forceX.addEventListener("change", changeNodeProp);
   forceY.addEventListener("change", changeNodeProp);
+}
+
+function setupElementInputs() {
+  const addElementBtn = doc.getElementById("add-element");
+  const deleteElementBtn = doc.getElementById("delete-element");
+  const elementIndex = doc.getInputElementById("element-index");
+  const elementNodes = [
+    doc.getInputElementById("element-node-0"),
+    doc.getInputElementById("element-node-1"), 
+    doc.getInputElementById("element-node-2")
+  ];
 
   addElementBtn.addEventListener("click", (_evt) => {
     const nodeLen = model.nodes_len();
-    if (nodeLen <= 3) {
-      alert("too few nodes to make an element");
+    if (nodeLen < 3) {
+      alert("Not enough nodes to make an element.");
       elementIndex.value = "";
       return;
     }
@@ -186,6 +216,17 @@ function setup() {
     elementNodes[0].value = indices[0].toString();
     elementNodes[1].value = indices[1].toString();
     elementNodes[2].value = indices[2].toString();
+  });
+
+  deleteElementBtn.addEventListener("click", () => {
+    const elementLen = model.elements_len();
+    if (elementLen < 1) {
+      alert("No elements to delete.");
+      return;
+    }
+    const index = parseInt(elementIndex.value);
+    model.delete_element(index);
+    changeElementIndex();
   });
 
   function changeElementIndex() {
@@ -228,19 +269,6 @@ function setup() {
   elementNodes[0].addEventListener("change", changeElementIndices);
   elementNodes[1].addEventListener("change", changeElementIndices);
   elementNodes[2].addEventListener("change", changeElementIndices);
-    
-  stepBtn.addEventListener("click", (evt) => {
-    model.step();
-    changeNodeIndex(evt);
-  });
-  /// TODO: 
-  /// 1. add elements
-  /// 2. step results
-  /// 3. delete nodes and elements
-  /// 4. graphical output
-  /// 5. add error messages
-
-  changeMaterials();
 }
 
 if (document.readyState === 'loading') {

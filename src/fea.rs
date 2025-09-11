@@ -1,7 +1,7 @@
 
 pub mod test;
 
-use std::{cell::RefCell, rc::Rc, vec};
+use std::{cell::RefCell, fmt, rc::Rc, vec};
 use crate::math::{stack::Matrix, *};
 use wasm_bindgen::prelude::*;
 
@@ -10,7 +10,7 @@ pub struct Lin2DStaticModel {
     elasticity: stack::Matrix<3,3>,
     nodes: Rc<RefCell<Vec<Node2D>>>,
     elements: Vec<T3Element>,
-    stiffness: heap::Matrix,
+    stiffness: Option<heap::Matrix>,
 }
 
 impl Lin2DStaticModel {
@@ -20,7 +20,7 @@ impl Lin2DStaticModel {
             elasticity,
             nodes: Rc::new(RefCell::new(vec![])), 
             elements: vec![], 
-            stiffness: heap::Matrix::identity(0),
+            stiffness: None,
         }
     }
 
@@ -54,10 +54,11 @@ impl Lin2DStaticModel {
                 }
             }
         }
-        self.stiffness = global_stiffness;
+        self.stiffness = Some(global_stiffness);
     }
 
-    pub fn step_guass_seidel(&mut self, steps: usize) {
+    pub fn step_guass_seidel(&self, steps: usize) {
+        let stiffness = self.stiffness.as_ref().unwrap();
         let mut nodes = self.nodes.borrow_mut();
         let len = nodes.len();
         let mut u = vec![0.0; 2 * len];
@@ -82,12 +83,12 @@ impl Lin2DStaticModel {
         let mut f = heap::Vector::new(f.into_boxed_slice());
         for _step in 0..steps {
             for &i in &known_f {
-                let k_i = &self.stiffness[i];
+                let k_i = &stiffness[i];
                 u[i] = (f[i] - k_i * &u) / k_i[i] + u[i];
             }
         }
         for i in known_u {
-            let k_i = &self.stiffness[i];
+            let k_i = &stiffness[i];
             f[i] = k_i * &u;
         }
         for i in 0..len {
@@ -105,34 +106,88 @@ impl Lin2DStaticModel {
     pub fn nodes_len(&self) -> usize {
         self.nodes.borrow().len()
     }
-
     pub fn add_node(&mut self) {
         self.nodes.borrow_mut().push(Node2D::zero_at((0.0, 0.0)));
     }
-
-    pub fn get_node(&self, index: usize) -> Node2D {
-        self.nodes.borrow()[index]
+    pub fn delete_node(&mut self, index: usize) {
+        let mut nodes = self.nodes.borrow_mut();
+        nodes.swap_remove(index);
+        let (i_new, i_old) = (index, nodes.len());
+        for element in &mut self.elements {
+            for index in &mut element.indices {
+                if i_old == *index {
+                    *index = i_new;
+                } else if i_new == *index {
+                    *index = i_old;
+                }
+            }
+        }
     }
-
+    pub fn get_node(&self, index: usize) -> Node2D { 
+        let nodes = self.nodes.borrow(); 
+        nodes[index]
+    }
     pub fn set_node(&mut self, index: usize, node: &Node2D) {
-        self.nodes.borrow_mut()[index] = *node;
+        let mut nodes = self.nodes.borrow_mut(); 
+        nodes[index] = *node;
     }
-
     pub fn elements_len(&self) -> usize {
         self.elements.len()
     }
     pub fn add_elem(&mut self) {
         let len = self.nodes_len();
         self.add_elements(&[[len - 3, len - 2, len - 1]]);
+        self.stiffness = None;
+    }
+    pub fn delete_element(&mut self, index: usize) {
+        self.elements.swap_remove(index);
+        self.stiffness = None;
     }
     pub fn get_element_indices(&self, index: usize) -> Box<[usize]> {
         self.elements[index].indices.into()
     }
-    pub fn set_element_indices(&mut self, element_index: usize, new_indices: &[usize]) {
+    pub fn set_element_indices(
+        &mut self, element_index: usize, new_indices: &[usize]
+    ) {
         self.elements[element_index].indices.copy_from_slice(new_indices);
     }
-    pub fn step(&mut self) {
+    pub fn step(&mut self) -> Result<(), JsError>{
+        self.check().map_err(|e| JsError::from(e))?;
+        self.create_stiffness_matrix();
         self.step_guass_seidel(1);
+        Ok(())
+    }
+    pub fn check(&self) -> Result<(), JsError> {
+        let nodes = self.nodes.borrow();
+        let mut errors = vec![];
+        let mut node_in_element = vec![false; nodes.len()];
+        for (element_index, element) in self.elements.iter().enumerate() {
+            let mut missing_nodes = false;
+            for &node_index in &element.indices {
+                if node_index >= nodes.len() {
+                    // check no nodes are missing from elements
+                    errors.push(FeaErrorType::MissingNode {node_index, element_index});
+                    missing_nodes = true;
+                } else {
+                    // check all known force nodes are part of an element
+                    node_in_element[node_index] = true;
+                }
+            }
+            // Check all elements have size
+            if !missing_nodes && element.area() <= 0.0 {
+                errors.push(FeaErrorType::DegenerateElement {element_index});
+            }
+        }
+        for (node_index, &in_element) in node_in_element.iter().enumerate() {
+            if !in_element {
+                errors.push(FeaErrorType::NodeWithoutElement {node_index});
+            }
+        }
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(FeaError{errors}.into())
+        }
     }
 }
 
@@ -147,14 +202,59 @@ pub fn plane_stress_matrix(E: f64, nu: f64, G: f64) -> stack::Matrix<3,3> {
     stack::Matrix::new(values)
 }
 
+#[derive(Debug, Clone, Copy)]
+enum FeaErrorType {
+    MissingNode {
+        node_index: usize,
+        element_index: usize,
+    },
+    NodeWithoutElement {
+        node_index: usize
+    },
+    DegenerateElement {
+        element_index: usize
+    },
+}
+
+#[wasm_bindgen]
+#[derive(Debug, Clone)]
+pub struct FeaError {
+    errors: Vec<FeaErrorType>
+}
+
+impl fmt::Display for FeaErrorType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            FeaErrorType::MissingNode {node_index, element_index} => 
+                write!(f, "node (index: {node_index}) is missing from element (index: {element_index}) and should be replaced"),
+            FeaErrorType::NodeWithoutElement { node_index } => 
+                write!(f, "node (index: {node_index}) is not part of an element and should be deleted"),
+            FeaErrorType::DegenerateElement { element_index } => 
+                write!(f, "element (index: {element_index}) has no size and should be deleted"),
+        }
+    }
+}
+
+impl std::error::Error for FeaErrorType {}
+
+impl fmt::Display for FeaError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for error in &self.errors {
+            writeln!(f, "{error}")?
+        }
+        Ok(())
+    }
+}
+
+impl std::error::Error for FeaError {}
+
 type Point2D = stack::Vector<2>;
 
 #[wasm_bindgen]
-#[repr(u8)]
 #[derive(Debug, Clone, Copy)]
 pub enum KnownType {
-    Force = 0, 
-    Displacement = 1,
+    Force, 
+    Displacement,
 }
 
 #[wasm_bindgen]
@@ -244,7 +344,6 @@ impl Node2D {
     pub fn set_known_y(&mut self, known: KnownType) {
         self.known[1] = known;
     }
-
 }
 
 
@@ -259,10 +358,13 @@ impl T3Element {
     pub const fn new(nodes: Rc<RefCell<Vec<Node2D>>>, indices: [usize; 3]) -> Self {
         T3Element { nodes, indices }
     }
-
     fn pos(&self) -> [Point2D; 3] {
         let nodes = self.nodes.borrow();
-        std::array::from_fn(|i| nodes[self.indices[i]].position)
+        self.indices.map(|i| nodes[i].position)
+    }
+    fn get_pos(&self) -> [Option<Point2D>; 3] {
+        let nodes = self.nodes.borrow();
+        self.indices.map(|i| nodes.get(i).map(|n| n.position))
     }
 
     fn get_trial_functions(&self) -> [T3TrailFunction; 3] {
@@ -310,7 +412,7 @@ impl T3Element {
         let pos = self.pos();
         let d1 = pos[1] - pos[0];
         let d2 = pos[2] - pos[0];
-        d1.cross(d2) / 2.0
+        0.5 * d1.cross(d2).abs()
     }
 
     #[allow(non_snake_case)]
@@ -318,12 +420,12 @@ impl T3Element {
         &self,
         elasticity: stack::Matrix<3,3>
     ) -> Vec<((usize, usize), stack::Matrix<2, 2>)> {
+        let area = self.area();
         let mut stiffness_matrices = vec![];
         let (stress_ops, strain_ops) = self.get_stress_and_strain_ops();
         for (i, &strain_op) in strain_ops.iter().enumerate() {
             for (j, &stress_op) in stress_ops.iter().enumerate() {
                 let index = (self.indices[i], self.indices[j]);
-                let area = self.area().abs();
                 let stiffness_mat = stress_op * elasticity * strain_op * area;
                 stiffness_matrices.push((index, stiffness_mat));
             }
