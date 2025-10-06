@@ -3,6 +3,7 @@
 mod utils;
 pub mod math;
 pub mod fea;
+pub mod fea_output;
 
 use wasm_bindgen::prelude::*;
 pub use fea::Lin2DStaticModel;

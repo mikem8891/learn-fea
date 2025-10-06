@@ -3,7 +3,9 @@ pub mod test;
 
 use std::{cell::RefCell, fmt, rc::Rc, vec};
 use crate::math::{stack::Matrix, *};
+use crate::fea_output::*;
 use wasm_bindgen::prelude::*;
+
 
 #[wasm_bindgen]
 pub struct Lin2DStaticModel {
@@ -97,6 +99,19 @@ impl Lin2DStaticModel {
                 node.displacement[j] = u[2 * i + j];
                 node.force[j]        = f[2 * i + j];
             }
+        }
+    }
+
+    pub fn set_to_output(&self) {
+        let nodes = self.nodes.borrow();
+        // TODO: write elements to the output
+        for (element_index, &element) in self.elements.iter().enumerate() {
+            VERTICES.with_borrow_mut(|v| {
+                v[3*element_index  ] = nodes[node_index].position[0] as f32;
+                v[3*element_index+1] = nodes[node_index].position[1] as f32;
+            });
+            // TODO: write displacements, stresses, and forces to the output
+
         }
     }
 }
@@ -362,11 +377,6 @@ impl T3Element {
         let nodes = self.nodes.borrow();
         self.indices.map(|i| nodes[i].position)
     }
-    fn get_pos(&self) -> [Option<Point2D>; 3] {
-        let nodes = self.nodes.borrow();
-        self.indices.map(|i| nodes.get(i).map(|n| n.position))
-    }
-
     fn get_trial_functions(&self) -> [T3TrailFunction; 3] {
         let pos = self.pos();
         [

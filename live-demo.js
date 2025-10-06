@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 
-import initWasm, {Lin2DStaticModel, Node2D, KnownType, init_fea} from "./pkg/learn_fea.js";
+import initWasm, {Lin2DStaticModel, Node2D, KnownType, init_fea, FeaError} from "./pkg/learn_fea.js";
 
 import * as doc from "./modules/doc.js";
 
@@ -19,18 +19,31 @@ function setup() {
   setupElementInputs();
 
   const stepBtn = doc.getElementById("step-button");
+  const errorDiv = doc.getElementById("errors");
     
   stepBtn.addEventListener("click", (evt) => {
-    model.check();
-    model.step();
-    doc.getInputElementById("node-index").dispatchEvent(new Event("change"));
+    errorDiv.innerText = "";
+    try {
+      model.check();
+      model.step();
+      doc.getInputElementById("node-index").dispatchEvent(new Event("change"));
+      errorDiv.hidden = true;
+    } catch (error) {
+      if (error instanceof Error) {
+        errorDiv.innerText = error.message;
+      } else {
+        errorDiv.innerText = "unknown error";
+      }
+      errorDiv.hidden = false;
+    }
   });
   /// TODO: 
   /// /. add elements
   /// /. step results
   /// /. delete nodes and elements
   /// 4. graphical output
-  /// 5. add error messages
+  /// /. add error messages
+  /// 6. save and load files
 }
 
 function setupMaterialInputs() {
@@ -227,6 +240,8 @@ function setupElementInputs() {
     const index = parseInt(elementIndex.value);
     model.delete_element(index);
     changeElementIndex();
+    const nodeIndex = doc.getInputElementById("node-index");
+    nodeIndex.dispatchEvent(new Event("change"));
   });
 
   function changeElementIndex() {

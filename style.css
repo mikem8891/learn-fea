@@ -74,3 +74,6 @@ div.main-content{
   padding-left: 1.0em;
   padding-top:  0.5em;
 }
+div.errors {
+  color: #f88;
+}
