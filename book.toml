@@ -1,0 +1,7 @@
+[book]
+authors = ["Mike Maley"]
+language = "en"
+src = "src"
+
+[output.html]
+additional-css = ["style.css"]

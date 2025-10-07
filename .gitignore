@@ -5,3 +5,4 @@ pkg/*.ts
 **/*.rs.bk
 *.pdb
 .vscode
+book

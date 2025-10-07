@@ -1,36 +1,5 @@
-* {
-  box-sizing: border-box;
-}
 body{
   font-family: Arial, Helvetica, sans-serif;
-  color: Gainsboro;
-  background-color: #333A40;
-  font-size: 11pt;
-  margin: 0px;
-}
-a:link {
-  color: #acccdc;
-  background-color: transparent;
-  text-decoration: none;
-}
-a:visited {
-  color: #acccdc;
-  background-color: transparent;
-  text-decoration: none;
-}
-a:hover {
-  color: Gainsboro;
-  background-color: transparent;
-  text-decoration: underline;
-}
-@media print {
-  body {
-    color: black;
-    background-color: white;
-  }
-  a {
-    color: black;
-  }
 }
 .example {
   border-color: Gainsboro;
@@ -40,40 +9,6 @@ a:hover {
   padding-left: 0.5em;
   padding-top: 0.5em;
 }
-.page{
-  max-width: 624px;
-  margin: auto;
-}
 la-tex {
   font-family: Fira Math;
-}
-:root {
-  --sidebar-width: 300px;
-}
-div.main {
-  height: 100dvh;
-  width:  100vw;
-}
-div.sidebar{
-  float: left;
-  width: var(--sidebar-width);
-  height: inherit;
-  overflow: auto;
-  border-color: Gainsboro;
-  border-style: solid;
-  border-width: 0.1em;
-  padding-left: 0.5em;
-  padding-top:  0.5em;
-}
-div.main-content{
-  float: left;
-  width: calc(100vw - var(--sidebar-width));
-  height: inherit;
-  overflow: auto;
-  box-shadow: 0px 0px 10px black inset;
-  padding-left: 1.0em;
-  padding-top:  0.5em;
-}
-div.errors {
-  color: #f88;
 }
