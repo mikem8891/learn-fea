@@ -1,0 +1,15 @@
+svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2px;
+  stroke-linejoin: bevel;
+}
+text {
+  fill: currentColor;
+  font-family: Fira Math, Arial, sans-serif;
+  stroke: none;
+}
+.subscript {
+    font-size: 70%;
+    baseline-shift: sub;
+}

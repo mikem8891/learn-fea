@@ -76,12 +76,44 @@ Newton’s second law at any point in the material may be written as follows:
   \frac{\partial^2 \mathbf{u}}{\partial t^2}
 </la-tex>
 
-Where <la-tex>\mathbf{f}</la-tex> is the sum of forces per unit volume and 
+Where <la-tex>\mathbf{f}</la-tex> is the sum of forces per unit volume and
 <la-tex>\rho</la-tex> is the density.  We are concerned with the
-stress in the material, but other forces can be added, as needed.  Let 
+stress in the material, but other forces can be added, as needed.  Let
 <la-tex>\mathbf{f}_s</la-tex> be the net force due to stress.
   
-<div style="mask: url(stress.svg) no-repeat center; background-color: currentColor; height: 100px;"></div>
+<svg width="100" height="100" style="display: block; margin: auto;">
+  <style>
+    line {
+      stroke-width: 1.5px;
+    }
+    text {
+      font-size: 11px;
+    }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="4" refX="4" refY="2" orient="auto-start-reverse">
+      <path d="M 0 0 L 6 2 L 0 4 z" style="fill: currentColor; stroke: none;" />
+    </marker>
+  </defs>
+  <polygon points="37,37 63,37 63,63 37,63" />
+  <text x="43" y="10" text-anchor="end" >
+    σ<tspan class="subscript">y</tspan>
+  </text>
+  <text x="95" y="63" text-anchor="end" >
+    σ<tspan class="subscript">x</tspan>
+  </text>
+  <text x="70" y="30" text-anchor="start" >
+    τ<tspan class="subscript">xy</tspan>
+  </text>
+  <line x1="50" y1="30" x2="50" y2="10" stroke-width="2px" marker-end="url(#arrow)" />
+  <line x1="50" y1="70" x2="50" y2="90" stroke-width="2px" marker-end="url(#arrow)" />
+  <line x1="30" y1="50" x2="10" y2="50" stroke-width="2px" marker-end="url(#arrow)" />
+  <line x1="70" y1="50" x2="90" y2="50" stroke-width="2px" marker-end="url(#arrow)" />
+  <line x1="40" y1="32" x2="60" y2="32" stroke-width="2px" marker-end="url(#arrow)" />
+  <line x1="60" y1="68" x2="40" y2="68" stroke-width="2px" marker-end="url(#arrow)" />
+  <line x1="32" y1="40" x2="32" y2="60" stroke-width="2px" marker-end="url(#arrow)" />
+  <line x1="68" y1="60" x2="68" y2="40" stroke-width="2px" marker-end="url(#arrow)" />
+</svg>
 
 <la-tex display="block">
   \mathbf{f}_s=
