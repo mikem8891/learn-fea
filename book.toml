@@ -4,4 +4,5 @@ language = "en"
 src = "src"
 
 [output.html]
-additional-css = ["style.css", "style-svg.css"]
+additional-css = ["style.css"]
+edit-url-template = "https://github.com/mikem8891/learn-fea/edit/main/{path}"

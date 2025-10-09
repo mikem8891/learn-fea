@@ -1,40 +1,24 @@
 # Basics of Finite Element
 
-<p>Finite element method is used to solve partial differential equations on domains
-with complex geometry.  This is in contrast to finite difference method which usually 
-requires a domain to be easily divided into equal sized tiles or blocks.  Finite
-element method uses elements made up of nodes.  Adjacent elements share the nodes
-at their common boundary.  The solution is approximated as the sum below.</p>
+Finite element method is used to solve partial differential equations on domains with complex geometry.  This is in contrast to finite difference method which usually  requires a domain to be easily divided into equal sized tiles or blocks.  Finite element method uses elements made up of nodes.  Adjacent elements share the nodes at their common boundary.  The solution is approximated as the sum below.
 
 <la-tex display="block">
   \mathbf{u}(\mathbf{x},t)\approx\sum_i{N_i(\mathbf{x}) \mathbf{u}_i(t)}
 </la-tex>
 
-<p>Where <la-tex>N_i</la-tex> are trail functions and <la-tex>\mathbf u_i</la-tex>
-are the values of the solution at each node.  The trail functions are determined
-by the domain and the type of elements used.  A trial function for node i will have
-a value of 1 at node i and 0 at all other nodes.  In addition, the trail function
-will be 0 outside of any elements it is a part of.  Depending on the type of
-element, the trail function may be linear, quadratic, or some other distribution.
-When all the trail functions in an element are summed, the value across the entire 
-element is 1.</p>
+Where <la-tex>N_i</la-tex> are trail functions and <la-tex>\mathbf u_i</la-tex> are the values of the solution at each node.  The trail functions are determined by the domain and the type of elements used.  A trial function for node i will have a value of 1 at node i and 0 at all other nodes.  In addition, the trail function will be 0 outside of any elements it is a part of.  Depending on the type of element, the trail function may be linear, quadratic, or some other distribution. When all the trail functions in an element are summed, the value across the entire element is 1.
 
+#### Example
 <div id="2d-tri-lin-trail-ex" class="example">
-<h3>Example</h3>
-Lets look at an example of
-trail functions.  The simplest 2D element is a linear triangular element. This
-element is not accurate for structural finite element, so we will look at better
-elements later.  Let <la-tex>D</la-tex> be the triangular domain of an element
-between nodes at (0, 0), (1, 0), and (0, 1).
+<p>
+Lets look at an example of trail functions.  The simplest 2D element is a linear triangular element. This element is not accurate for structural finite element, so we will look at better elements later.  Let <la-tex>D</la-tex> be the triangular domain of an element between nodes at (0, 0), (1, 0), and (0, 1).
 </p>
-
 <la-tex display="block">
   D = \{ (x, y) : 0&lt;x,\,0&lt;y,\,x+y&lt;1\}
 </la-tex>
-
-<p>Each node has its own trail function.  The trail function is 1 at its node 
-and zero at the other nodes.</p>
-
+<p>
+Each node has its own trail function.  The trail function is 1 at its node and zero at the other nodes.
+</p>
 <div style="max-width: fit-content; margin: auto;">
   <la-tex>N_1 = 1-x-y</la-tex><br>
   <la-tex>N_2 = x</la-tex><br>
@@ -43,12 +27,7 @@ and zero at the other nodes.</p>
 <br>
 </div>
 
-<p>Since the approximate solution is a product of a space-only dependent
-function (<la-tex>N_i(\mathbf{x})</la-tex>) and a time-only dependent value
-(<la-tex>\mathbf{u}_i(t)</la-tex>), the stress and strain only depend on the 
-derivatives of the trail functions and only the value at the node. For this
-reason, we let <la-tex>\mathbf{B}</la-tex> be the derivative of the trail 
-function used to calculate stress and strain.</p>
+Since the approximate solution is a product of a space-only dependent function (<la-tex>N_i(\mathbf{x})</la-tex>) and a time-only dependent value (<la-tex>\mathbf{u}_i(t)</la-tex>), the stress and strain only depend on the derivatives of the trail functions and only the value at the node. For this reason, we let <la-tex>\mathbf{B}</la-tex> be the derivative of the trail function used to calculate stress and strain.
 
 <la-tex display="block">
   \mathbf{B} = \mathbf{L}(N) = 
@@ -60,10 +39,10 @@ function used to calculate stress and strain.</p>
   \end{bmatrix}
 </la-tex>
 
+#### Example
 <div id="2d-tri-lin-trail-der-ex" class="example">
-  <h3>Example</h3>
-  <p>Lets calculate <la-tex>\mathbf{B}</la-tex> for the trail functions from the
-    <a href="#2d-tri-lin-trail-ex">example</a> above.</p>
+Lets calculate <la-tex>\mathbf{B}</la-tex> for the trail functions from the <a href="#2d-tri-lin-trail-ex">example</a> above.
+
 <la-tex display="block">
   \mathbf{B}_1 = 
   \begin{bmatrix}
@@ -86,7 +65,7 @@ function used to calculate stress and strain.</p>
 </la-tex><br>
 </div>
 
-<p>The strain and stress can be approximated using the equations below.</p>
+The strain and stress can be approximated using the equations below.
 
 <la-tex display="block">
   \mathbf{\epsilon}\approx\sum_i{\mathbf{B}_i \mathbf{u}_i(t)} 
@@ -94,26 +73,22 @@ function used to calculate stress and strain.</p>
   \mathbf{\sigma}\approx\mathbf{E}\sum_i{\mathbf{B}_i \mathbf{u}_i(t)}
 </la-tex>
 
-<p>Now lets rewrite Newton's second law from above in terms of the approximate
-solution.</p>
+Now lets rewrite Newton's second law from above in terms of the approximate
+solution.
 
 <la-tex display="block">
   \mathbf{f}_b + \mathbf{L}^T(\mathbf{\sigma}) =
   \sum_i{\rho N_i \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}}
 </la-tex>
 
-<p>We will multiply Newton's second law above by <la-tex>N_j</la-tex>, the nodes'
-trail functions, to generate a system of ordinary differential equations that
-can be solved.</p>
+<p>We will multiply Newton's second law above by <la-tex>N_j</la-tex>, the nodes' trail functions, to generate a system of ordinary differential equations that can be solved.
 
 <la-tex display="block">
   N_j \mathbf{f}_b + N_j \mathbf{L}^T(\mathbf{\sigma}) =
   \sum_i{\rho N_i N_j \frac{\mathrm{d} \mathbf{u}_i}{\mathrm{d} t^2}}
 </la-tex>
 
-<p>We apply the product rule to the stress term.  This will allow us to break up
-the term into an internal stress force and an external stress force applied at
-the boundary.  </p>
+We apply the product rule to the stress term.  This will allow us to break up the term into an internal stress force and an external stress force applied at the boundary.
 
 <la-tex display="block">
   N_j \mathbf{f}_b + 
@@ -148,12 +123,9 @@ the element.</p>
   M_{ji} = \iint_D \rho N_i N_j \mathrm{dA}
 </la-tex>
 
-<p>Where <la-tex>\mathbf{f}_{s}</la-tex> is the force due to the stress,
-<la-tex>\mathbf{K}</la-tex> is the stiffness, and 
-<la-tex>M</la-tex> is the mass.</p>
+Where <la-tex>\mathbf{f}_{s}</la-tex> is the force due to the stress, <la-tex>\mathbf{K}</la-tex> is the stiffness, and <la-tex>M</la-tex> is the mass.
 
-<p>The term inside the integral for the stiffness matrix evaluate to the 
-  following matrix.</p>
+The term inside the integral for the stiffness matrix evaluate to the following matrix.
 <la-tex display="block">
   \mathbf{B}^T_j\mathbf{E}\mathbf{B}_i = 
 </la-tex><br>
@@ -162,15 +134,16 @@ the element.</p>
     E' \frac{\partial N_i}{\partial x} \frac{\partial N_j}{\partial x} + 
     G  \frac{\partial N_i}{\partial y} \frac{\partial N_j}{\partial y} & 
     E'\nu \frac{\partial N_i}{\partial y} \frac{\partial N_j}{\partial x} + 
-    G     \frac{\partial N_i}{\partial x} \frac{\partial N_j}{\partial y} \\ 
+    G     \frac{\partial N_i}{\partial x} \frac{\partial N_j}{\partial y} \\\\
     E'\nu \frac{\partial N_i}{\partial x} \frac{\partial N_j}{\partial y}+ 
     G     \frac{\partial N_i}{\partial y} \frac{\partial N_j}{\partial x} & 
     E' \frac{\partial N_i}{\partial y} \frac{\partial N_j}{\partial y} + 
     G  \frac{\partial N_i}{\partial x} \frac{\partial N_j}{\partial x}
   \end{bmatrix}
-</la-tex><br>
+</la-tex>
+
+#### Example
 <div class="example">
-  <h3>Example</h3>
   <p>Now lets calculate mass values and stiffness matrices using the trails 
   functions from the <a href="#2d-tri-lin-trail-ex">example</a> above.  We will start with the mass value for <la-tex>i=1</la-tex> and 
   <la-tex>j=1</la-tex>.  For convenience, we will apply

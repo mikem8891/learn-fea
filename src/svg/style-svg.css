@@ -1,0 +1,25 @@
+svg {
+  display: block;
+  fill: none;
+  margin: auto;
+  stroke: currentColor;
+  stroke-width: 2px;
+  stroke-linejoin: bevel;
+}
+marker, text {
+  fill: currentColor;
+  stroke: none;
+}
+text {
+  font-family: Fira Math, Arial, sans-serif;
+  font-size: 11pt;
+  font-style: italic;
+}
+.arrow {
+  marker-end: url(#arrow);
+  stroke-width: 1px;
+}
+.subscript {
+  font-size: 70%;
+  baseline-shift: sub;
+}
