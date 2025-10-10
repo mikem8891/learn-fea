@@ -13,11 +13,17 @@ marker, text {
 text {
   font-family: Fira Math, Arial, sans-serif;
   font-size: 11pt;
-  font-style: italic;
+}
+.var {
+  font-style: italic;  
 }
 .arrow {
   marker-end: url(#arrow);
   stroke-width: 1px;
+}
+.element {
+  marker-mid: url(#node);
+  marker-end: url(#node);
 }
 .subscript {
   font-size: 70%;

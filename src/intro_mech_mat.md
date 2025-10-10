@@ -72,17 +72,17 @@ Where <la-tex>\mathbf{f}</la-tex> is the sum of forces per unit volume and <la-t
 <svg width="100" height="100">
   <defs>
     <marker id="arrow" markerWidth="6" markerHeight="4" refX="4" refY="2" orient="auto-start-reverse">
-      <path d="M 0 0 L 6 2 L 0 4 z" />
+      <polygon points="0,0 0,4 6,2" />
     </marker>
   </defs>
   <polygon points="37,37 63,37 63,63 37,63" />
-  <text x="43" y="10" text-anchor="end" >
+  <text x="43" y="10" text-anchor="end" class="var">
     σ<tspan class="subscript">y</tspan>
   </text>
-  <text x="95" y="63" text-anchor="end" >
+  <text x="95" y="63" text-anchor="end" class="var">
     σ<tspan class="subscript">x</tspan>
   </text>
-  <text x="70" y="30" text-anchor="start" >
+  <text x="70" y="30" text-anchor="start" class="var">
     τ<tspan class="subscript">xy</tspan>
   </text>
   <line x1="50" y1="30" x2="50" y2="10" class="arrow" />

@@ -13,6 +13,30 @@ Where <la-tex>N_i</la-tex> are trail functions and <la-tex>\mathbf u_i</la-tex> 
 <p>
 Lets look at an example of trail functions.  The simplest 2D element is a linear triangular element. This element is not accurate for structural finite element, so we will look at better elements later.  Let <la-tex>D</la-tex> be the triangular domain of an element between nodes at (0, 0), (1, 0), and (0, 1).
 </p>
+<svg height="200" width="200">
+  <defs>
+    <!-- marker for the nodes -->
+    <marker id="node" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="0">
+      <circle cx="2" cy="2" r="2"/>
+    </marker>
+  </defs>
+  <!-- element -->
+  <polygon points="50,50 150,150 50,150" class="element" />
+  <!-- text labelling the coordinates -->
+  <text x="40" y="50" text-anchor="end" >
+    (0, 1)
+  </text>
+  <text x="40" y="150" text-anchor="end" >
+    (0, 0)
+  </text>
+  <text x="160" y="150" text-anchor="start" >
+    (1, 0)
+  </text>
+  <!-- label of the element domain -->
+  <text x="80" y="120" text-anchor="middle" class="var">
+    D
+  </text>
+</svg>
 <la-tex display="block">
   D = \{ (x, y) : 0&lt;x,\,0&lt;y,\,x+y&lt;1\}
 </la-tex>
