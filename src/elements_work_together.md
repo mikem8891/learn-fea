@@ -10,9 +10,40 @@ Using multiple elements is not that much different from using a single element. 
 
 Where, <la-tex>D_k</la-tex> is the domain of the <la-tex>k^{th}</la-tex> element and <la-tex>D</la-tex> is the union of all the element domains.  The same applies for the mass.
 
-> #### Example 1
-> Expanding from the previous [example 1](basic_finite_element.md#example-1) of a single triangular linear element, we will add a second element to create a square.  The new element will share Nodes 2 and 3 and introduce Node 4 at (1, 1).  The domain of the old element will be denoted <la-tex>D_1</la-tex> and this new element will be denoted <la-tex>D_2.</la-tex>
+> #### Example 4
+> Expanding from the previous [example 1](basic_finite_element.md#example-1) of a single triangular linear element, we will add a second element to create a square.  The new element will share Nodes 2 and 3 and introduce Node 4 at (1, 1).  The domain of the old element will be denoted <la-tex>D_1</la-tex> and this new element will be denoted <la-tex>D_2</la-tex>.
 >
+> <svg height="125" width="175">
+>   <defs>
+>     <!-- marker for the nodes -->
+>     <marker id="node" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="0">
+>       <circle cx="2" cy="2" r="2"/>
+>     </marker>
+>   </defs>
+>   <!-- element -->
+>   <polygon points="50,25 125,100 50,100" class="element" />
+>   <polyline points="50,25 125,25 125,100" class="element" />
+>   <!-- text labelling the coordinates -->
+>   <text x="40" y="25" text-anchor="end">
+>     (0, 1)
+>   </text>
+>   <text x="135" y="25" text-anchor="start">
+>     (1, 1)
+>   </text>
+>   <text x="100" y="50" text-anchor="middle" class="var">
+>     D<tspan class="subscript">2</tspan>
+>   </text>
+>   <text x="75" y="80" text-anchor="middle" class="var">
+>     D<tspan class="subscript">1</tspan>
+>   </text>
+>   <text x="40" y="100" text-anchor="end">
+>     (0, 0)
+>   </text>
+>   <text x="135" y="100" text-anchor="start">
+>     (1, 0)
+>   </text>
+>   <!-- label of the element domain -->
+> </svg>
 > <la-tex display="block">
 >   D_2 = \{ (x, y) : x&lt;1,\,y&lt;1,\,1&lt;x+y\}
 > </la-tex>
