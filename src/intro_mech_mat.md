@@ -79,11 +79,11 @@ Where <la-tex>\mathbf{f}</la-tex> is the sum of forces per unit volume and <la-t
   <text x="43" y="10" text-anchor="end" class="var">
     σ<tspan class="subscript">y</tspan>
   </text>
-  <text x="95" y="63" text-anchor="end" class="var">
-    σ<tspan class="subscript">x</tspan>
-  </text>
   <text x="70" y="30" text-anchor="start" class="var">
     τ<tspan class="subscript">xy</tspan>
+  </text>
+  <text x="95" y="63" text-anchor="end" class="var">
+    σ<tspan class="subscript">x</tspan>
   </text>
   <line x1="50" y1="30" x2="50" y2="10" class="arrow" />
   <line x1="50" y1="70" x2="50" y2="90" class="arrow" />
