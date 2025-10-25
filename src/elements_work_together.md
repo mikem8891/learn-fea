@@ -10,7 +10,7 @@ Using multiple elements is not that much different from using a single element. 
 
 Where, <la-tex>D_k</la-tex> is the domain of the <la-tex>k^{th}</la-tex> element and <la-tex>D</la-tex> is the union of all the element domains.  The same applies for the mass.
 
-> #### Example 4
+> #### Example 6
 > Expanding from the previous [example 1](basic_finite_element.md#example-1) of a single triangular linear element, we will add a second element to create a square.  The new element will share Nodes 2 and 3 and introduce Node 4 at (1, 1).  The domain of the old element will be denoted <la-tex>D_1</la-tex> and this new element will be denoted <la-tex>D_2</la-tex>.
 >
 > <svg height="125" width="175">
@@ -20,7 +20,7 @@ Where, <la-tex>D_k</la-tex> is the domain of the <la-tex>k^{th}</la-tex> element
 >       <circle cx="2" cy="2" r="2"/>
 >     </marker>
 >   </defs>
->   <!-- element -->
+>   <!-- elements -->
 >   <polygon points="50,25 125,100 50,100" class="element" />
 >   <polyline points="50,25 125,25 125,100" class="element" />
 >   <!-- text labelling the coordinates -->
