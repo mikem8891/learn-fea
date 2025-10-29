@@ -1,0 +1,31 @@
+<svg height="125" width="175">
+  <defs>
+    <!-- marker for the nodes -->
+    <marker id="node" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="0">
+      <circle cx="2" cy="2" r="2"/>
+    </marker>
+  </defs>
+  <!-- element -->
+  <polygon points="50,25 125,100 50,100" class="element" />
+  <polyline points="50,25 125,25 125,100" class="element" />
+  <!-- text labelling the coordinates -->
+  <text x="40" y="25" text-anchor="end">
+    (0, 1)
+  </text>
+  <text x="135" y="25" text-anchor="start">
+    (1, 1)
+  </text>
+  <text x="100" y="50" text-anchor="middle" class="var">
+    D<tspan class="subscript">2</tspan>
+  </text>
+  <text x="75" y="80" text-anchor="middle" class="var">
+    D<tspan class="subscript">1</tspan>
+  </text>
+  <text x="40" y="100" text-anchor="end">
+    (0, 0)
+  </text>
+  <text x="135" y="100" text-anchor="start">
+    (1, 0)
+  </text>
+  <!-- label of the element domain -->
+</svg>

@@ -8,46 +8,30 @@ Finite element method is used to solve partial differential equations on domains
 
 Where <la-tex>N_i</la-tex> are trail functions and <la-tex>\mathbf u_i</la-tex> are the values of the solution at each node.  The trail functions are determined by the domain and the type of elements used.  A trial function for node i will have a value of 1 at node i and 0 at all other nodes.  In addition, the trail function will be 0 outside of any elements it is a part of.  Depending on the type of element, the trail function may be linear, quadratic, or some other distribution. When all the trail functions in an element are summed, the value across the entire element is 1.
 
-> #### Example 1
-> 
-> Lets look at an example of trail functions.  The simplest 2D element is a linear triangular element. This element is not accurate for structural finite element, so we will look at better > elements later.  Let <la-tex>D</la-tex> be the triangular domain of an element between nodes at (0, 0), (1, 0), and (0, 1).
-> 
-> <svg height="125" width="175">
->   <defs>
->     <!-- marker for the nodes -->
->     <marker id="node" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="0">
->       <circle cx="2" cy="2" r="2"/>
->     </marker>
->   </defs>
->   <!-- element -->
->   <polygon points="50,25 125,100 50,100" class="element" />
->   <!-- text labelling the coordinates -->
->   <text x="40" y="25" text-anchor="end">
->     (0, 1)
->   </text>
->   <text x="75" y="80" text-anchor="middle" class="var">
->     D
->   </text>
->   <text x="40" y="100" text-anchor="end">
->     (0, 0)
->   </text>
->   <text x="135" y="100" text-anchor="start">
->     (1, 0)
->   </text>
->   <!-- label of the element domain -->
-> </svg>
-> <la-tex display="block">
->   D = \{ (x, y) : 0&lt;x,\,0&lt;y,\,x+y&lt;1\}
-> </la-tex>
-> 
-> Each node has its own trail function.  The trail function is 1 at its node and zero at the other nodes.
-> 
-> <div style="max-width: fit-content; margin: auto;">
->   <la-tex>N_1 = 1-x-y</la-tex><br>
->   <la-tex>N_2 = x</la-tex><br>
->   <la-tex>N_3 = y</la-tex><br>
-> </div>  
-> <br>
+<blockquote>
+
+#### Example 1
+
+Lets look at an example of trail functions.  The simplest 2D element is a linear triangular element. This element is not accurate for structural finite element, so we will look at better > elements later.  Let <la-tex>D</la-tex> be the triangular domain of an element between nodes at (0, 0), (1, 0), and (0, 1).
+
+{{ #include svg/element.svg }}
+
+<la-tex display="block">
+  D = \{ (x, y) : 0&lt;x,\,0&lt;y,\,x+y&lt;1\}
+</la-tex>
+
+Each node has its own trail function.  The trail function is 1 at its node and zero at the other nodes.
+
+<div style="max-width: fit-content; margin: auto;">
+  <la-tex>N_1 = 1-x-y</la-tex><br>
+  <la-tex>N_2 = x</la-tex><br>
+  <la-tex>N_3 = y</la-tex><br>
+</div>
+
+
+<br>
+
+</blockquote>
 
 Since the approximate solution is a product of a space-only dependent function (<la-tex>N_i(\mathbf{x})</la-tex>) and a time-only dependent value (<la-tex>\mathbf{u}_i(t)</la-tex>), the stress and strain only depend on the derivatives of the trail functions and only the value at the node. For this reason, we let <la-tex>\mathbf{B}</la-tex> be the derivative of the trail function used to calculate stress and strain.
 
