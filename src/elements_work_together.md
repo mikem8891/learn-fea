@@ -1,6 +1,4 @@
 # Elements Working Together
-<<<<<<< Updated upstream
-=======
 
 Using multiple elements is not that much different from using a single element.  The elements interact through their mutual nodes. Each element needs to have its properties calculated.  As a review, the trail functions are defined for each node on the domain of the element, then the stiffness matrix is calculated for each node of the element.  You may notice that the stiffness matrices for some of the nodes have already been calculated from previous elements; however, they do not apply to the domain of any new element you add.  To get the full stiffness matrix you need to sum the matrices over the domains of all the elements.
 
@@ -180,4 +178,3 @@ Now we solve for our unknown displacements.
 <br>
 
 </blockquote>
->>>>>>> Stashed changes
