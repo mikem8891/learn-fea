@@ -7,4 +7,3 @@ src = "src"
 additional-css = ["style.css"]
 edit-url-template = "https://github.com/mikem8891/learn-fea/edit/main/{path}"
 git-repository-url = "https://github.com/mikem8891/learn-fea"
-git-repository-icon = "fa-github"
