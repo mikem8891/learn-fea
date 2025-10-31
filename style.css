@@ -1,0 +1,11 @@
+.example {
+  border-color: currentColor;
+  border-style: solid;
+  border-width: 0.1em;
+  margin-top: 0.5em;
+  padding-left: 0.5em;
+  padding-top: 0.5em;
+}
+la-tex {
+  font-family: Fira Math;
+}

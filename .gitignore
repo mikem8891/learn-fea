@@ -1,0 +1,8 @@
+debug/
+target/
+Cargo.lock
+pkg/*.ts
+**/*.rs.bk
+*.pdb
+.vscode
+book

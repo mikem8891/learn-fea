@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Intro to Mechanics of Materials - Learn Finite Element Analysis</title>
+
+
+        <!-- Custom HTML head -->
+        <link
+            rel="stylesheet"
+            href="https://fred-wang.github.io/MathFonts/FiraMath/mathfonts.css" />
+        <link rel="stylesheet" href="./svg/style-svg.css">
+        <script src="./TeXZilla-min.js"></script>
+        <script src="./latex-element.js" type="module"></script>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="style.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Learn Finite Element Analysis</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/mikem8891/learn-fea" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/mikem8891/learn-fea/edit/main/src/intro_mech_mat.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="intro-to-mechanics-of-materials"><a class="header" href="#intro-to-mechanics-of-materials">Intro to Mechanics of Materials</a></h1>
+<p>Starting with a 2D solid material.  Let <la-tex>\mathbf{u}</la-tex> be the displacement field of the material.  Let <la-tex>\mathbf{\epsilon}</la-tex> be the normal <la-tex>(\epsilon)</la-tex> and shear <la-tex>(\gamma)</la-tex> strains.  Let <la-tex>\mathbf{\sigma}</la-tex> be the normal <la-tex>(\sigma)</la-tex> and shear <la-tex>(\tau)</la-tex> stresses.</p>
+<la-tex display="block">
+\mathbf{u} = 
+\begin{pmatrix}
+  u_x \\ u_y
+\end{pmatrix} \:\:\:\: displacement
+</la-tex>
+<la-tex display="block">
+\mathbf{\epsilon} =
+\begin{pmatrix}
+  \epsilon_x \\ \epsilon_y \\ \gamma_{xy}
+\end{pmatrix} =
+\begin{pmatrix}
+  \frac{\partial u_x}{\partial x} \\
+  \frac{\partial u_y}{\partial y} \\
+  \frac{\partial u_x}{\partial y} +
+  \frac{\partial u_y}{\partial x}
+\end{pmatrix} \:\:\:\: strain
+</la-tex>
+<la-tex display="block">
+  \mathbf{\sigma} =
+  \begin{pmatrix}
+    \sigma_x \\ \sigma_y \\ \tau_{xy}
+  \end{pmatrix} \:\:\:\: stress
+</la-tex>
+<p>Let <la-tex>\mathbf{L}</la-tex> be the strain-displacement differential operator for converting <la-tex>\mathbf{u}</la-tex> to <la-tex>\mathbf{\epsilon}</la-tex>.</p>
+<la-tex display="block">
+\mathbf{L(u)}=
+\begin{bmatrix}
+  \frac{\partial}{\partial x} & 0 \\
+  0 & \frac{\partial}{\partial y} \\
+  \frac{\partial}{\partial y} &
+  \frac{\partial}{\partial x}
+\end{bmatrix}
+\begin{pmatrix}
+  u_x \\ u_y
+\end{pmatrix}
+= \mathbf{\epsilon}
+</la-tex>
+<p>Let <la-tex>\mathbf{E}</la-tex> be the elasticity matrix to convert strain into stress, where <la-tex>E</la-tex> is Young’s modulus, <la-tex>G</la-tex> is the modulus of rigidity, and <la-tex>\nu</la-tex> is Poisson’s ratio.  The matrix shown is for the plane stress condition; that is <la-tex>\sigma_z = 0</la-tex>.  For convenience, we will apply the substitution <la-tex>E' = E/(1-\nu^2)</la-tex>.</p>
+<la-tex display="block">
+  \mathbf{\sigma} =
+  \mathbf{E\epsilon} =
+  \begin{bmatrix}
+    E' & E'\nu & 0 \\
+    E'\nu & E' & 0 \\
+    0 & 0 & G
+  \end{bmatrix}
+  \begin{pmatrix}
+    \epsilon_x \\ \epsilon_y \\ \gamma_{xy}
+  \end{pmatrix}
+</la-tex>
+<p>Newton’s second law at any point in the material may be written as follows:</p>
+<la-tex display="block">
+  \mathbf{f} = \rho
+  \frac{\partial^2 \mathbf{u}}{\partial t^2}
+</la-tex>
+<p>Where <la-tex>\mathbf{f}</la-tex> is the sum of forces per unit volume and <la-tex>\rho</la-tex> is the density.  We are concerned with the stress in the material, but other forces can be added, as needed.  Let <la-tex>\mathbf{f}_s</la-tex> be the net force due to stress.</p>
+<svg width="100" height="100">
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="4" refX="4" refY="2" orient="auto-start-reverse">
+      <polygon points="0,0 0,4 6,2" />
+    </marker>
+  </defs>
+  <polygon points="37,37 63,37 63,63 37,63" />
+  <text x="43" y="10" text-anchor="end" class="var">
+    σ<tspan class="subscript">y</tspan>
+  </text>
+  <text x="70" y="30" text-anchor="start" class="var">
+    τ<tspan class="subscript">xy</tspan>
+  </text>
+  <text x="95" y="63" text-anchor="end" class="var">
+    σ<tspan class="subscript">x</tspan>
+  </text>
+  <line x1="50" y1="30" x2="50" y2="10" class="arrow" />
+  <line x1="50" y1="70" x2="50" y2="90" class="arrow" />
+  <line x1="30" y1="50" x2="10" y2="50" class="arrow" />
+  <line x1="70" y1="50" x2="90" y2="50" class="arrow" />
+  <line x1="40" y1="32" x2="60" y2="32" class="arrow" />
+  <line x1="60" y1="68" x2="40" y2="68" class="arrow" />
+  <line x1="32" y1="40" x2="32" y2="60" class="arrow" />
+  <line x1="68" y1="60" x2="68" y2="40" class="arrow" />
+</svg>
+<la-tex display="block">
+  \mathbf{f}_s=
+  \mathbf{L}^T(\mathbf{\sigma}) =
+  \begin{bmatrix}
+    \frac{\partial}{\partial x} & 0 & \frac{\partial}{\partial y} \\
+    0 & \frac{\partial}{\partial y} & \frac{\partial}{\partial x}
+  \end{bmatrix}
+  \begin{pmatrix}
+    \sigma_x \\
+    \sigma_y \\
+    \tau_{xy}
+  \end{pmatrix}
+</la-tex>
+<p>Let <la-tex>\mathbf{f}_b</la-tex> be the sum of other forces per unit volume, such as body forces like  gravity and magnetism, or reference-frame forces like centrifugal force and coriolis force.</p>
+<la-tex display="block">
+  \mathbf{f}_b + \mathbf{L}^T(\mathbf{\sigma}) =
+  \rho \frac{\partial^2 \mathbf{u}}{\partial t^2}
+</la-tex>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="basic_finite_element.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="basic_finite_element.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
