@@ -1,4 +1,5 @@
 [book]
+title = "Learn Finite Element Analysis"
 authors = ["Mike Maley"]
 language = "en"
 src = "src"
